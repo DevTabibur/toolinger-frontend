@@ -1372,6 +1372,99 @@ export const categoriesAndTools: any = {
       },
     ],
   },
+  // all
+  "image-tools": {
+    name: "Image Tools",
+    description:
+      "Image editing, conversion, and analysis tools",
+    color: "from-cyan-500 to-blue-500",
+    tools: [
+      {
+        name: "Image Translator",
+        description: "Translate text within images to different languages",
+        icon: "🌐",
+        slug: "image-translator",
+        level: "pro",
+      },
+      {
+        name: "Barcode Scanner",
+        description: "Scan and decode barcodes from images",
+        icon: "📷",
+        slug: "barcode-scanner",
+        level: "free",
+      },
+      {
+        name: "Image to Excel",
+        description: "Convert images of tables into Excel format",
+        icon: "📊",
+        slug: "image-to-excel",
+        level: "pro",
+      },
+      {
+        name: "Reverse Image Search",
+        description: "Find similar images across the web",
+        icon: "🔍",
+        slug: "reverse-image-search",
+        level: "free",
+      },
+      {
+        name: "Image to Text",
+        description: "Extract text from images",
+        icon: "📝",
+        slug: "image-to-text",
+        level: "free",
+      },
+      {
+        name: "Crop Image Online",
+        description: "Crop images to desired dimensions",
+        icon: "✂️",
+        slug: "crop-image-online",
+        level: "free",
+      },
+      {
+        name: "Binary Translator",
+        description: "Translate binary code to text and vice versa",
+        icon: "0️⃣1️⃣",
+        slug: "binary-translator",
+        level: "free",
+      },
+      {
+        name: "Text to Image",
+        description: "Convert text into an image format",
+        icon: "🖼️",
+        slug: "text-to-image",
+        level: "pro",
+      },
+      {
+        name: "JPG to Word",
+        description: "Convert JPG images to Word documents",
+        icon: "📄",
+        slug: "jpg-to-word",
+        level: "pro",
+      },
+      {
+        name: "PDF to Text",
+        description: "Extract text from PDF files",
+        icon: "📄",
+        slug: "pdf-to-text",
+        level: "free",
+      },
+      {
+        name: "Text to Handwriting",
+        description: "Convert typed text into a handwriting style",
+        icon: "✍️",
+        slug: "text-to-handwriting",
+        level: "pro",
+      },
+      {
+        name: "PDF to Word",
+        description: "Convert PDF documents to Word format",
+        icon: "📄",
+        slug: "pdf-to-word",
+        level: "pro",
+      },
+    ],
+  },
 };
 
 export const categories = [
