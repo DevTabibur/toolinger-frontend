@@ -186,8 +186,11 @@ export function Header() {
               Home
             </Link>
             <div className="relative group">
-              <button className="text-sm font-medium hover:text-primary transition-colors">
+              <button className="text-sm font-medium hover:text-primary transition-colors flex items-center">
                 Categories
+                <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
               </button>
               <div className="absolute top-full left-0 mt-2 w-48 bg-background border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                 <div className="p-2">

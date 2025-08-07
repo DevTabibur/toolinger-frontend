@@ -1,7 +1,7 @@
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { AdBanner } from "@/components/ad-banner"
-import Link from "next/link"
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { AdBanner } from "@/components/ad-banner";
+import Link from "next/link";
 import {
   Search,
   Zap,
@@ -20,7 +20,8 @@ import {
   Globe,
   Settings,
   Plus,
-} from "lucide-react"
+} from "lucide-react";
+import { GlobalSearch } from "@/components/global-search";
 
 export default function HomePage() {
   const categories = [
@@ -50,7 +51,11 @@ export default function HomePage() {
       icon: BarChart3,
       count: 15,
       description: "Search engine optimization and analysis tools",
-      tools: ["Meta Tag Generator", "Keyword Density Checker", "Robots.txt Generator"],
+      tools: [
+        "Meta Tag Generator",
+        "Keyword Density Checker",
+        "Robots.txt Generator",
+      ],
     },
     {
       name: "Calculators",
@@ -101,7 +106,7 @@ export default function HomePage() {
       description: "Additional specialized tools and utilities",
       tools: ["QR Code Scanner", "Random Name Generator", "Color Palette"],
     },
-  ]
+  ];
 
   const featuredTools = [
     {
@@ -140,7 +145,7 @@ export default function HomePage() {
       category: "Design Tools",
       popular: false,
     },
-  ]
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -149,14 +154,16 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="gradient-bg text-white py-16 md:py-24">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">200+ Free Online Tools</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            200+ Free Online Tools
+          </h1>
           <p className="text-xl md:text-2xl mb-8 opacity-90 max-w-3xl mx-auto">
-            Boost your productivity with our comprehensive collection of web-based tools. No downloads, no registration
-            required.
+            Boost your productivity with our comprehensive collection of
+            web-based tools. No downloads, no registration required.
           </p>
 
           {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mb-8">
+          {/* <div className="max-w-2xl mx-auto mb-8">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
@@ -165,6 +172,14 @@ export default function HomePage() {
                 className="w-full pl-12 pr-4 py-4 text-lg rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30"
               />
             </div>
+          </div> */}
+
+          {/* Search Bar */}
+          <div className="max-w-2xl mx-auto mb-8">
+            <GlobalSearch
+              placeholder="Search from 200+ tools..."
+              variant="hero"
+            />
           </div>
 
           {/* Features */}
@@ -194,19 +209,24 @@ export default function HomePage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Tool Categories</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Tool Categories
+            </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Explore our organized collection of tools designed to solve your everyday problems
+              Explore our organized collection of tools designed to solve your
+              everyday problems
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((category) => {
-              const IconComponent = category.icon
+              const IconComponent = category.icon;
               return (
                 <Link
                   key={category.name}
-                  href={`/category/${category.name.toLowerCase().replace(" ", "-")}`}
+                  href={`/category/${category.name
+                    .toLowerCase()
+                    .replace(" ", "-")}`}
                   className="group bg-card border rounded-xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className="gradient-bg w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
@@ -215,13 +235,19 @@ export default function HomePage() {
                   <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
                     {category.name}
                   </h3>
-                  <p className="text-muted-foreground text-sm mb-3">{category.description}</p>
+                  <p className="text-muted-foreground text-sm mb-3">
+                    {category.description}
+                  </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-primary">{category.count} tools</span>
-                    <div className="text-xs text-muted-foreground">Popular: {category.tools[0]}</div>
+                    <span className="text-sm font-medium text-primary">
+                      {category.count} tools
+                    </span>
+                    <div className="text-xs text-muted-foreground">
+                      Popular: {category.tools[0]}
+                    </div>
                   </div>
                 </Link>
-              )
+              );
             })}
           </div>
         </div>
@@ -235,9 +261,14 @@ export default function HomePage() {
               <div className="flex items-center justify-between mb-8">
                 <div>
                   <h2 className="text-3xl font-bold mb-2">Featured Tools</h2>
-                  <p className="text-muted-foreground">Most popular and frequently used tools</p>
+                  <p className="text-muted-foreground">
+                    Most popular and frequently used tools
+                  </p>
                 </div>
-                <Link href="/tools" className="text-primary hover:underline font-medium flex items-center space-x-1">
+                <Link
+                  href="/tools"
+                  className="text-primary hover:underline font-medium flex items-center space-x-1"
+                >
                   <span>View All</span>
                   <TrendingUp className="h-4 w-4" />
                 </Link>
@@ -251,7 +282,9 @@ export default function HomePage() {
                     className="group bg-background border rounded-lg p-6 hover:shadow-md transition-all duration-300"
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <h3 className="font-semibold group-hover:text-primary transition-colors">{tool.name}</h3>
+                      <h3 className="font-semibold group-hover:text-primary transition-colors">
+                        {tool.name}
+                      </h3>
                       {tool.popular && (
                         <div className="flex items-center space-x-1 text-yellow-500">
                           <Star className="h-4 w-4 fill-current" />
@@ -259,8 +292,12 @@ export default function HomePage() {
                         </div>
                       )}
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3">{tool.description}</p>
-                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">{tool.category}</span>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      {tool.description}
+                    </p>
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                      {tool.category}
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -279,19 +316,27 @@ export default function HomePage() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">200+</div>
+              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">
+                200+
+              </div>
               <div className="text-muted-foreground">Free Tools</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">1M+</div>
+              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">
+                1M+
+              </div>
               <div className="text-muted-foreground">Monthly Users</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">50M+</div>
+              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">
+                50M+
+              </div>
               <div className="text-muted-foreground">Tools Used</div>
             </div>
             <div>
-              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">99.9%</div>
+              <div className="text-3xl md:text-4xl font-bold gradient-text mb-2">
+                99.9%
+              </div>
               <div className="text-muted-foreground">Uptime</div>
             </div>
           </div>
@@ -305,5 +350,5 @@ export default function HomePage() {
 
       <Footer />
     </div>
-  )
+  );
 }
