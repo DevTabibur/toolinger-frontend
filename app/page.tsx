@@ -22,131 +22,9 @@ import {
   Plus,
 } from "lucide-react";
 import { GlobalSearch } from "@/components/global-search";
+import { categories, featuredTools } from "@/lib/categories";
 
 export default function HomePage() {
-  const categories = [
-    {
-      name: "Text Tools",
-      icon: Type,
-      count: 25,
-      description: "Text manipulation, formatting, and analysis tools",
-      tools: ["Word Counter", "Text Case Converter", "Lorem Ipsum Generator"],
-    },
-    {
-      name: "Image Tools",
-      icon: ImageIcon,
-      count: 18,
-      description: "Image editing, compression, and conversion tools",
-      tools: ["Image Compressor", "Image Resizer", "Background Remover"],
-    },
-    {
-      name: "Developer Tools",
-      icon: Code,
-      count: 32,
-      description: "Development utilities and code generators",
-      tools: ["JSON Formatter", "Base64 Encoder", "Hash Generator"],
-    },
-    {
-      name: "SEO Tools",
-      icon: BarChart3,
-      count: 15,
-      description: "Search engine optimization and analysis tools",
-      tools: [
-        "Meta Tag Generator",
-        "Keyword Density Checker",
-        "Robots.txt Generator",
-      ],
-    },
-    {
-      name: "Calculators",
-      icon: Calculator,
-      count: 28,
-      description: "Mathematical and financial calculators",
-      tools: ["Percentage Calculator", "BMI Calculator", "Loan Calculator"],
-    },
-    {
-      name: "Converters",
-      icon: Shuffle,
-      count: 22,
-      description: "Unit and format conversion tools",
-      tools: ["Unit Converter", "Currency Converter", "Color Converter"],
-    },
-    {
-      name: "Generators",
-      icon: Palette,
-      count: 20,
-      description: "Content and data generation tools",
-      tools: ["Password Generator", "QR Code Generator", "UUID Generator"],
-    },
-    {
-      name: "Productivity",
-      icon: FileText,
-      count: 16,
-      description: "Tools to boost your daily productivity",
-      tools: ["PDF Tools", "Time Zone Converter", "Pomodoro Timer"],
-    },
-    {
-      name: "Domain Tools",
-      icon: Globe,
-      count: 15,
-      description: "Domain analysis and management tools",
-      tools: ["Domain Authority Checker", "Whois Lookup", "DNS Records"],
-    },
-    {
-      name: "Website Management",
-      icon: Settings,
-      count: 24,
-      description: "Website analysis and management utilities",
-      tools: ["Server Status Checker", "Website Speed Test", "SSL Checker"],
-    },
-    {
-      name: "More Tools",
-      icon: Plus,
-      count: 35,
-      description: "Additional specialized tools and utilities",
-      tools: ["QR Code Scanner", "Random Name Generator", "Color Palette"],
-    },
-  ];
-
-  const featuredTools = [
-    {
-      name: "Password Generator",
-      description: "Generate secure passwords with custom options",
-      category: "Security",
-      popular: true,
-    },
-    {
-      name: "QR Code Generator",
-      description: "Create QR codes for text, URLs, and more",
-      category: "Generators",
-      popular: true,
-    },
-    {
-      name: "Image Compressor",
-      description: "Reduce image file size without quality loss",
-      category: "Image Tools",
-      popular: true,
-    },
-    {
-      name: "JSON Formatter",
-      description: "Format and validate JSON data",
-      category: "Developer Tools",
-      popular: false,
-    },
-    {
-      name: "Word Counter",
-      description: "Count words, characters, and paragraphs",
-      category: "Text Tools",
-      popular: true,
-    },
-    {
-      name: "Color Picker",
-      description: "Pick colors and get hex, RGB, HSL values",
-      category: "Design Tools",
-      popular: false,
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -161,18 +39,6 @@ export default function HomePage() {
             Boost your productivity with our comprehensive collection of
             web-based tools. No downloads, no registration required.
           </p>
-
-          {/* Search Bar */}
-          {/* <div className="max-w-2xl mx-auto mb-8">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search from 200+ tools..."
-                className="w-full pl-12 pr-4 py-4 text-lg rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/30"
-              />
-            </div>
-          </div> */}
 
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto mb-8">

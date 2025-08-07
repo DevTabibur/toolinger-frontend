@@ -17,6 +17,7 @@ export async function generateMetadata({
 }: CategoryPageProps): Promise<Metadata> {
   const category =
     categoriesAndTools[params.slug as keyof typeof categoriesAndTools];
+  console.log("category", category);
 
   if (!category) {
     return {
@@ -42,19 +43,20 @@ export async function generateMetadata({
 
 export default function CategoryPage({ params }: CategoryPageProps) {
   const category =
-    categoriesAndTools[params.slug as keyof typeof categoriesAndTools];
+    categoriesAndTools[params?.slug as keyof typeof categoriesAndTools];
 
   if (!category) {
     notFound();
   }
 
+  console.log("category.color", category.color);
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
       {/* Category Header */}
       <section
-        className={`bg-gradient-to-r ${category.color} text-white py-12`}
+        className={`bg-gradient-to-r ${category.color}   text-white py-12`}
       >
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
@@ -63,10 +65,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           <p className="text-lg md:text-xl opacity-90 max-w-3xl">
             {category.description}
           </p>
-          <div className="mt-6 max-w-xl">
-            <GlobalSearch
+          <div className="mt-6">
+            <SearchBar
               placeholder={`Search ${category.name.toLowerCase()}...`}
-              variant="hero"
             />
           </div>
         </div>
@@ -83,9 +84,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="lg:w-3/4">
               <CategoryToolsGrid
-                tools={category.tools}
-                categorySlug={params.slug}
-                categoryName={category.name}
+                tools={category?.tools}
+                categorySlug={params?.slug}
+                categoryName={category?.name}
               />
             </div>
 
@@ -109,11 +110,8 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   );
 }
 
-// export async function generateStaticParams() {
-//   return Object.keys(categoriesAndTools).map((slug) => ({
-//     slug,
-//   }));
-// }
-
-
-
+export async function generateStaticParams() {
+  return Object.keys(categoriesAndTools).map((slug) => ({
+    slug,
+  }));
+}

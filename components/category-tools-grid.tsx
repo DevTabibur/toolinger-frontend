@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 
 interface Tool {
+  level: string
   name: string
   description: string
   icon: string
@@ -18,6 +19,7 @@ interface CategoryToolsGridProps {
 
 export function CategoryToolsGrid({ tools, categorySlug, categoryName }: CategoryToolsGridProps) {
   const [searchTerm, setSearchTerm] = useState("")
+  console.log('tools', tools)
 
   const filteredTools = tools.filter(
     (tool) =>
@@ -30,7 +32,7 @@ export function CategoryToolsGrid({ tools, categorySlug, categoryName }: Categor
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-4">{categoryName}</h2>
         <p className="text-muted-foreground mb-4">
-          Looking for better way to work with {categoryName.toLowerCase()}? Check out these tools!
+          Looking for better way to work with  {categoryName.toLowerCase()}? Check out these tools!
         </p>
       </div>
 
@@ -39,7 +41,7 @@ export function CategoryToolsGrid({ tools, categorySlug, categoryName }: Categor
           <Link
             key={tool.slug}
             href={`/${categorySlug}/${tool.slug}`}
-            className="group bg-card border rounded-lg p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+            className="group relative bg-card border rounded-lg p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
           >
             <div className="flex items-start space-x-4">
               <div className="text-3xl">{tool.icon}</div>
@@ -48,6 +50,9 @@ export function CategoryToolsGrid({ tools, categorySlug, categoryName }: Categor
                 <p className="text-sm text-muted-foreground">{tool.description}</p>
               </div>
             </div>
+            <span className={`absolute top-2 right-2 px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r ${tool.level === 'pro' ? 'from-red-400 to-red-600 text-white' : 'from-green-400 to-green-600 text-white'}`}>
+              {tool.level === 'pro' ? 'Pro' : 'Free'}
+            </span>
           </Link>
         ))}
       </div>
