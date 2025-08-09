@@ -654,7 +654,7 @@ export const categoriesAndTools: any = {
       },
     ],
   },
-  // all
+  // all ==> 1
   calculators: {
     name: "Calculators",
     description:
@@ -799,7 +799,7 @@ export const categoriesAndTools: any = {
         name: "Pre and Post Money Valuation",
         description: "Calculate pre and post money valuation for startups",
         icon: "💼", // Replace with a professional icon
-        slug: "valuation-calculator",
+        slug: "pre-and-post-money-valuation-calculator",
         level: "pro",
       },
     ],

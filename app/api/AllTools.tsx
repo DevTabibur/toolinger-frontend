@@ -1,5 +1,5 @@
 import axios from "axios";
-const URL = `https://toolsbackend.toolinger.com/`;
+const URL = `https://toolsbackend.toolinger.com`;
 //====================================MORE TOOLS====================================
 
 // More Tools API functions
@@ -153,13 +153,13 @@ export async function convertTextToHEX(data: any) {
 export async function calculateAdsense(data: any) {
   try {
     const response = await axios.post(
-      "`${URL}`more-tools/adsense-calculator",
+      `${URL}/more-tools/adsense-calculator`,
       data
     );
     return response.data;
   } catch (error) {
     console.error("Error in calculateAdsense:", error);
-    throw error;
+    // throw error;
   }
 }
 
@@ -173,7 +173,7 @@ export async function calculatePaypalFee(data: any) {
     return response.data;
   } catch (error) {
     console.error("Error in calculatePaypalFee:", error);
-    throw error;
+    // throw error;
   }
 }
 
@@ -251,13 +251,13 @@ export async function calculateLTV(data: any) {
 export async function calculateCPM(data: any) {
   try {
     const response = await axios.post(
-      "`${URL}`more-tools/cpm-calculator",
+      `${URL}/more-tools/cpm-calculator`,
       data
     );
     return response.data;
   } catch (error) {
     console.error("Error in calculateCPM:", error);
-    throw error;
+    // throw error;
   }
 }
 
