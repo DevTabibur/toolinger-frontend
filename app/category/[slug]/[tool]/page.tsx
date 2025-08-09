@@ -1,5 +1,7 @@
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+
+// calculator tools
 import {
   AdsenseCalculator,
   AgeCalculator,
@@ -21,6 +23,21 @@ import {
   SalesTaxCalculator,
   ToolNotFound
 } from "@/components/tools/Calculators";
+
+// text tools
+import {
+  ASCIIToTextConverter,
+  CodeToTextRatio,
+  InvisibleCharacter,
+  KeywordsByTotalWordRatio,
+  TextEditor,
+  TextRepeater,
+  TextToPDF,
+  TextToWord,
+  WordCombiner,
+  WordCounter,
+  WordsToPages
+} from "@/components/tools/text";
 
 
 
@@ -70,6 +87,31 @@ export default function ToolDetailsPage({
         return <AgeCalculator />;
       case "pre-and-post-money-valuation-calculator":
         return <PreAndPostMoney />;
+      // text tools
+      case "word-counter":
+        return <WordCounter />;
+      case "code-to-text-ratio":
+        return <CodeToTextRatio />;
+      case "invisible-character":
+        return <InvisibleCharacter />;
+      case "text-to-word":
+        return <TextToWord />;
+      case "text-to-pdf":
+        return <TextToPDF />;
+      case "text-repeater":
+        return <TextRepeater />;
+      case "keyword-total-words":
+        return <KeywordsByTotalWordRatio />;
+      case "word-combiner":
+        return <WordCombiner />;
+      case "ascii-to-text":
+        return <ASCIIToTextConverter />;
+      case "text-to-ascii":
+        return <ASCIIToTextConverter />;
+      // case "online-text-editor":
+      //   return <TextEditor />;
+      case "word-pages":
+        return <WordsToPages />;
       default:
         return <ToolNotFound />;
     }

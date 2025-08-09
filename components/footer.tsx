@@ -113,8 +113,12 @@ export function Footer() {
         </div>
 
         <div className="border-t mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-muted-foreground">© 2024 Toolinger. All rights reserved.</p>
-          <p className="text-sm text-muted-foreground mt-4 md:mt-0">Made with ❤️ for productivity enthusiasts</p>
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Toolinger. All rights reserved.
+          </p>
+          <p className="text-sm text-muted-foreground mt-4 md:mt-0">
+            Made with ❤️ <Link href="https://woptio.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-primary">Woptio.com</Link>
+          </p>
         </div>
       </div>
     </footer>
