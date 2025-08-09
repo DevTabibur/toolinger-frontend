@@ -674,6 +674,7 @@ export const categoriesAndTools: any = {
         icon: "💵", // Replace with a professional icon
         slug: "adsense-calculator",
         level: "pro",
+        component: "Hello"
       },
       {
         name: "PayPal Fee Calculator",

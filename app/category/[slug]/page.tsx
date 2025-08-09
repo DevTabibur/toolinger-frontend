@@ -87,6 +87,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                 tools={category?.tools}
                 categorySlug={params?.slug}
                 categoryName={category?.name}
+                component={category?.component}
               />
             </div>
 
