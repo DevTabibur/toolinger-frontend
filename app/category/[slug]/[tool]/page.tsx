@@ -52,7 +52,11 @@ import {
 } from "@/components/tools/developer";
 
 // Generators tools
-import { ReverseTextGenerator } from "@/components/tools/Generators";
+import {
+  PasswordGenerator,
+  ReverseTextGenerator,
+  UpsideDownTextGenerator
+} from "@/components/tools/Generators";
 
 
 
@@ -159,6 +163,10 @@ export default function ToolDetailsPage({
       // generators tools
       case "reverse-text-generator":
         return <ReverseTextGenerator />;
+      case "upside-down-text-generator":
+        return <UpsideDownTextGenerator />;
+      case "password-generator":
+        return <PasswordGenerator />;
       default:
         return <ToolNotFound />;
     }

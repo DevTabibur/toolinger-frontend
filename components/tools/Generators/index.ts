@@ -1,4 +1,10 @@
 import ReverseTextGenerator from "./ReverseTextGenerator";
+import UpsideDownTextGenerator from "./UpsideDownTextGenerator";
+import PasswordGenerator from "./PasswordGenerator";
 
 
-export { ReverseTextGenerator }
+export {
+    ReverseTextGenerator,
+    UpsideDownTextGenerator,
+    PasswordGenerator
+}
