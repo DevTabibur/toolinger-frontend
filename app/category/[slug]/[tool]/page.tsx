@@ -24,6 +24,8 @@ import {
   ToolNotFound
 } from "@/components/tools/Calculators";
 
+
+
 // text tools
 import {
   ASCIIToTextConverter,
@@ -38,6 +40,10 @@ import {
   WordCounter,
   WordsToPages
 } from "@/components/tools/text";
+
+
+// developer tools
+import { DNSRecordsChecker, MinifyTools, ServerStatus, SourceCodeOfWebpage, URLEncodeDecode } from "@/components/tools/developer";
 
 
 
@@ -112,6 +118,35 @@ export default function ToolDetailsPage({
       //   return <TextEditor />;
       case "word-pages":
         return <WordsToPages />;
+      // developer tools
+      case "minify-html":
+        return <MinifyTools />;
+      case "minify-css":
+        return <MinifyTools />;
+      case "minify-js":
+        return <MinifyTools />;
+      case "minify-json":
+        return <MinifyTools />;
+      case "js-beautifier":
+        return <MinifyTools />;
+      case "css-beautifier":
+        return <MinifyTools />;
+      case "html-beautifier":
+        return <MinifyTools />;
+      case "xml-beautifier":
+        return <MinifyTools />;
+      case "json-beautifier":
+        return <MinifyTools />;
+      case "php-beautifier":
+        return <MinifyTools />;
+      case "url-encoder-decoder":
+        return <URLEncodeDecode />;
+      case "source-code-retriever":
+        return <SourceCodeOfWebpage />;
+      case "server-status":
+        return <ServerStatus />;
+      case "dns-records":
+        return <DNSRecordsChecker />;
       default:
         return <ToolNotFound />;
     }
