@@ -43,7 +43,16 @@ import {
 
 
 // developer tools
-import { DNSRecordsChecker, MinifyTools, ServerStatus, SourceCodeOfWebpage, URLEncodeDecode } from "@/components/tools/developer";
+import {
+  DNSRecordsChecker,
+  MinifyTools,
+  ServerStatus,
+  SourceCodeOfWebpage,
+  URLEncodeDecode
+} from "@/components/tools/developer";
+
+// Generators tools
+import { ReverseTextGenerator } from "@/components/tools/Generators";
 
 
 
@@ -147,6 +156,9 @@ export default function ToolDetailsPage({
         return <ServerStatus />;
       case "dns-records":
         return <DNSRecordsChecker />;
+      // generators tools
+      case "reverse-text-generator":
+        return <ReverseTextGenerator />;
       default:
         return <ToolNotFound />;
     }
