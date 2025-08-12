@@ -1412,7 +1412,7 @@ export const categoriesAndTools: any = {
         description: "Convert typed text into a handwriting style",
         icon: "✍️",
         slug: "text-to-handwriting",
-        level: "pro",
+        level: "free",
       },
       {
         name: "PDF to Word",

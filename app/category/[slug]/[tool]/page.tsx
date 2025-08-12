@@ -57,6 +57,7 @@ import {
   ReverseTextGenerator,
   UpsideDownTextGenerator
 } from "@/components/tools/Generators";
+import { CropImageOnline, TextToHandWriting, TextToImage } from "@/components/tools/Image";
 
 
 
@@ -167,6 +168,15 @@ export default function ToolDetailsPage({
         return <UpsideDownTextGenerator />;
       case "password-generator":
         return <PasswordGenerator />;
+      // image tools
+      case "text-to-handwriting":
+        return <TextToHandWriting />;
+      case "text-to-image":
+        return <TextToImage />;
+      // case "crop-image-online":
+      //   return <CropImageOnline />;
+      case "binary-calculator":
+        return <BinaryCalculator />;
       default:
         return <ToolNotFound />;
     }
