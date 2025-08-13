@@ -126,20 +126,20 @@ export const categoriesAndTools: any = {
       "Essential tools for website analysis, monitoring, and optimization",
     color: "from-violet-500 to-purple-500",
     tools: [
-      {
-        name: "Link Analyzer",
-        description: "Analyze links on your website for SEO and performance",
-        icon: "🔗",
-        slug: "link-analyzer",
-        level: "pro", // Badge label: pro
-      },
+      // {
+      //   name: "Link Analyzer",
+      //   description: "Analyze links on your website for SEO and performance",
+      //   icon: "🔗",
+      //   slug: "link-analyzer",
+      //   level: "pro", // Badge label: pro
+      // },
       {
         name: "Google Malware Checker",
         description:
           "Scan your website for malware and security threats using Google's safe browsing technology.",
         icon: "🦠",
         slug: "google-malware-checker",
-        level: "pro", // Badge label: pro
+        level: "free", // Badge label: pro
       },
       {
         name: "Website Links Count Checker",
@@ -148,27 +148,27 @@ export const categoriesAndTools: any = {
         slug: "links-count-checker",
         level: "free", // Badge label: free
       },
-      {
-        name: "Broken Links Finder",
-        description: "Identify broken links on your website",
-        icon: "🔗",
-        slug: "broken-links-finder",
-        level: "pro", // Badge label: pro
-      },
-      {
-        name: "Links Extractor",
-        description: "Extract all links from any webpage",
-        icon: "🔗",
-        slug: "links-extractor",
-        level: "free", // Badge label: free
-      },
-      {
-        name: "Reverse NS Checker",
-        description: "Check reverse name server records",
-        icon: "🔄",
-        slug: "reverse-ns-checker",
-        level: "pro", // Badge label: pro
-      },
+      // {
+      //   name: "Broken Links Finder",
+      //   description: "Identify broken links on your website",
+      //   icon: "🔗",
+      //   slug: "broken-links-finder",
+      //   level: "pro", // Badge label: pro
+      // },
+      // {
+      //   name: "Links Extractor",
+      //   description: "Extract all links from any webpage",
+      //   icon: "🔗",
+      //   slug: "links-extractor",
+      //   level: "pro", // Badge label: free
+      // },
+      // {
+      //   name: "Reverse NS Checker",
+      //   description: "Check reverse name server records",
+      //   icon: "🔄",
+      //   slug: "reverse-ns-checker",
+      //   level: "pro", // Badge label: pro
+      // },
       {
         name: "Detect CMS",
         description: "Detect what CMS a website is using",
@@ -1500,13 +1500,13 @@ export const categories = [
     description: "Website analysis and management utilities",
     tools: ["Server Status Checker", "Website Speed Test", "SSL Checker"],
   },
-  {
-    name: "More Tools",
-    icon: Plus,
-    count: 3,
-    description: "Additional specialized tools and utilities",
-    tools: ["QR Code Scanner", "Random Name Generator", "Color Palette"],
-  },
+  // {
+  //   name: "More Tools",
+  //   icon: Plus,
+  //   count: 3,
+  //   description: "Additional specialized tools and utilities",
+  //   tools: ["QR Code Scanner", "Random Name Generator", "Color Palette"],
+  // },
 ];
 
 export const featuredTools = [

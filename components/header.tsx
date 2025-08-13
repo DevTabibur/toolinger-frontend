@@ -154,15 +154,15 @@ export function Header() {
   const categories = [
     "Text Tools",
     "Image Tools",
-    "SEO Tools",
+    // "SEO Tools",
     "Developer Tools",
-    "Productivity",
+    // "Productivity",
     "Converters",
     "Generators",
     "Calculators",
-    "Domain Tools",
+    // "Domain Tools",
     "Website Management",
-    "More Tools",
+    // "More Tools",
   ];
 
   return (

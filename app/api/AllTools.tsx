@@ -505,14 +505,16 @@ export async function keywordDensity(data: any) {
 // Google Malware Checker
 export async function googleMalwareChecker(data: any) {
   try {
+
     const response = await axios.post(
-      "`${URL}`tools/google-malware-checker",
+      `${URL}/api/v1/tools/google-malware-checker`,
       data
     );
     return response.data;
   } catch (error) {
+
     console.error("Error in googleMalwareChecker:", error);
-    throw error;
+    return { error: error instanceof Error ? error.message : "Unknown error" };
   }
 }
 
@@ -589,13 +591,13 @@ export async function codeToTextRatioChecker(data: any) {
 export async function linkCountChecker(data: any) {
   try {
     const response = await axios.post(
-      "`${URL}`tools/website-link-count-checker",
+      `${URL}/api/v1/tools/website-link-count-checker`,
       data
     );
     return response.data;
   } catch (error) {
     console.error("Error in linkCountChecker:", error);
-    throw error;
+    // throw error;
   }
 }
 
@@ -905,16 +907,17 @@ export async function generateEmailTemplate(data: any) {
 }
 
 // Detect CMS Tool API
-export async function detectCMS(data: any) {
+export async function detectCMS(data: { url: string }) {
   try {
+    
     const response = await axios.post(
-      "`${URL}`advanced-tools/detect-cms",
+      `${URL}/api/v1/advanced-tools/detect-cms`,
       data
     );
     return response.data;
   } catch (error) {
     console.error("Error in detectCMS:", error);
-    throw error;
+    // throw error;
   }
 }
 

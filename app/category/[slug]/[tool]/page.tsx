@@ -57,7 +57,21 @@ import {
   ReverseTextGenerator,
   UpsideDownTextGenerator
 } from "@/components/tools/Generators";
-import { CropImageOnline, TextToHandWriting, TextToImage } from "@/components/tools/Image";
+
+// Image tools
+import {
+  CropImageOnline,
+  TextToHandWriting,
+  TextToImage
+} from "@/components/tools/Image";
+
+// website management tools
+import {
+  DetectCMS,
+  GoogleMalwareChecker,
+  WebsiteLinkCountChecker
+} from "@/components/tools/WebsiteManagement";
+import { RGBTOHEX } from "@/components/tools/Converters";
 
 
 
@@ -177,6 +191,16 @@ export default function ToolDetailsPage({
       //   return <CropImageOnline />;
       case "binary-calculator":
         return <BinaryCalculator />;
+      // website management
+      case "google-malware-checker":
+        return <GoogleMalwareChecker />;
+      case "detect-cms":
+        return <DetectCMS />;
+      case "links-count-checker":
+        return <WebsiteLinkCountChecker />;
+        // converters tools
+        case "rgb-to-hex":
+        return <RGBTOHEX />;
       default:
         return <ToolNotFound />;
     }
