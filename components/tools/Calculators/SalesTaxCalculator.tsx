@@ -47,7 +47,7 @@ const SalesTaxCalculator: React.FC = () => {
                         Calculator Tools
                     </Link>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-foreground font-medium">LTV Calculator</span>
+                    <span className="text-foreground font-medium">Sales Tax Calculator</span>
                 </nav>
             </div>
 

@@ -28,10 +28,10 @@ export default function DNSRecordsChecker() {
                     </Link>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     <Link
-                        href="/category/text-tools"
+                        href="/category/developer-tools"
                         className="text-muted-foreground hover:text-primary"
                     >
-                        Text Tools
+                        Developer Tools
                     </Link>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     <span className="text-foreground font-medium">DNS Records Checker</span>

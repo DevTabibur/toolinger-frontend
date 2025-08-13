@@ -3,6 +3,7 @@ import URLEncodeDecode from "./URLEncodeDecode";
 import SourceCodeOfWebpage from "./SourceCodeOfWebpage";
 import ServerStatus from "./ServerStatus";
 import DNSRecordsChecker from "./DNSRecordsChecker";
+import HtmlEncodeDecode from "./HtmlEncodeDecode";
 
 
 export {
@@ -10,5 +11,6 @@ export {
     URLEncodeDecode,
     SourceCodeOfWebpage,
     ServerStatus,
-    DNSRecordsChecker
+    DNSRecordsChecker,
+    HtmlEncodeDecode
 }

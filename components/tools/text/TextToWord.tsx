@@ -158,7 +158,7 @@ export default function TextToWord() {
                         Text Tools
                     </Link>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-foreground font-medium">Text to Word</span>
+                    <span className="text-foreground font-medium">Text to Word Converter</span>
                 </nav>
             </div>
 
@@ -166,16 +166,8 @@ export default function TextToWord() {
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}
                     <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        <h1 className="text-2xl font-bold text-center mb-2 text-gray-900 dark:text-gray-100">Word Counter</h1>
-                        <div className="flex items-center justify-between mb-4">
-                            <h1 className="text-xl font-bold">Text to Word Converter</h1>
-                            <button
-                                className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-sm"
-                                onClick={() => setIsDark((d) => !d)}
-                            >
-                                {isDark ? "Light Mode" : "Dark Mode"}
-                            </button>
-                        </div>
+                        <h1 className="text-2xl font-bold text-center mb-4 text-gray-900 dark:text-gray-100">Text to Word Converter</h1>
+                       
                         <div className="flex items-center gap-2 mb-2">
                             <input
                                 ref={fileInputRef}
@@ -269,3 +261,4 @@ export default function TextToWord() {
 
     );
 }
+

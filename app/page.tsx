@@ -144,7 +144,7 @@ export default function HomePage() {
                 {featuredTools.map((tool) => (
                   <Link
                     key={tool.name}
-                    href={`/tool/${tool.name.toLowerCase().replace(" ", "-")}`}
+                    href={`/category/${tool.link}`}
                     className="group bg-background border rounded-lg p-6 hover:shadow-md transition-all duration-300"
                   >
                     <div className="flex items-start justify-between mb-3">

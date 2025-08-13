@@ -6,425 +6,11 @@ import { useState, useEffect, useRef } from "react"
 import { Search, X } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { ITool, SearchedAllTools } from "@/lib/categories"
 
-interface Tool {
-  name: string
-  description: string
-  category: string
-  slug: string
-  categorySlug: string
-  icon?: string
-}
 
-const allTools: Tool[] = [
-  // Domain Tools
-  {
-    name: "Domain Authority Checker",
-    description: "Check domain authority and page authority scores",
-    category: "Domain Tools",
-    slug: "domain-authority-checker",
-    categorySlug: "domain-tools",
-    icon: "🔍",
-  },
-  {
-    name: "Domain Age Checker",
-    description: "Find out when a domain was first registered",
-    category: "Domain Tools",
-    slug: "domain-age-checker",
-    categorySlug: "domain-tools",
-    icon: "📅",
-  },
-  {
-    name: "Domain Whois Checker",
-    description: "Get detailed whois information for any domain",
-    category: "Domain Tools",
-    slug: "domain-whois-checker",
-    categorySlug: "domain-tools",
-    icon: "ℹ️",
-  },
-  {
-    name: "Domain IP History",
-    description: "View historical IP addresses for any domain",
-    category: "Domain Tools",
-    slug: "domain-ip-history",
-    categorySlug: "domain-tools",
-    icon: "📊",
-  },
-  {
-    name: "Reverse IP Domains",
-    description: "Find all domains hosted on the same IP address",
-    category: "Domain Tools",
-    slug: "reverse-ip-domains",
-    categorySlug: "domain-tools",
-    icon: "🔄",
-  },
-  {
-    name: "Google Malware Checker",
-    description: "Check if a website is flagged by Google for malware",
-    category: "Domain Tools",
-    slug: "google-malware-checker",
-    categorySlug: "domain-tools",
-    icon: "🛡️",
-  },
-  {
-    name: "Backlink Maker",
-    description: "Generate high-quality backlinks for your website",
-    category: "Domain Tools",
-    slug: "backlink-maker",
-    categorySlug: "domain-tools",
-    icon: "🔗",
-  },
-  {
-    name: "Broken Links Checker",
-    description: "Find and fix broken links on your website",
-    category: "Domain Tools",
-    slug: "broken-links-checker",
-    categorySlug: "domain-tools",
-    icon: "🔧",
-  },
-  {
-    name: "Google Indexer",
-    description: "Check if your pages are indexed by Google",
-    category: "Domain Tools",
-    slug: "google-indexer",
-    categorySlug: "domain-tools",
-    icon: "🔍",
-  },
-  {
-    name: "Reverse Whois Checker",
-    description: "Find domains registered by the same person or organization",
-    category: "Domain Tools",
-    slug: "reverse-whois-checker",
-    categorySlug: "domain-tools",
-    icon: "👤",
-  },
-  {
-    name: "Alexa Rank Checker",
-    description: "Check website's Alexa traffic ranking",
-    category: "Domain Tools",
-    slug: "alexa-rank-checker",
-    categorySlug: "domain-tools",
-    icon: "📈",
-  },
 
-  // Developer Tools
-  {
-    name: "DNS Records Checker",
-    description: "Check DNS records for any domain",
-    category: "Developer Tools",
-    slug: "dns-records",
-    categorySlug: "developer-tools",
-    icon: "🌐",
-  },
-  {
-    name: "HTML Encoder/Decoder",
-    description: "Encode and decode HTML entities",
-    category: "Developer Tools",
-    slug: "html-encoder-decoder",
-    categorySlug: "developer-tools",
-    icon: "📝",
-  },
-  {
-    name: "JSON Beautifier",
-    description: "Format and validate JSON data",
-    category: "Developer Tools",
-    slug: "json-beautifier",
-    categorySlug: "developer-tools",
-    icon: "📋",
-  },
-  {
-    name: "Minify HTML",
-    description: "Compress HTML code by removing unnecessary characters",
-    category: "Developer Tools",
-    slug: "minify-html",
-    categorySlug: "developer-tools",
-    icon: "🗜️",
-  },
-  {
-    name: "JS Beautifier",
-    description: "Format and beautify JavaScript code",
-    category: "Developer Tools",
-    slug: "js-beautifier",
-    categorySlug: "developer-tools",
-    icon: "✨",
-  },
-  {
-    name: "CSS Beautifier",
-    description: "Format and beautify CSS code",
-    category: "Developer Tools",
-    slug: "css-beautifier",
-    categorySlug: "developer-tools",
-    icon: "🎨",
-  },
-  {
-    name: "URL Encoder/Decoder",
-    description: "Encode and decode URLs",
-    category: "Developer Tools",
-    slug: "url-encoder-decoder",
-    categorySlug: "developer-tools",
-    icon: "🔗",
-  },
 
-  // Text Tools
-  {
-    name: "Password Generator",
-    description: "Generate secure passwords with custom options",
-    category: "Text Tools",
-    slug: "password-generator",
-    categorySlug: "text-tools",
-    icon: "🔐",
-  },
-  {
-    name: "Binary Translator",
-    description: "Convert text to binary and vice versa",
-    category: "Text Tools",
-    slug: "binary-translator",
-    categorySlug: "text-tools",
-    icon: "🔢",
-  },
-  {
-    name: "Reverse Text Generator",
-    description: "Reverse any text string",
-    category: "Text Tools",
-    slug: "reverse-text-generator",
-    categorySlug: "text-tools",
-    icon: "🔄",
-  },
-  {
-    name: "Upside Down Text Generator",
-    description: "Flip text upside down",
-    category: "Text Tools",
-    slug: "upside-down-text-generator",
-    categorySlug: "text-tools",
-    icon: "🙃",
-  },
-  {
-    name: "Roman Numeral Converter",
-    description: "Convert numbers to Roman numerals and back",
-    category: "Text Tools",
-    slug: "roman-numeral-converter",
-    categorySlug: "text-tools",
-    icon: "🏛️",
-  },
-  {
-    name: "Text to Hex Converter",
-    description: "Convert text to hexadecimal format",
-    category: "Text Tools",
-    slug: "text-to-hex",
-    categorySlug: "text-tools",
-    icon: "🔤",
-  },
-  {
-    name: "Random Word Generator",
-    description: "Generate random words for various purposes",
-    category: "Text Tools",
-    slug: "random-word-generator",
-    categorySlug: "text-tools",
-    icon: "🎲",
-  },
-  {
-    name: "Grammar Checker",
-    description: "Check and correct grammar in your text",
-    category: "Text Tools",
-    slug: "grammar-checker",
-    categorySlug: "text-tools",
-    icon: "✅",
-  },
-
-  // Calculators
-  {
-    name: "Percentage Calculator",
-    description: "Calculate percentages, increases, and decreases",
-    category: "Calculators",
-    slug: "percentage-calculator",
-    categorySlug: "calculators",
-    icon: "📊",
-  },
-  {
-    name: "Age Calculator",
-    description: "Calculate age in years, months, and days",
-    category: "Calculators",
-    slug: "age-calculator",
-    categorySlug: "calculators",
-    icon: "🎂",
-  },
-  {
-    name: "Discount Calculator",
-    description: "Calculate discounts and final prices",
-    category: "Calculators",
-    slug: "discount-calculator",
-    categorySlug: "calculators",
-    icon: "💰",
-  },
-  {
-    name: "Sales Tax Calculator",
-    description: "Calculate sales tax and total amount",
-    category: "Calculators",
-    slug: "sales-tax-calculator",
-    categorySlug: "calculators",
-    icon: "🧾",
-  },
-  {
-    name: "GST Calculator",
-    description: "Calculate GST (Goods and Services Tax)",
-    category: "Calculators",
-    slug: "gst-calculator",
-    categorySlug: "calculators",
-    icon: "📋",
-  },
-  {
-    name: "Margin Calculator",
-    description: "Calculate profit margins and markups",
-    category: "Calculators",
-    slug: "margin-calculator",
-    categorySlug: "calculators",
-    icon: "📈",
-  },
-  {
-    name: "Interest Calculator",
-    description: "Calculate simple and compound interest",
-    category: "Calculators",
-    slug: "interest-calculator",
-    categorySlug: "calculators",
-    icon: "🏦",
-  },
-  {
-    name: "Average Calculator",
-    description: "Calculate mean, median, and mode",
-    category: "Calculators",
-    slug: "average-calculator",
-    categorySlug: "calculators",
-    icon: "📊",
-  },
-
-  // Converters
-  {
-    name: "RGB to Hex Converter",
-    description: "Convert RGB colors to hexadecimal format",
-    category: "Converters",
-    slug: "rgb-to-hex",
-    categorySlug: "converters",
-    icon: "🎨",
-  },
-  {
-    name: "Hex to RGB Converter",
-    description: "Convert hexadecimal colors to RGB format",
-    category: "Converters",
-    slug: "hex-to-rgb",
-    categorySlug: "converters",
-    icon: "🌈",
-  },
-  {
-    name: "Currency Converter",
-    description: "Convert between different currencies",
-    category: "Converters",
-    slug: "currency-converter",
-    categorySlug: "converters",
-    icon: "💱",
-  },
-  {
-    name: "Unit Converter",
-    description: "Convert between various units of measurement",
-    category: "Converters",
-    slug: "unit-converter",
-    categorySlug: "converters",
-    icon: "📏",
-  },
-
-  // Generators
-  {
-    name: "QR Code Generator",
-    description: "Generate QR codes for text, URLs, and more",
-    category: "Generators",
-    slug: "qr-code-generator",
-    categorySlug: "generators",
-    icon: "📱",
-  },
-  {
-    name: "Random Address Generator",
-    description: "Generate random addresses for testing",
-    category: "Generators",
-    slug: "random-address-generator",
-    categorySlug: "generators",
-    icon: "🏠",
-  },
-  {
-    name: "Email Template Generator",
-    description: "Create professional email templates",
-    category: "Generators",
-    slug: "email-template-generator",
-    categorySlug: "generators",
-    icon: "📧",
-  },
-  {
-    name: "Favicon Generator",
-    description: "Generate favicons for your website",
-    category: "Generators",
-    slug: "favicon-generator",
-    categorySlug: "generators",
-    icon: "🎯",
-  },
-
-  // SEO Tools
-  {
-    name: "Website SEO Score",
-    description: "Analyze your website's SEO performance",
-    category: "SEO Tools",
-    slug: "website-seo-score",
-    categorySlug: "seo-tools",
-    icon: "📊",
-  },
-  {
-    name: "Google Index Checker",
-    description: "Check if your pages are indexed by Google",
-    category: "SEO Tools",
-    slug: "google-index-tool",
-    categorySlug: "seo-tools",
-    icon: "🔍",
-  },
-  {
-    name: "CMS Detector",
-    description: "Detect what CMS a website is using",
-    category: "SEO Tools",
-    slug: "detect-cms",
-    categorySlug: "seo-tools",
-    icon: "🔍",
-  },
-
-  // Productivity Tools
-  {
-    name: "Timer",
-    description: "Set timers for various tasks and activities",
-    category: "Productivity Tools",
-    slug: "timer",
-    categorySlug: "productivity-tools",
-    icon: "⏰",
-  },
-  {
-    name: "Calendar",
-    description: "View and manage calendar dates",
-    category: "Productivity Tools",
-    slug: "calendar",
-    categorySlug: "productivity-tools",
-    icon: "📅",
-  },
-  {
-    name: "Dictionary",
-    description: "Look up word definitions and meanings",
-    category: "Productivity Tools",
-    slug: "dictionary",
-    categorySlug: "productivity-tools",
-    icon: "📚",
-  },
-  {
-    name: "Basic Calculator",
-    description: "Perform basic mathematical calculations",
-    category: "Productivity Tools",
-    slug: "calculator",
-    categorySlug: "productivity-tools",
-    icon: "🧮",
-  },
-]
 
 interface GlobalSearchProps {
   placeholder?: string
@@ -439,7 +25,7 @@ export function GlobalSearch({
 }: GlobalSearchProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [isOpen, setIsOpen] = useState(false)
-  const [filteredTools, setFilteredTools] = useState<Tool[]>([])
+  const [filteredTools, setFilteredTools] = useState<ITool[]>([])
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const searchRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -447,7 +33,7 @@ export function GlobalSearch({
 
   useEffect(() => {
     if (searchTerm.trim()) {
-      const filtered = allTools.filter(
+      const filtered = SearchedAllTools.filter(
         (tool) =>
           tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           tool.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -499,7 +85,7 @@ export function GlobalSearch({
     }
   }
 
-  const handleToolClick = (tool: Tool) => {
+  const handleToolClick = (tool: ITool) => {
     setIsOpen(false)
     setSearchTerm("")
     setSelectedIndex(-1)
@@ -545,9 +131,8 @@ export function GlobalSearch({
         {searchTerm && (
           <button
             onClick={clearSearch}
-            className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-black/10 transition-colors ${
-              variant === "hero" ? "text-white/70 hover:text-white" : "text-muted-foreground hover:text-foreground"
-            }`}
+            className={`absolute right-3 top-1/2 transform -translate-y-1/2 p-1 rounded-full hover:bg-black/10 transition-colors ${variant === "hero" ? "text-white/70 hover:text-white" : "text-muted-foreground hover:text-foreground"
+              }`}
           >
             <X className="h-4 w-4" />
           </button>
@@ -566,12 +151,12 @@ export function GlobalSearch({
               </div>
               <div className="py-2">
                 {filteredTools.map((tool, index) => (
-                  <button
+                  <Link
                     key={`${tool.categorySlug}-${tool.slug}`}
+                    href={`/category/${tool.categorySlug}/${tool.slug}`}
                     onClick={() => handleToolClick(tool)}
-                    className={`w-full px-4 py-3 text-left hover:bg-muted/50 transition-colors flex items-start space-x-3 ${
-                      index === selectedIndex ? "bg-muted/50" : ""
-                    }`}
+                    className={`w-full px-4 py-3 text-left hover:bg-muted/50 transition-colors flex items-start space-x-3 ${index === selectedIndex ? "bg-muted/50" : ""
+                      }`}
                   >
                     <div className="text-2xl mt-0.5">{tool.icon}</div>
                     <div className="flex-1 min-w-0">
@@ -579,21 +164,21 @@ export function GlobalSearch({
                       <div className="text-xs text-muted-foreground truncate">{tool.description}</div>
                       <div className="text-xs text-primary mt-1">{tool.category}</div>
                     </div>
-                  </button>
+                  </Link>
                 ))}
               </div>
-              {allTools.filter(
+              {SearchedAllTools.filter(
                 (tool) =>
                   tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                   tool.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
                   tool.category.toLowerCase().includes(searchTerm.toLowerCase()),
               ).length > 8 && (
-                <div className="p-3 border-t bg-muted/50 text-center">
-                  <span className="text-sm text-muted-foreground">
-                    Showing top 8 results. Keep typing to refine your search.
-                  </span>
-                </div>
-              )}
+                  <div className="p-3 border-t bg-muted/50 text-center">
+                    <span className="text-sm text-muted-foreground">
+                      Showing top 8 results. Keep typing to refine your search.
+                    </span>
+                  </div>
+                )}
             </>
           ) : searchTerm.trim() ? (
             <div className="p-8 text-center">

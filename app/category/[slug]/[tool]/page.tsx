@@ -45,6 +45,7 @@ import {
 // developer tools
 import {
   DNSRecordsChecker,
+  HtmlEncodeDecode,
   MinifyTools,
   ServerStatus,
   SourceCodeOfWebpage,
@@ -61,6 +62,7 @@ import {
 // Image tools
 import {
   CropImageOnline,
+  PdfToWord,
   TextToHandWriting,
   TextToImage
 } from "@/components/tools/Image";
@@ -185,6 +187,8 @@ export default function ToolDetailsPage({
         return <MinifyTools />;
       case "url-encoder-decoder":
         return <URLEncodeDecode />;
+      case "html-encoder-decoder":
+        return <HtmlEncodeDecode />;
       case "source-code-retriever":
         return <SourceCodeOfWebpage />;
       case "server-status":
@@ -205,8 +209,10 @@ export default function ToolDetailsPage({
         return <TextToImage />;
       // case "crop-image-online":
       //   return <CropImageOnline />;
-      case "binary-calculator":
+      case "binary-translator":
         return <BinaryCalculator />;
+      // case "pdf-to-word":
+      //   return <PdfToWord />;
       // website management
       case "google-malware-checker":
         return <GoogleMalwareChecker />;
