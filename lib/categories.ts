@@ -213,7 +213,7 @@ export const categoriesAndTools: any = {
     name: "Developer Tools",
     description:
       "Essential tools for web developers and programmers to optimize and debug code",
-    color: "from-green-500 to-emerald-500",
+    color: "from-cyan-500 to-navy-500",
     tools: [
       {
         name: "DNS Records Checker",
@@ -617,7 +617,8 @@ export const categoriesAndTools: any = {
     name: "Calculators",
     description:
       "Mathematical and financial calculators for everyday calculations",
-    color: "from-orange-500 to-red-500",
+    color: "from-yellow-500 to-orange-500",
+    
     tools: [
       // {
       //   name: "Link Price Calculator",
@@ -766,7 +767,8 @@ export const categoriesAndTools: any = {
   converters: {
     name: "Converters",
     description: "Convert between different units, formats, and number systems",
-    color: "from-teal-500 to-blue-500",
+    color: "from-cyan-500 to-indigo-500",
+
     tools: [
       {
         name: "RGB to Hex Converter",
@@ -960,7 +962,8 @@ export const categoriesAndTools: any = {
   generators: {
     name: "Generators",
     description: "Generate various types of content and data for your projects",
-    color: "from-indigo-500 to-purple-500",
+    color: "from-yellow-500 to-pink-200",
+
     tools: [
       // {
       //   name: "Meta Tag Generator",
@@ -1479,7 +1482,7 @@ export const categories = [
   {
     name: "Calculators",
     icon: Calculator,
-    count: 17,
+    count: 10,
     description: "Mathematical and financial calculators",
     tools: ["Percentage Calculator", "BMI Calculator", "Loan Calculator"],
   },

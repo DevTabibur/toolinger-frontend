@@ -48,14 +48,23 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
-  console.log("category.color", category.color);
+  // Convert the dynamic color string to Tailwind classes safely
+  // category.color is e.g. "from-red-500 to-blue-500"
+  // We need to ensure these classes are always present in the final build (for Tailwind JIT)
+  // So, we can map all possible color classes in a hidden element, or use a whitelist comment.
+  // But for now, we can just use the string as className, as long as Tailwind is configured to scan this file.
+
+  // Remove the console.log, as it's not needed for color rendering
+  // console.log("category.color", category.color);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
       {/* Category Header */}
       <section
-        className={`bg-gradient-to-r ${category.color}   text-white py-12`}
+        // Use dynamic color classes for gradient background
+        className={`bg-gradient-to-r ${category.color} text-white py-12`}
       >
         <div className="container mx-auto px-4">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
@@ -110,6 +119,18 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     </div>
   );
 }
+
+// Ensure Tailwind includes all possible dynamic color classes in the build
+// prettier-ignore
+const _tailwindColorSafelist = [
+  "from-blue-500", "to-cyan-500",
+  "from-violet-500", "to-purple-500",
+  "from-rose-500", "to-pink-500",
+  "from-red-500", "to-blue-500",
+  "from-purple-500", "to-pink-500",
+  "from-yellow-500", "to-orange-500",
+  "from-cyan-500", "to-blue-500",
+];
 
 export async function generateStaticParams() {
   return Object.keys(categoriesAndTools).map((slug) => ({

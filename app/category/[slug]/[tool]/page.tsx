@@ -273,7 +273,7 @@ export default function ToolDetailsPage({
         return <ToolNotFound />;
     }
   };
-
+ 
   return (
     <div className="min-h-screen bg-background">
       <Header />
