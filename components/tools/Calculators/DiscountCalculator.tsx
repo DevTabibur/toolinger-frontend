@@ -6,7 +6,8 @@ import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
 
 const DiscountCalculator: React.FC = () => {
-  const [result, setResult] = React.useState<number | null>(null);
+  const [saving, setSaving] = React.useState<number | null>(null);
+  const [remaining, setRemaining] = React.useState<number | null>(null);
 
   const formik = useFormik({
     initialValues: {
@@ -27,8 +28,10 @@ const DiscountCalculator: React.FC = () => {
     onSubmit: (values) => {
       const price = parseFloat(values.originalPrice);
       const discount = parseFloat(values.discount);
-      const discountedPrice = price - (price * discount) / 100;
-      setResult(discountedPrice);
+      const savingAmount = (price * discount) / 100;
+      const remainingAmount = price - savingAmount;
+      setSaving(savingAmount);
+      setRemaining(remainingAmount);
     },
   });
 
@@ -55,7 +58,6 @@ const DiscountCalculator: React.FC = () => {
           <span className="text-foreground font-medium">Discount Calculator</span>
         </nav>
       </div>
-
 
       <div className="container mx-auto p-4">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
@@ -132,11 +134,16 @@ const DiscountCalculator: React.FC = () => {
                 </button>
               </div>
             </form>
-            {result !== null && (
-              <div className="mt-6 text-center">
-                <span className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Discounted Price: ${result.toFixed(2)}
-                </span>
+            {(saving !== null && remaining !== null) && (
+              <div className="mt-6 flex flex-col md:flex-row justify-center gap-4">
+                <div className="flex-1 max-w-xs border border-blue-400 rounded p-4 text-center mx-auto">
+                  <div className="text-xl font-semibold text-blue-700 mb-1">Saving</div>
+                  <div className="text-lg text-gray-800 dark:text-gray-100">${saving.toFixed(2)}</div>
+                </div>
+                <div className="flex-1 max-w-xs border border-blue-400 rounded p-4 text-center mx-auto">
+                  <div className="text-xl font-semibold text-blue-700 mb-1">Remaining</div>
+                  <div className="text-lg text-gray-800 dark:text-gray-100">${remaining.toFixed(2)}</div>
+                </div>
               </div>
             )}
           </div>
@@ -156,10 +163,7 @@ const DiscountCalculator: React.FC = () => {
             Advertiesment
           </div>
         </div>
-
       </div>
-
-
     </>
   );
 };

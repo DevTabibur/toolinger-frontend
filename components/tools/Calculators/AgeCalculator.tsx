@@ -5,6 +5,117 @@ import * as Yup from "yup";
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
 
+// Helper function to calculate age with 100% accuracy
+function calculateAge(dob: string, birthTime?: string) {
+    if (!dob) return null;
+
+    // Parse date and time
+    let [year, month, day] = dob.split("-").map(Number);
+    let hours = 0, minutes = 0;
+    if (birthTime && birthTime.length >= 4) {
+        [hours, minutes] = birthTime.split(":").map(Number);
+    }
+
+    // If no birthTime, default to 00:00 (midnight)
+    const birthDate = new Date(year, month - 1, day, hours, minutes);
+
+    // Current date and time
+    const now = new Date();
+
+    // Calculate difference in milliseconds
+    let diff = now.getTime() - birthDate.getTime();
+    if (diff < 0) return null; // Future date
+
+    // Calculate years, months, days, hours, minutes, seconds
+    let ageDate = new Date(diff);
+
+    // Years
+    let years = now.getFullYear() - birthDate.getFullYear();
+
+    // Months
+    let months = now.getMonth() - birthDate.getMonth();
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    // Days
+    let days = now.getDate() - birthDate.getDate();
+    if (days < 0) {
+        // Go to previous month
+        months--;
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+        // Get days in previous month
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate();
+    }
+
+    // Hours, Minutes, Seconds
+    let hoursNow = now.getHours();
+    let minutesNow = now.getMinutes();
+    let secondsNow = now.getSeconds();
+
+    let hoursBirth = birthDate.getHours();
+    let minutesBirth = birthDate.getMinutes();
+    let secondsBirth = birthDate.getSeconds();
+
+    let hoursDiff = hoursNow - hoursBirth;
+    let minutesDiff = minutesNow - minutesBirth;
+    let secondsDiff = secondsNow - secondsBirth;
+
+    if (secondsDiff < 0) {
+        minutesDiff--;
+        secondsDiff += 60;
+    }
+    if (minutesDiff < 0) {
+        hoursDiff--;
+        minutesDiff += 60;
+    }
+    if (hoursDiff < 0) {
+        days--;
+        hoursDiff += 24;
+        if (days < 0) {
+            months--;
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+            // Get days in previous month
+            const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+            days += prevMonth.getDate();
+        }
+    }
+
+    // Total days, weeks, months, hours, minutes, seconds
+    const totalMilliseconds = now.getTime() - birthDate.getTime();
+    const totalSeconds = Math.floor(totalMilliseconds / 1000);
+    const totalMinutes = Math.floor(totalSeconds / 60);
+    const totalHours = Math.floor(totalMinutes / 60);
+    const totalDays = Math.floor(totalHours / 24);
+    const totalWeeks = Math.floor(totalDays / 7);
+    const totalMonths = years * 12 + months;
+
+    return {
+        years,
+        months,
+        days,
+        hours: hoursDiff,
+        minutes: minutesDiff,
+        seconds: secondsDiff,
+        totalDays,
+        totalWeeks,
+        totalMonths,
+        totalHours,
+        totalMinutes,
+        totalSeconds,
+        birthDate,
+        now
+    };
+}
+
 const validationSchema = Yup.object().shape({
     dob: Yup.date()
         .required("Date of Birth is required")
@@ -21,7 +132,7 @@ const initialValues = {
 };
 
 const AgeCalculator: React.FC = () => {
-    const [submitted, setSubmitted] = useState(false);
+    const [result, setResult] = useState<any>(null);
 
     return (
         <>
@@ -47,7 +158,6 @@ const AgeCalculator: React.FC = () => {
                 </nav>
             </div>
 
-
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}
@@ -58,9 +168,13 @@ const AgeCalculator: React.FC = () => {
                         <Formik
                             initialValues={initialValues}
                             validationSchema={validationSchema}
-                            onSubmit={(values) => {
-                                setSubmitted(true);
-                                console.log(values);
+                            onSubmit={(values, { setSubmitting }) => {
+                                const age = calculateAge(
+                                    values.dob,
+                                    values.birthTime && values.birthTime.length > 0 ? values.birthTime : "00:00"
+                                );
+                                setResult(age);
+                                setSubmitting(false);
                             }}
                         >
                             {({ isSubmitting, setFieldValue, values }) => (
@@ -110,7 +224,6 @@ const AgeCalculator: React.FC = () => {
                                             />
                                         </div>
                                     </div>
-                                    {/* No Advanced Option */}
                                     <div className="flex justify-center mt-6">
                                         <button
                                             type="submit"
@@ -120,13 +233,72 @@ const AgeCalculator: React.FC = () => {
                                             Calculate
                                         </button>
                                     </div>
+                                    {/* Result Section */}
+                                    {result && (
+                                        <div className="mt-8 bg-emerald-50 dark:bg-gray-900 border border-emerald-200 dark:border-gray-700 rounded p-6">
+                                            <h3 className="text-lg font-semibold mb-4 text-emerald-700 dark:text-emerald-300">
+                                                Your Age Result
+                                            </h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                <div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Years:</span> {result.years}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Months:</span> {result.months}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Days:</span> {result.days}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Hours:</span> {result.hours}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Minutes:</span> {result.minutes}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Seconds:</span> {result.seconds}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Total Months:</span> {result.totalMonths}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Total Weeks:</span> {result.totalWeeks}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Total Days:</span> {result.totalDays}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Total Hours:</span> {result.totalHours}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Total Minutes:</span> {result.totalMinutes}
+                                                    </div>
+                                                    <div className="mb-2">
+                                                        <span className="font-medium">Total Seconds:</span> {result.totalSeconds}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                                                <div>
+                                                    <span className="font-medium">Date of Birth:</span>{" "}
+                                                    {result.birthDate.toLocaleString()}
+                                                </div>
+                                                <div>
+                                                    <span className="font-medium">Current Date:</span>{" "}
+                                                    {result.now.toLocaleString()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </Form>
                             )}
                         </Formik>
                     </div>
                     {/* Second column: col-span-5 on md+ */}
                     <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        {/* You can place content for the second column here */}
                         Advertiesment
                     </div>
                 </div>
@@ -140,11 +312,7 @@ const AgeCalculator: React.FC = () => {
                         Advertiesment
                     </div>
                 </div>
-
             </div>
-
-
-
         </>
     );
 };

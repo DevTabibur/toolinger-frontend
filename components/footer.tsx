@@ -2,15 +2,31 @@ import Link from "next/link"
 import { Wrench, Facebook, Twitter, Instagram, Linkedin } from "lucide-react"
 
 export function Footer() {
-  const toolCategories = ["Text Tools", "Image Tools", "SEO Tools", "Developer Tools", "Productivity", "Converters"]
+  const toolCategories = [
+    "Text Tools",
+    "Image Tools",
+    // "SEO Tools",
+    "Developer Tools",
+    // "Productivity", 
+    "Converters"]
 
   const popularTools = [
-    "Password Generator",
-    "QR Code Generator",
-    "Image Compressor",
-    "Text Counter",
-    "Color Picker",
-    "Base64 Encoder",
+    {
+      name: "Password Generator",
+      categorySlug: "generators",
+    },
+    {
+      name: "Word Counter",
+      categorySlug: "text-tools",
+    },
+    {
+      name: "DNS Records",
+      categorySlug: "developer-tools",
+    },
+    {
+      name: "Detect CMS",
+      categorySlug: "website-management",
+    },
   ]
 
   return (
@@ -67,12 +83,12 @@ export function Footer() {
             <h3 className="font-semibold">Popular Tools</h3>
             <ul className="space-y-2">
               {popularTools.map((tool) => (
-                <li key={tool}>
+                <li key={tool.name}>
                   <Link
-                    href={`/tool/${tool.toLowerCase().replace(" ", "-")}`}
+                    href={`/category/${tool.categorySlug}/${tool.name.toLowerCase().replace(" ", "-")}`}
                     className="text-sm text-muted-foreground hover:text-primary transition-colors"
                   >
-                    {tool}
+                    {tool.name}
                   </Link>
                 </li>
               ))}

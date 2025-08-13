@@ -619,49 +619,48 @@ export const categoriesAndTools: any = {
       "Mathematical and financial calculators for everyday calculations",
     color: "from-orange-500 to-red-500",
     tools: [
-      {
-        name: "Link Price Calculator",
-        description: "Calculate the price of links based on various metrics",
-        icon: "🔗", // Replace with a professional icon
-        slug: "link-price-calculator",
-        level: "pro",
-      },
+      // {
+      //   name: "Link Price Calculator",
+      //   description: "Calculate the price of links based on various metrics",
+      //   icon: "🔗", // Replace with a professional icon
+      //   slug: "link-price-calculator",
+      //   level: "pro",
+      // },
       {
         name: "AdSense Calculator",
         description: "Calculate potential AdSense earnings",
         icon: "💵", // Replace with a professional icon
         slug: "adsense-calculator",
-        level: "pro",
-        component: "Hello",
-      },
-      {
-        name: "PayPal Fee Calculator",
-        description: "Calculate PayPal transaction fees",
-        icon: "💳", // Replace with a professional icon
-        slug: "paypal-fee-calculator",
         level: "free",
       },
+      // {
+      //   name: "PayPal Fee Calculator",
+      //   description: "Calculate PayPal transaction fees",
+      //   icon: "💳", // Replace with a professional icon
+      //   slug: "paypal-fee-calculator",
+      //   level: "free",
+      // },
       {
         name: "LTV Calculator",
         description: "Calculate customer lifetime value",
         icon: "📈", // Replace with a professional icon
         slug: "ltv-calculator",
-        level: "pro",
+        level: "free",
       },
-      {
-        name: "CPC Calculator",
-        description: "Calculate cost per click for advertising",
-        icon: "📊", // Replace with a professional icon
-        slug: "cpc-calculator",
-        level: "pro",
-      },
-      {
-        name: "CPM Calculator",
-        description: "Calculate cost per mille for advertising",
-        icon: "📊", // Replace with a professional icon
-        slug: "cpm-calculator",
-        level: "pro",
-      },
+      // {
+      //   name: "CPC Calculator",
+      //   description: "Calculate cost per click for advertising",
+      //   icon: "📊", // Replace with a professional icon
+      //   slug: "cpc-calculator",
+      //   level: "pro",
+      // },
+      // {
+      //   name: "CPM Calculator",
+      //   description: "Calculate cost per mille for advertising",
+      //   icon: "📊", // Replace with a professional icon
+      //   slug: "cpm-calculator",
+      //   level: "pro",
+      // },
       {
         name: "Discount Calculator",
         description: "Calculate discounts and final prices",
@@ -690,34 +689,34 @@ export const categoriesAndTools: any = {
         slug: "octal-calculator",
         level: "free",
       },
-      {
-        name: "Percentage Calculator",
-        description: "Calculate percentages, increases, and decreases",
-        icon: "📊", // Replace with a professional icon
-        slug: "percentage-calculator",
-        level: "free",
-      },
+      // {
+      //   name: "Percentage Calculator",
+      //   description: "Calculate percentages, increases, and decreases",
+      //   icon: "📊", // Replace with a professional icon
+      //   slug: "percentage-calculator",
+      //   level: "pro",
+      // },
       {
         name: "Earnings Per Share Calculator",
         description: "Calculate earnings per share",
         icon: "📈", // Replace with a professional icon
         slug: "eps-calculator",
-        level: "pro",
+        level: "free",
       },
       {
         name: "Probability Calculator",
         description: "Calculate probabilities for various events",
         icon: "🎲", // Replace with a professional icon
         slug: "probability-calculator",
-        level: "pro",
-      },
-      {
-        name: "Margin Calculator",
-        description: "Calculate profit margins and markups",
-        icon: "📈", // Replace with a professional icon
-        slug: "margin-calculator",
         level: "free",
       },
+      // {
+      //   name: "Margin Calculator",
+      //   description: "Calculate profit margins and markups",
+      //   icon: "📈", // Replace with a professional icon
+      //   slug: "margin-calculator",
+      //   level: "pro",
+      // },
       
       {
         name: "GST Calculator",
@@ -726,13 +725,13 @@ export const categoriesAndTools: any = {
         slug: "gst-calculator",
         level: "free",
       },
-      {
-        name: "Lower and Upper Bound Calculator",
-        description: "Calculate lower and upper bounds for data sets",
-        icon: "📏", // Replace with a professional icon
-        slug: "bound-calculator",
-        level: "pro",
-      },
+      // {
+      //   name: "Lower and Upper Bound Calculator",
+      //   description: "Calculate lower and upper bounds for data sets",
+      //   icon: "📏", // Replace with a professional icon
+      //   slug: "bound-calculator",
+      //   level: "pro",
+      // },
       {
         name: "Average Calculator",
         description: "Calculate mean, median, and mode",
@@ -759,7 +758,7 @@ export const categoriesAndTools: any = {
         description: "Calculate pre and post money valuation for startups",
         icon: "💼", // Replace with a professional icon
         slug: "pre-and-post-money-valuation-calculator",
-        level: "pro",
+        level: "free",
       },
     ],
   },
@@ -1912,14 +1911,14 @@ export const SearchedAllTools: ITool[] = [
   // ==========================Calculators=============================
 
   
-    {
-      name: "Link Price Calculator",
-      description: "Calculate the price of links based on various metrics",
-      category: "Calculators",
-      slug: "link-price-calculator",
-      categorySlug: "calculators",
-      icon: "🔗",
-    },
+    // {
+    //   name: "Link Price Calculator",
+    //   description: "Calculate the price of links based on various metrics",
+    //   category: "Calculators",
+    //   slug: "link-price-calculator",
+    //   categorySlug: "calculators",
+    //   icon: "🔗",
+    // },
     {
       name: "AdSense Calculator",
       description: "Calculate potential AdSense earnings",
@@ -1928,14 +1927,14 @@ export const SearchedAllTools: ITool[] = [
       categorySlug: "calculators",
       icon: "💵",
     },
-    {
-      name: "PayPal Fee Calculator",
-      description: "Calculate PayPal transaction fees",
-      category: "Calculators",
-      slug: "paypal-fee-calculator",
-      categorySlug: "calculators",
-      icon: "💳",
-    },
+    // {
+    //   name: "PayPal Fee Calculator",
+    //   description: "Calculate PayPal transaction fees",
+    //   category: "Calculators",
+    //   slug: "paypal-fee-calculator",
+    //   categorySlug: "calculators",
+    //   icon: "💳",
+    // },
     {
       name: "LTV Calculator",
       description: "Calculate customer lifetime value",
@@ -1944,22 +1943,22 @@ export const SearchedAllTools: ITool[] = [
       categorySlug: "calculators",
       icon: "📈",
     },
-    {
-      name: "CPC Calculator",
-      description: "Calculate cost per click for advertising",
-      category: "Calculators",
-      slug: "cpc-calculator",
-      categorySlug: "calculators",
-      icon: "📊",
-    },
-    {
-      name: "CPM Calculator",
-      description: "Calculate cost per mille for advertising",
-      category: "Calculators",
-      slug: "cpm-calculator",
-      categorySlug: "calculators",
-      icon: "📊",
-    },
+    // {
+    //   name: "CPC Calculator",
+    //   description: "Calculate cost per click for advertising",
+    //   category: "Calculators",
+    //   slug: "cpc-calculator",
+    //   categorySlug: "calculators",
+    //   icon: "📊",
+    // },
+    // {
+    //   name: "CPM Calculator",
+    //   description: "Calculate cost per mille for advertising",
+    //   category: "Calculators",
+    //   slug: "cpm-calculator",
+    //   categorySlug: "calculators",
+    //   icon: "📊",
+    // },
     // {
     //   name: "Discount Calculator",
     //   description: "Calculate discounts and final prices",
@@ -2025,22 +2024,15 @@ export const SearchedAllTools: ITool[] = [
     //   icon: "📈",
     // },
    
-    {
-      name: "GST Calculator",
-      description: "Calculate GST (Goods and Services Tax)",
-      category: "Calculators",
-      slug: "gst-calculator",
-      categorySlug: "calculators",
-      icon: "📋",
-    },
-    {
-      name: "Lower and Upper Bound Calculator",
-      description: "Calculate lower and upper bounds for data sets",
-      category: "Calculators",
-      slug: "bound-calculator",
-      categorySlug: "calculators",
-      icon: "📏",
-    },
+    
+    // {
+    //   name: "Lower and Upper Bound Calculator",
+    //   description: "Calculate lower and upper bounds for data sets",
+    //   category: "Calculators",
+    //   slug: "bound-calculator",
+    //   categorySlug: "calculators",
+    //   icon: "📏",
+    // },
     {
       name: "Average Calculator",
       description: "Calculate mean, median, and mode",
@@ -2066,15 +2058,14 @@ export const SearchedAllTools: ITool[] = [
       icon: "💼",
     },
   
-    ///
-  {
-    name: "Percentage Calculator",
-    description: "Calculate percentages, increases, and decreases",
-    category: "Calculators",
-    slug: "percentage-calculator",
-    categorySlug: "calculators",
-    icon: "📊",
-  },
+  // {
+  //   name: "Percentage Calculator",
+  //   description: "Calculate percentages, increases, and decreases",
+  //   category: "Calculators",
+  //   slug: "percentage-calculator",
+  //   categorySlug: "calculators",
+  //   icon: "📊",
+  // },
   {
     name: "Age Calculator",
     description: "Calculate age in years, months, and days",
@@ -2082,6 +2073,14 @@ export const SearchedAllTools: ITool[] = [
     slug: "age-calculator",
     categorySlug: "calculators",
     icon: "🎂",
+  },
+  {
+    name: "Earnings Per Share Calculator",
+    description: "Calculate earnings per share",
+    category: "Calculators",
+    slug: "eps-calculator",
+    categorySlug: "calculators",
+    icon: "📈",
   },
   {
     name: "Discount Calculator",
@@ -2107,14 +2106,14 @@ export const SearchedAllTools: ITool[] = [
     categorySlug: "calculators",
     icon: "📋",
   },
-  {
-    name: "Margin Calculator",
-    description: "Calculate profit margins and markups",
-    category: "Calculators",
-    slug: "margin-calculator",
-    categorySlug: "calculators",
-    icon: "📈",
-  },
+  // {
+  //   name: "Margin Calculator",
+  //   description: "Calculate profit margins and markups",
+  //   category: "Calculators",
+  //   slug: "margin-calculator",
+  //   categorySlug: "calculators",
+  //   icon: "📈",
+  // },
   {
     name: "Interest Calculator",
     description: "Calculate simple and compound interest",

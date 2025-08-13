@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
@@ -13,7 +13,7 @@ const validationSchema = Yup.object().shape({
     equity: Yup.number()
         .typeError("Equity must be a number")
         .required("Equity is required")
-        .min(0, "Equity must be at least 0%")
+        .min(0.00001, "Equity must be greater than 0%")
         .max(100, "Equity cannot exceed 100%"),
 });
 
@@ -22,9 +22,27 @@ const initialValues = {
     equity: "",
 };
 
-const PreAndPostMoney: React.FC = () => {
-    return (
+function calculateValuations(investment: number, equity: number) {
+    // equity is in percent, so convert to decimal
+    const equityDecimal = equity / 100;
+    // Pre-money valuation = Investment / (Equity% / 100) - Investment
+    // Post-money valuation = Pre-money + Investment
+    if (equityDecimal <= 0 || equityDecimal >= 1) {
+        return { pre: null, post: null };
+    }
+    const pre = investment / equityDecimal - investment;
+    const post = pre + investment;
+    return {
+        pre: pre,
+        post: post,
+    };
+}
 
+const PreAndPostMoney: React.FC = () => {
+    const [result, setResult] = useState<{ pre: number | null; post: number | null } | null>(null);
+    const [submitted, setSubmitted] = useState(false);
+
+    return (
         <>
             {/* Breadcrumb */}
             <div className="container mx-auto px-4 py-4">
@@ -48,7 +66,6 @@ const PreAndPostMoney: React.FC = () => {
                 </nav>
             </div>
 
-
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}
@@ -60,7 +77,11 @@ const PreAndPostMoney: React.FC = () => {
                             initialValues={initialValues}
                             validationSchema={validationSchema}
                             onSubmit={(values, { setSubmitting }) => {
-                                console.log(values);
+                                const investment = parseFloat(values.investment as string);
+                                const equity = parseFloat(values.equity as string);
+                                const vals = calculateValuations(investment, equity);
+                                setResult(vals);
+                                setSubmitted(true);
                                 setSubmitting(false);
                             }}
                         >
@@ -76,11 +97,13 @@ const PreAndPostMoney: React.FC = () => {
                                                 Investment
                                             </label>
                                             <Field
-                                                type="text"
+                                                type="number"
                                                 id="investment"
                                                 name="investment"
                                                 placeholder="Rs"
                                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-700 dark:text-gray-100"
+                                                min="0"
+                                                step="any"
                                             />
                                             <ErrorMessage
                                                 name="investment"
@@ -97,11 +120,14 @@ const PreAndPostMoney: React.FC = () => {
                                                 Investor&apos;s equity %
                                             </label>
                                             <Field
-                                                type="text"
+                                                type="number"
                                                 id="equity"
                                                 name="equity"
                                                 placeholder="%"
                                                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-700 dark:text-gray-100"
+                                                min="0.00001"
+                                                max="100"
+                                                step="any"
                                             />
                                             <ErrorMessage
                                                 name="equity"
@@ -119,32 +145,60 @@ const PreAndPostMoney: React.FC = () => {
                                             Calculate
                                         </button>
                                     </div>
+                                    {/* Result Section */}
+                                    {submitted && (
+                                        <div className="mt-10">
+                                            <h3 className="text-xl font-semibold text-center mb-6 text-gray-800 dark:text-gray-100">
+                                                Result
+                                            </h3>
+                                            <div className="flex flex-col md:flex-row justify-center gap-6">
+                                                <div className="flex-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow p-6 text-center">
+                                                    <div className="text-gray-500 text-sm mb-2">Pre-money val</div>
+                                                    <div className="text-2xl font-bold text-green-600">
+                                                        {result && result.pre !== null
+                                                            ? result.pre.toLocaleString(undefined, {
+                                                                minimumFractionDigits: 2,
+                                                                maximumFractionDigits: 2,
+                                                            })
+                                                            : "--"}
+                                                    </div>
+                                                </div>
+                                                <div className="flex-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow p-6 text-center">
+                                                    <div className="text-gray-500 text-sm mb-2">Post-money val</div>
+                                                    <div className="text-2xl font-bold text-green-600">
+                                                        {result && result.post !== null
+                                                            ? result.post.toLocaleString(undefined, {
+                                                                minimumFractionDigits: 2,
+                                                                maximumFractionDigits: 2,
+                                                            })
+                                                            : "--"}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </Form>
                             )}
                         </Formik>
                     </div>
                     {/* Second column: col-span-5 on md+ */}
-                    <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        {/* You can place content for the second column here */}
-                        Advertiesment
+                    <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4 flex items-center justify-center min-h-[180px]">
+                        {/* Placeholder for Advertisement */}
+                        <span className="text-gray-400 text-lg font-semibold">Advertisement</span>
                     </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-6 on md+ */}
-                    <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        Advertiesment
+                    <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4 flex items-center justify-center min-h-[120px]">
+                        <span className="text-gray-400 text-lg font-semibold">Advertisement</span>
                     </div>
                     {/* Second column: col-span-6 on md+ */}
-                    <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        Advertiesment
+                    <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4 flex items-center justify-center min-h-[120px]">
+                        <span className="text-gray-400 text-lg font-semibold">Advertisement</span>
                     </div>
                 </div>
-
             </div>
-
-
         </>
-
     );
 };
 
