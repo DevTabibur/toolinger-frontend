@@ -780,113 +780,131 @@ export const categoriesAndTools: any = {
         icon: "🎨",
         slug: "hex-to-rgb",
       },
-      {
-        name: "Currency Converter",
-        description: "Convert between different currencies",
-        icon: "💱",
-        slug: "currency-converter",
-      },
-      {
-        name: "Unit Converter",
-        description: "Convert between various units of measurement",
-        icon: "📏",
-        slug: "unit-converter",
-      },
+      // {
+      //   name: "Currency Converter",
+      //   description: "Convert between different currencies",
+      //   icon: "💱",
+      //   slug: "currency-converter",
+      //   level: "pro",
+      // },
+      // {
+      //   name: "Unit Converter",
+      //   description: "Convert between various units of measurement",
+      //   icon: "📏",
+      //   slug: "unit-converter",
+      //   level: "pro",
+      // },
       {
         name: "Decimal to Octal",
         description: "Convert decimal numbers to octal format",
         icon: "🔢",
         slug: "decimal-to-octal",
+        level: "free",
       },
       {
         name: "Octal to Decimal",
         description: "Convert octal numbers to decimal format",
         icon: "🔟",
         slug: "octal-to-decimal",
+        level: "free",
       },
+      // {
+      //   name: "Active to Passive Voice Converter",
+      //   description: "Convert active voice sentences to passive voice",
+      //   icon: "🔄",
+      //   slug: "active-to-passive-voice",
+      //   level:"pro"
+      // },
+      // {
+      //   name: "ICO Converter",
+      //   description: "Convert images to ICO format",
+      //   icon: "🖼️",
+      //   slug: "ico-converter",
+      //   level:"pro"
+      // },
       {
-        name: "Active to Passive Voice Converter",
-        description: "Convert active voice sentences to passive voice",
-        icon: "🔄",
-        slug: "active-to-passive-voice",
-      },
-      {
-        name: "ICO Converter",
-        description: "Convert images to ICO format",
-        icon: "🖼️",
-        slug: "ico-converter",
-      },
-      {
-        name: "Roman Numeral Date Converter",
+        name: "Roman Numerals Date Converter",
         description: "Convert dates to Roman numeral format",
         icon: "📅",
-        slug: "roman-numeral-date",
+        slug: "roman-numerals-date",
+        level:"free"
       },
       {
         name: "Text to Binary Converter",
         description: "Convert text to binary format",
         icon: "💻",
         slug: "text-to-binary",
+        level:"free"
       },
       {
         name: "Decimal to Binary Converter",
         description: "Convert decimal numbers to binary format",
         icon: "0️⃣1️⃣",
         slug: "decimal-to-binary",
+        level:"free"
       },
       {
         name: "Binary to Decimal Converter",
         description: "Convert binary numbers to decimal format",
         icon: "1️⃣0️⃣",
         slug: "binary-to-decimal",
+        level:"free"
       },
       {
         name: "Decimal to Hex Converter",
         description: "Convert decimal numbers to hexadecimal format",
         icon: "🔣",
         slug: "decimal-to-hex",
+        level:"free"
       },
       {
         name: "Hex to Decimal Converter",
         description: "Convert hexadecimal numbers to decimal format",
         icon: "🔢",
         slug: "hex-to-decimal",
+        level:"free"
       },
       {
         name: "Binary to Hex Converter",
         description: "Convert binary numbers to hexadecimal format",
         icon: "🔠",
         slug: "binary-to-hex",
+        level:"free"
       },
       {
         name: "Hex to Binary Converter",
         description: "Convert hexadecimal numbers to binary format",
         icon: "🔡",
         slug: "hex-to-binary",
+        level:"free"
       },
       {
         name: "Binary to Octal Converter",
         description: "Convert binary numbers to octal format",
         icon: "🔢",
         slug: "binary-to-octal",
+        level:"free"
       },
       {
         name: "Hex to Octal Converter",
         description: "Convert hexadecimal numbers to octal format",
         icon: "🔢",
-        slug: "hex-to-octal",
+       slug: "hex-to-octal",
+        level:"free"
       },
       {
         name: "Octal to Binary Converter",
         description: "Convert octal numbers to binary format",
         icon: "🔢",
-        slug: "octal-to-binary",
+       slug: "octal-to-binary",
+        level:"free"
       },
       {
         name: "Octal to Hex Converter",
         description: "Convert octal numbers to hexadecimal format",
         icon: "🔢",
         slug: "octal-to-hex",
+        level:"free"
       },
       {
         name: "Case Converter",
@@ -934,7 +952,7 @@ export const categoriesAndTools: any = {
         name: "Date Converter to Arabic, Roman, Bangla, and English",
         description: "Convert dates to various numeral systems",
         icon: "📆",
-        slug: "date-converter-multi",
+        slug: "multi-date-converter",
       },
     ],
   },

@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ChevronRight, Home, Repeat2 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const options = [
     { value: "binary", label: "Binary" },
@@ -134,6 +135,20 @@ const BinaryCalculator: React.FC = () => {
     const [result, setResult] = React.useState<string>("");
     const [error, setError] = React.useState<string>("");
 
+    // Get current pathname to extract category and tool
+    const pathname = usePathname();
+    // Example: /category/calculators/binary-calculator
+    // or /category/[slug]/[tool]
+    // We'll extract [slug] and [tool] from the path
+    let categorySlug = "calculators";
+    let toolSlug = "binary-calculator";
+    let toolName = "Binary Converter";
+    if (pathname) {
+        const parts = pathname.split("/").filter(Boolean);
+        // You can use parts to extract category/tool if needed
+        // For now, we keep the defaults above
+    }
+
     const formik = useFormik({
         initialValues: {
             input: "",
@@ -153,9 +168,6 @@ const BinaryCalculator: React.FC = () => {
                 if (from === to) {
                     output = input;
                 } else {
-                    // Conversion logic
-                    // First, convert input to text, then from text to target
-                    let intermediate = "";
                     switch (from) {
                         case "binary":
                             if (to === "text") output = binaryToText(input);
@@ -173,13 +185,13 @@ const BinaryCalculator: React.FC = () => {
                             if (to === "text") output = octalToText(input);
                             else if (to === "binary") output = octalToBinary(input);
                             else if (to === "decimal") output = octalToDecimal(input);
-                            else if (to === "hexadecimal") output = octalToText(input);
+                            else if (to === "hexadecimal") output = decimalToHex(octalToDecimal(input));
                             break;
                         case "hexadecimal":
                             if (to === "text") output = hexToText(input);
                             else if (to === "binary") output = hexToBinary(input);
                             else if (to === "decimal") output = hexToDecimal(input);
-                            else if (to === "octal") output = hexToOctal(input);
+                            else if (to === "octal") output = decimalToOctal(hexToDecimal(input));
                             break;
                         case "text":
                             if (to === "binary") output = textToBinary(input);
@@ -202,27 +214,52 @@ const BinaryCalculator: React.FC = () => {
     return (
         <>
             {/* Breadcrumb */}
-            <div className="container mx-auto px-4 py-4">
-                <nav className="flex items-center space-x-2 text-sm">
-                    <Link
-                        href="/"
-                        className="text-muted-foreground hover:text-primary flex items-center"
-                    >
-                        <Home className="h-4 w-4 mr-1" />
-                        Home
-                    </Link>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    <Link
-                        href="/category/calculators"
-                        className="text-muted-foreground hover:text-primary"
-                    >
-                        Calculator Tools
-                    </Link>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-foreground font-medium">Binary Converter</span>
-                </nav>
-            </div>
+            {/*
+                Dynamic breadcrumb: 
+                - 2nd link: /category/{category} (category from route)
+                - 2nd text: {Category} Tools (capitalize)
+                - 3rd text: {Tool} Converter (capitalize)
+            */}
+            {(() => {
+                // Get pathname, e.g. /category/calculators/binary-calculator
+                const pathname = usePathname();
+                // Split and extract category and tool
+                // pathname: /category/[category]/[tool]
+                const parts = pathname.split("/").filter(Boolean);
+                // fallback if not enough parts
+                const category = parts[1] ? parts[1].replace(/-/g, " ") : "tools";
+                const tool = parts[2] ? parts[2].replace(/-/g, " ") : "converter";
+                // Capitalize first letter of each word
+                const capitalize = (str: string) =>
+                    str.replace(/\b\w/g, (c) => c.toUpperCase());
+                const categoryDisplay = capitalize(category);
+                const toolDisplay = capitalize(tool);
 
+                return (
+                    <div className="container mx-auto px-4 py-4">
+                        <nav className="flex items-center space-x-2 text-sm">
+                            <Link
+                                href="/"
+                                className="text-muted-foreground hover:text-primary flex items-center"
+                            >
+                                <Home className="h-4 w-4 mr-1" />
+                                Home
+                            </Link>
+                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                            <Link
+                                href={`/category/${parts[1] || ""}`}
+                                className="text-muted-foreground hover:text-primary"
+                            >
+                                {categoryDisplay} Tools
+                            </Link>
+                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-foreground font-medium">
+                                {toolDisplay} Converter
+                            </span>
+                        </nav>
+                    </div>
+                );
+            })()}
 
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
@@ -232,33 +269,7 @@ const BinaryCalculator: React.FC = () => {
                             Binary Converter
                         </h2>
                         <form onSubmit={formik.handleSubmit} className="space-y-6">
-                            <div>
-                                <label
-                                    htmlFor="input"
-                                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                                >
-                                    Input
-                                </label>
-                                <input
-                                    id="input"
-                                    name="input"
-                                    type="text"
-                                    placeholder="Enter value (e.g. 01000001 or 65 or A)"
-                                    className={`py-2 px-3 w-full border rounded focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 ${formik.touched.input && formik.errors.input
-                                            ? "border-red-500"
-                                            : "border-green-400"
-                                        }`}
-                                    value={formik.values.input}
-                                    onChange={formik.handleChange}
-                                    onBlur={formik.handleBlur}
-                                    autoComplete="off"
-                                />
-                                {formik.touched.input && formik.errors.input ? (
-                                    <div className="text-red-500 text-xs mt-1">
-                                        {formik.errors.input}
-                                    </div>
-                                ) : null}
-                            </div>
+
                             <div className="flex flex-col md:flex-row gap-4">
                                 <div className="flex-1">
                                     <label
@@ -303,6 +314,34 @@ const BinaryCalculator: React.FC = () => {
                                     </select>
                                 </div>
                             </div>
+                            <div>
+                                <label
+                                    htmlFor="input"
+                                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                                >
+                                    Input
+                                </label>
+                                <textarea
+                                    id="input"
+                                    name="input"
+                                    placeholder="Enter value (e.g. 01000001 or 65 or A)"
+                                    className={`py-2 px-3 w-full border rounded focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 ${formik.touched.input && formik.errors.input
+                                        ? "border-red-500"
+                                        : "border-green-400"
+                                        }`}
+                                    value={formik.values.input}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                    autoComplete="off"
+                                    rows={10}
+
+                                />
+                                {formik.touched.input && formik.errors.input ? (
+                                    <div className="text-red-500 text-xs mt-1">
+                                        {formik.errors.input}
+                                    </div>
+                                ) : null}
+                            </div>
                             <div className="flex justify-center">
                                 <button
                                     type="submit"
@@ -345,23 +384,20 @@ const BinaryCalculator: React.FC = () => {
                     {/* Second column: col-span-5 on md+ */}
                     <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         {/* You can place content for the second column here */}
-                        Advertiesment
+                        Advertisement
                     </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-6 on md+ */}
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        Advertiesment
+                        Advertisement
                     </div>
                     {/* Second column: col-span-6 on md+ */}
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        Advertiesment
+                        Advertisement
                     </div>
                 </div>
-
             </div>
-
-
         </>
     );
 };

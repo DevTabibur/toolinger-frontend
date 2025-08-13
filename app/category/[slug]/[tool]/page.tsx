@@ -71,7 +71,23 @@ import {
   GoogleMalwareChecker,
   WebsiteLinkCountChecker
 } from "@/components/tools/WebsiteManagement";
-import { RGBTOHEX } from "@/components/tools/Converters";
+
+// Converters tools
+import {
+  AsciiToDecimal,
+  AsciiToHEX,
+  CaseConverter,
+  DecimalToAscii,
+  DecimalToOctal,
+  HexToAscii,
+  HEXTORGB,
+  HexToText,
+  MultiDateConverter,
+  OctalToDecimal,
+  RGBTOHEX,
+  RomanNumeralsDate,
+  TextToHex
+} from "@/components/tools/Converters";
 
 
 
@@ -198,9 +214,55 @@ export default function ToolDetailsPage({
         return <DetectCMS />;
       case "links-count-checker":
         return <WebsiteLinkCountChecker />;
-        // converters tools
-        case "rgb-to-hex":
+      // converters tools
+      case "rgb-to-hex":
         return <RGBTOHEX />;
+      case "hex-to-rgb":
+        return <HEXTORGB />;
+      case "decimal-to-octal":
+        return <DecimalToOctal />;
+      case "octal-to-decimal":
+        return <OctalToDecimal />;
+      case "roman-numerals-date":
+        return <RomanNumeralsDate />;
+      case "text-to-binary":
+        return <BinaryCalculator />;
+      case "decimal-to-binary":
+        return <BinaryCalculator />;
+      case "binary-to-decimal":
+        return <BinaryCalculator />;
+      case "decimal-to-hex":
+        return <BinaryCalculator />;
+      case "hex-to-decimal":
+        return <BinaryCalculator />;
+      case "binary-to-hex":
+        return <BinaryCalculator />;
+      case "hex-to-binary":
+        return <BinaryCalculator />;
+      case "binary-to-octal":
+        return <BinaryCalculator />;
+      case "hex-to-octal":
+        return <BinaryCalculator />;
+      case "octal-to-binary":
+        return <BinaryCalculator />;
+      case "octal-to-hex":
+        return <BinaryCalculator />;
+      case "case-converter":
+        return <CaseConverter />;
+      case "ascii-to-hex":
+        return <AsciiToHEX />;
+      case "ascii-to-decimal":
+        return <AsciiToDecimal />;
+      case "decimal-to-ascii":
+        return <DecimalToAscii />;
+      case "hex-to-ascii":
+        return <HexToAscii />;
+      case "hex-to-text":
+        return <HexToText />;
+      case "text-to-hex":
+        return <TextToHex />;
+      case "multi-date-converter":
+        return <MultiDateConverter />;
       default:
         return <ToolNotFound />;
     }
