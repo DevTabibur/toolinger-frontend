@@ -27,9 +27,8 @@ export async function generateMetadata({
 
   return {
     title: `${category.name} - Free Online Tools | Toolinger`,
-    description: `${category.description}. Access ${
-      category.tools.length
-    }+ free ${category.name.toLowerCase()} for productivity and efficiency.`,
+    description: `${category.description}. Access ${category.tools.length
+      }+ free ${category.name.toLowerCase()} for productivity and efficiency.`,
     keywords: `${category.name.toLowerCase()}, online tools, free tools, ${category.tools
       .map((tool: any) => tool.name.toLowerCase())
       .join(", ")}`,
@@ -65,10 +64,11 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           <p className="text-lg md:text-xl opacity-90 max-w-3xl">
             {category.description}
           </p>
-          <div className="mt-6">
-            <SearchBar
-              placeholder={`Search ${category.name.toLowerCase()}...`}
-            />
+          <div
+            className="mt-6 block w-full max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl"
+            style={{ minWidth: 0 }}
+          >
+            <GlobalSearch placeholder={`Search ${category.name.toLowerCase()}...`} />
           </div>
         </div>
       </section>
