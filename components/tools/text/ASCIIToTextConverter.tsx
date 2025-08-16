@@ -70,7 +70,7 @@ export default function ASCIIToTextConverter() {
                         className="text-muted-foreground hover:text-primary flex items-center"
                     >
                         <Home className="h-4 w-4 mr-1" />
-                        Home
+                        Home 
                     </Link>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     <Link
@@ -80,7 +80,7 @@ export default function ASCIIToTextConverter() {
                         Text Tools
                     </Link>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-foreground font-medium">ASCII to Text Converter</span>
+                    <span className="text-foreground font-medium">Text to ASCII  Converter</span>
                 </nav>
             </div>
 
@@ -90,10 +90,10 @@ export default function ASCIIToTextConverter() {
                     {/* First column: col-span-7 on md+ */}
                     <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 text-gray-900 dark:text-gray-100">
-                            ASCII to Text Converter
+                            Text to ASCII Converter
                         </h1>
                         <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
-                            To use prepostseo <b>ASCII to Text Converter</b>, enter the text in the text box below.
+                            To use toolinger <b>Text to ASCII Converter</b>, enter the text in the text box below.
                         </p>
                         <div className="bg-white dark:bg-gray-800 rounded shadow p-4 md:p-6 max-w-3xl mx-auto">
                             <div className="flex flex-col md:flex-row gap-4 items-center">

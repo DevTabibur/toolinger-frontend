@@ -1,0 +1,86 @@
+User-agent: *
+Allow: /
+
+# Allow crawling of all main pages and tools
+Allow: /about
+Allow: /contact
+Allow: /privacy
+Allow: /terms
+Allow: /sitemap
+Allow: /coming-soon
+
+# Allow crawling of category pages
+Allow: /category/
+Allow: /domain-tools/
+Allow: /website-management/
+Allow: /developer-tools/
+Allow: /text-tools/
+Allow: /calculators/
+Allow: /converters/
+Allow: /generators/
+Allow: /image-tools/
+
+# Allow crawling of individual tool pages
+Allow: /*/page.tsx
+Allow: /*/*/page.tsx
+
+# Allow crawling of static assets
+Allow: /public/
+Allow: /*.css
+Allow: /*.js
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.gif
+Allow: /*.svg
+Allow: /*.ico
+Allow: /*.woff
+Allow: /*.woff2
+Allow: /*.ttf
+Allow: /*.eot
+
+# Disallow crawling of sensitive areas
+Disallow: /api/
+Disallow: /_next/
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /.env
+Disallow: /package.json
+Disallow: /pnpm-lock.yaml
+Disallow: /tsconfig.json
+Disallow: /tailwind.config.ts
+Disallow: /next.config.mjs
+Disallow: /postcss.config.mjs
+Disallow: /components.json
+
+# Disallow crawling of development and build files
+Disallow: /*.log
+Disallow: /*.map
+Disallow: /build/
+Disallow: /dist/
+Disallow: /.next/
+Disallow: /out/
+
+# Disallow crawling of admin or private areas (if any)
+Disallow: /admin/
+Disallow: /private/
+Disallow: /dashboard/
+Disallow: /user/
+Disallow: /login/
+Disallow: /register/
+
+# Disallow crawling of temporary or cache files
+Disallow: /cache/
+Disallow: /temp/
+Disallow: /tmp/
+Disallow: /*.tmp
+Disallow: /*.cache
+
+# Crawl delay (optional - helps prevent overwhelming the server)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://toolinger.com/sitemap.xml
+
+# Host (canonical domain)
+Host: https://toolinger.com

@@ -55,13 +55,13 @@ const EarningPerShareCalculator: React.FC = () => {
                         Calculator Tools
                     </Link>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-foreground font-medium">EPS Calculator</span>
+                    <span className="text-foreground font-medium">Earnings Per Share (EPS) Calculator</span>
                 </nav>
             </div>
 
             <div className="container mx-auto p-4">
                 <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">
-                    Earnings Per Share Calculator
+                    Earnings Per Share (EPS) Calculator
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}

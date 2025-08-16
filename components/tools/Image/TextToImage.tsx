@@ -20,11 +20,35 @@ const IMAGE_FORMATS = [
 
 const DEFAULT_TEXT = "";
 
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+    // Split by explicit newlines first
+    const paragraphs = text.split('\n');
+    const lines: string[] = [];
+    for (let p = 0; p < paragraphs.length; p++) {
+        let words = paragraphs[p].split(' ');
+        let line = '';
+        for (let n = 0; n < words.length; n++) {
+            let testLine = line ? line + ' ' + words[n] : words[n];
+            let metrics = ctx.measureText(testLine);
+            let testWidth = metrics.width;
+            if (testWidth > maxWidth && line) {
+                lines.push(line);
+                line = words[n];
+            } else {
+                line = testLine;
+            }
+        }
+        lines.push(line);
+    }
+    return lines;
+}
+
 export default function TextToImage() {
     const [inputText, setInputText] = useState(DEFAULT_TEXT);
     const [bgColor, setBgColor] = useState("#ffffff");
     const [textColor, setTextColor] = useState("#000000");
-    const [fontSize, setFontSize] = useState(48);
+    // Set default font size to 12
+    const [fontSize, setFontSize] = useState(12);
     const [fontFamily, setFontFamily] = useState(FONT_FAMILIES[0].value);
     const [fontWeight, setFontWeight] = useState(false);
     const [fontStyle, setFontStyle] = useState(false);
@@ -43,7 +67,7 @@ export default function TextToImage() {
         return `${fontWeight ? "bold " : ""}${fontStyle ? "italic " : ""}${fontSize}px ${family}`;
     };
 
-    // Draw text to canvas
+    // Draw text to canvas with word wrapping
     const drawCanvas = () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
@@ -64,30 +88,43 @@ export default function TextToImage() {
         ctx.textAlign = hAlign as CanvasTextAlign;
         ctx.textBaseline = vAlign === "top" ? "top" : vAlign === "middle" ? "middle" : "bottom";
 
-        // Calculate position
-        let x = imgWidth / 2;
-        if (hAlign === "left") x = 0;
-        if (hAlign === "right") x = imgWidth;
+        // Calculate max text width (leave a little padding)
+        const padding = 20;
+        const maxTextWidth = imgWidth - 2 * padding;
 
-        let y = imgHeight / 2;
-        if (vAlign === "top") y = 0;
-        if (vAlign === "bottom") y = imgHeight;
+        // Wrap text
+        const wrappedLines = wrapText(ctx, inputText, maxTextWidth);
 
-        // Handle multi-line text
-        const lines = inputText.split("\n");
+        // Calculate vertical position
         const lineHeight = fontSize * 1.2;
-        let startY = y;
-        if (vAlign === "middle") {
-            startY = y - ((lines.length - 1) / 2) * lineHeight;
-        } else if (vAlign === "top") {
-            startY = 0;
+        let totalTextHeight = wrappedLines.length * lineHeight;
+        let y: number;
+        if (vAlign === "top") {
+            y = padding + lineHeight / 2;
         } else if (vAlign === "bottom") {
-            startY = imgHeight - lines.length * lineHeight + lineHeight;
+            y = imgHeight - totalTextHeight + lineHeight / 2 - padding;
+        } else {
+            // middle
+            y = imgHeight / 2 - totalTextHeight / 2 + lineHeight / 2;
         }
 
-        lines.forEach((line, i) => {
-            ctx.fillText(line, x, startY + i * lineHeight);
-        });
+        // Calculate x position for alignment
+        let x: number;
+        if (hAlign === "left") {
+            x = padding;
+            ctx.textAlign = "left";
+        } else if (hAlign === "right") {
+            x = imgWidth - padding;
+            ctx.textAlign = "right";
+        } else {
+            x = imgWidth / 2;
+            ctx.textAlign = "center";
+        }
+
+        // Draw each line
+        for (let i = 0; i < wrappedLines.length; i++) {
+            ctx.fillText(wrappedLines[i], x, y + i * lineHeight);
+        }
     };
 
     // Redraw canvas on every relevant change
@@ -355,13 +392,36 @@ export default function TextToImage() {
                     </div>
                     {/* Canvas and actions */}
                     <div className="flex flex-col items-center gap-4">
-                        <canvas
-                            ref={canvasRef}
-                            width={imgWidth}
-                            height={imgHeight}
-                            className="border rounded shadow"
-                            style={{ background: bgColor, maxWidth: "100%", height: "auto" }}
-                        />
+                        <div
+                        className="overflow-auto"
+                            style={{
+                                width: imgWidth,
+                                height: imgHeight,
+                                overflow: "auto",
+                                maxWidth: "100%",
+                                borderRadius: "0.375rem",
+                                border: "1px solid #e5e7eb",
+                                boxShadow: "0 1px 2px 0 rgba(0,0,0,0.05)",
+                                background: bgColor,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: 0,
+                            }}
+                        >
+                            <canvas
+                                ref={canvasRef}
+                                width={imgWidth}
+                                height={imgHeight}
+                                style={{
+                                    background: bgColor,
+                                    display: "block",
+                                    maxWidth: "100%",
+                                    height: imgHeight,
+                                    width: imgWidth,
+                                }}
+                            />
+                        </div>
                         <div className="flex gap-2">
                             <button
                                 type="button"

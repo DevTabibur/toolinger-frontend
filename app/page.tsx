@@ -131,13 +131,13 @@ export default function HomePage() {
                     Most popular and frequently used tools
                   </p>
                 </div>
-                <Link
+                {/* <Link
                   href="/tools"
                   className="text-primary hover:underline font-medium flex items-center space-x-1"
                 >
                   <span>View All</span>
                   <TrendingUp className="h-4 w-4" />
-                </Link>
+                </Link> */}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

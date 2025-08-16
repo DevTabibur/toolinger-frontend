@@ -668,11 +668,12 @@ export async function whatIsMyBrowser() {
 // Find DNS records
 export async function findDNSRecords(data: any) {
   try {
-    const response = await axios.post("`${URL}`tools/find-dns-record", data);
+    console.log("data", data)
+    const response = await axios.post(`${URL}/api/v1/tools/find-dns-record`, data);
     return response.data;
   } catch (error) {
     console.error("Error in findDNSRecords:", error);
-    throw error;
+    // throw error;
   }
 }
 
@@ -909,7 +910,7 @@ export async function generateEmailTemplate(data: any) {
 // Detect CMS Tool API
 export async function detectCMS(data: { url: string }) {
   try {
-    
+
     const response = await axios.post(
       `${URL}/api/v1/advanced-tools/detect-cms`,
       data

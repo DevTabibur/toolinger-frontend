@@ -2,15 +2,18 @@
 import React, { useState } from "react";
 import { ChevronRight, Home, Search } from "lucide-react";
 import Link from "next/link";
+import { findDNSRecords } from "@/app/api/AllTools";
 
 export default function DNSRecordsChecker() {
     const [domain, setDomain] = useState("");
     const [submittedValue, setSubmittedValue] = useState<string | null>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit =async (e: React.FormEvent) => {
         e.preventDefault();
         setSubmittedValue(domain.trim());
         console.log("domain", e)
+        const res = await findDNSRecords(domain)
+        console.log("res", res)
     };
 
     return (

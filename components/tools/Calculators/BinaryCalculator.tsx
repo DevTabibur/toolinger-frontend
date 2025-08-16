@@ -250,11 +250,11 @@ const BinaryCalculator: React.FC = () => {
                                 href={`/category/${parts[1] || ""}`}
                                 className="text-muted-foreground hover:text-primary"
                             >
-                                {categoryDisplay} Tools
+                                {categoryDisplay}
                             </Link>
                             <ChevronRight className="h-4 w-4 text-muted-foreground" />
                             <span className="text-foreground font-medium">
-                                {toolDisplay} Converter
+                                {toolDisplay} 
                             </span>
                         </nav>
                     </div>
@@ -266,7 +266,7 @@ const BinaryCalculator: React.FC = () => {
                     {/* First column: col-span-7 on md+ */}
                     <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         <h2 className="text-2xl font-semibold text-center mb-6 text-gray-900 dark:text-gray-100">
-                            Binary Converter
+                            Binary Calculator
                         </h2>
                         <form onSubmit={formik.handleSubmit} className="space-y-6">
 

@@ -160,7 +160,7 @@ export function GlobalSearch({
                   >
                     <div className="text-2xl mt-0.5">{tool.icon}</div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm truncate">{tool.name}</div>
+                      <div className="font-medium text-sm truncate text-black dark:text-white">{tool.name}</div>
                       <div className="text-xs text-muted-foreground truncate">{tool.description}</div>
                       <div className="text-xs text-primary mt-1">{tool.category}</div>
                     </div>

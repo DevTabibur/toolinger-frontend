@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const PASSWORD_OPTIONS = [
     {
-        label: "String Letters (a...z)",
+        label: "Small Letters (a...z)",
         value: "lowercase",
         chars: "abcdefghijklmnopqrstuvwxyz",
     },
@@ -100,7 +100,7 @@ export default function PasswordGenerator() {
                             Password Generator
                         </h2>
                         <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
-                            To use prepostseo <b>Password Generator</b>, choose option below and click <b>generate password</b> button.
+                            To use toolinger <b>Password Generator</b>, choose option below and click <b>generate password</b> button.
                         </p>
                         <div className="bg-gray-100 dark:bg-gray-800 rounded p-4 mb-6">
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-200 mb-2">
@@ -111,7 +111,7 @@ export default function PasswordGenerator() {
                                 value={length}
                                 onChange={(e) => setLength(Number(e.target.value))}
                             >
-                                {[...Array(9)].map((_, i) => (
+                                {[...Array(15)].map((_, i) => (
                                     <option key={i + 1} value={i + 1}>
                                         {i + 1}
                                     </option>

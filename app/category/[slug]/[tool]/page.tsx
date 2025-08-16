@@ -100,9 +100,11 @@ export default function ToolDetailsPage({
 }) {
   const renderToolComponent = () => {
     switch (params.tool) {
-      // calculator
+      // ==========================calculator================
       case "link-price-calculator":
         return <LinkPriceCalculator />;
+        case "binary-translator":
+        return <BinaryCalculator />;
       case "adsense-calculator":
         return <AdsenseCalculator />;
       case "paypal-fee-calculator":
@@ -121,7 +123,7 @@ export default function ToolDetailsPage({
         return <OctalCalculator />;
       // case "percentage-calculator":
       //   return <OctalCalculator />;
-      case "eps-calculator":
+      case "earnings-per-share":
         return <EarningPerShareCalculator />;
       case "probability-calculator":
         return <ProbabilityCalculator />;
@@ -139,13 +141,13 @@ export default function ToolDetailsPage({
         return <AgeCalculator />;
       case "pre-and-post-money-valuation-calculator":
         return <PreAndPostMoney />;
-      // text tools
+      // ==================================text tools========================
       case "word-counter":
         return <WordCounter />;
-      case "code-to-text-ratio":
-        return <CodeToTextRatio />;
-      case "invisible-character":
-        return <InvisibleCharacter />;
+      // case "code-to-text-ratio":
+      //   return <CodeToTextRatio />;
+      // case "invisible-character":
+      //   return <InvisibleCharacter />;
       case "text-to-word":
         return <TextToWord />;
       case "text-to-pdf":
@@ -156,15 +158,15 @@ export default function ToolDetailsPage({
         return <KeywordsByTotalWordRatio />;
       case "word-combiner":
         return <WordCombiner />;
-      case "ascii-to-text":
-        return <ASCIIToTextConverter />;
+      // case "ascii-to-text":
+      //   return <ASCIIToTextConverter />;
       case "text-to-ascii":
         return <ASCIIToTextConverter />;
       // case "online-text-editor":
       //   return <TextEditor />;
-      case "word-pages":
-        return <WordsToPages />;
-      // developer tools
+      // case "word-pages":
+      //   return <WordsToPages />;
+      // =========================developer tools==========================
       case "minify-html":
         return <MinifyTools />;
       case "minify-css":
@@ -193,34 +195,33 @@ export default function ToolDetailsPage({
         return <SourceCodeOfWebpage />;
       case "server-status":
         return <ServerStatus />;
-      case "dns-records":
-        return <DNSRecordsChecker />;
-      // generators tools
+      // case "dns-records":
+      //   return <DNSRecordsChecker />;
+      // ====================generators tools======================
       case "reverse-text-generator":
         return <ReverseTextGenerator />;
       case "upside-down-text-generator":
         return <UpsideDownTextGenerator />;
       case "password-generator":
         return <PasswordGenerator />;
-      // image tools
+      // ===============image tools===================
       case "text-to-handwriting":
         return <TextToHandWriting />;
       case "text-to-image":
         return <TextToImage />;
       // case "crop-image-online":
       //   return <CropImageOnline />;
-      case "binary-translator":
-        return <BinaryCalculator />;
+      
       // case "pdf-to-word":
       //   return <PdfToWord />;
-      // website management
+      // =====================website management=================
       case "google-malware-checker":
         return <GoogleMalwareChecker />;
-      case "detect-cms":
+      case "cms-checker":
         return <DetectCMS />;
       case "links-count-checker":
         return <WebsiteLinkCountChecker />;
-      // converters tools
+      // =================converters tools===================
       case "rgb-to-hex":
         return <RGBTOHEX />;
       case "hex-to-rgb":
@@ -267,8 +268,8 @@ export default function ToolDetailsPage({
         return <HexToText />;
       case "text-to-hex":
         return <TextToHex />;
-      case "multi-date-converter":
-        return <MultiDateConverter />;
+      // case "multi-date-converter":
+      //   return <MultiDateConverter />;
       default:
         return <ToolNotFound />;
     }

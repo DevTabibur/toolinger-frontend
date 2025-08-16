@@ -76,7 +76,7 @@ export default function ReverseTextGenerator() {
                         Generators Tools
                     </Link>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-foreground font-medium">Backwards Text Generator
+                    <span className="text-foreground font-medium">Revers Text Generator
                     </span>
                 </nav>
             </div>
@@ -88,10 +88,10 @@ export default function ReverseTextGenerator() {
                     <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
                             <h1 className="text-2xl font-bold text-center mb-1 text-gray-900 dark:text-gray-100">
-                                Backwards Text Generator
+                                Reverse Text Generator
                             </h1>
                             <p className="text-center mb-5 text-gray-700 dark:text-gray-300">
-                                Enter Text and click <b>Reverse Text</b>. This tool will reverse words and backwards text paragraphs.
+                                Enter Text and click <b>Reverse Text</b>. This tool will reverse words and reverse text paragraphs.
                             </p>
                             <div className="mb-4 relative">
                                 <textarea

@@ -133,7 +133,7 @@ export default function WordCombiner() {
                             Word Combiner
                         </h1>
                         <p className="text-center text-gray-600 dark:text-gray-300 mb-4">
-                            To use prepostseo <b>Word Combiner</b>, type your keywords in the box and press <b>Combine</b> (one word on each line)
+                            To use toolinger <b>Word Combiner</b>, type your keywords in the box and press <b>Combine</b> (one word on each line)
                         </p>
                         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6">
                             <div className="text-center text-xs text-gray-500 dark:text-gray-400 mb-3">
