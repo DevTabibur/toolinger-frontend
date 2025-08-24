@@ -35,7 +35,7 @@ interface MenuItem {
     permission?: string
     children?: MenuItem[]
 }
-
+ 
 const menuItems: MenuItem[] = [
     {
         id: "overview",
@@ -61,6 +61,26 @@ const menuItems: MenuItem[] = [
                 label: "Blog Settings",
                 icon: <Settings className="w-4 h-4" />,
                 href: "/dashboard/blog/settings",
+            },
+        ],
+    },
+    {
+        id: "blog-category",
+        label: "Blog Category",
+        icon: <Inbox className="w-5 h-5" />,
+        permission: "blog_category_management",
+        children: [
+            {
+                id: "add-category",
+                label: "Add Category",
+                icon: <Edit3 className="w-4 h-4" />,
+                href: "/dashboard/blog-category/add",
+            },
+            {
+                id: "manage-category",
+                label: "Manage Category",
+                icon: <BookOpen className="w-4 h-4" />,
+                href: "/dashboard/blog-category/manage",
             },
         ],
     },
