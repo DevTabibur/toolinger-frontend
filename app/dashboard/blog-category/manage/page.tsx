@@ -85,7 +85,9 @@ function CategoryManagePage() {
     const [search, setSearch] = useState("")
     const [statusFilter, setStatusFilter] = useState("All")
     const [page, setPage] = useState(1)
-    const [editModal, setEditModal] = useState<null | { _id: string; name: string; slug: string; status: string }>(null)
+    const [editModal, setEditModal] = useState<null | {
+        description: string; _id: string; name: string; slug: string; status: string 
+}>(null)
     const [categories, setCategories] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -142,13 +144,14 @@ function CategoryManagePage() {
     )
 
     // Edit Modal Handlers
-    const [editForm, setEditForm] = useState({ name: "", slug: "", status: "Active" })
+    const [editForm, setEditForm] = useState({ name: "", slug: "", status: "Active", description:"" })
     useEffect(() => {
         if (editModal) {
             setEditForm({
                 name: editModal.name,
                 slug: editModal.slug,
                 status: formatStatus(editModal.status),
+                description: editModal.description
             })
         }
     }, [editModal])
@@ -163,6 +166,7 @@ function CategoryManagePage() {
                 name: editForm.name,
                 slug: editForm.slug,
                 status: editForm.status.toLowerCase(),
+                description: editForm.description
             })
             if (res && res.success && res.data) {
                 // Update the local state with the updated category
@@ -511,6 +515,22 @@ function CategoryManagePage() {
                                         <option value="Active">Active</option>
                                         <option value="Inactive">Inactive</option>
                                     </select>
+                                </motion.div>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 8 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.16 }}
+                                >
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Description
+                                    </label>
+                                    <textarea
+                                        value={editForm?.description || ""}
+                                        onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
+                                        className="w-full px-3 py-2 rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#00dbed]"
+                                        required
+                                        rows={4}
+                                    />
                                 </motion.div>
                                 {editError && (
                                     <div className="text-red-500 text-sm">{editError}</div>
