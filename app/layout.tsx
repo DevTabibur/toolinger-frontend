@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "react-hot-toast"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
   verification: {
     google: "your-google-verification-code",
   },
-    generator: 'v0.dev'
+  generator: 'v0.dev'
 }
 
 export default function RootLayout({
@@ -63,6 +64,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

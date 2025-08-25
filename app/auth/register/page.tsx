@@ -5,6 +5,9 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
 import { Wrench, Eye, EyeOff } from "lucide-react";
+import { registerNewUser } from "@/app/api/auth.Api";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const TOOLINGER_COLOR = "#00b6d6";
 const TOOLINGER_GRADIENT_FROM = "#00b6d6";
@@ -31,6 +34,44 @@ const RegisterSchema = Yup.object().shape({
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const router = useRouter()
+
+  // handleSubmit function
+  const handleSubmit = async (
+    values: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+    },
+    { setSubmitting }: FormikHelpers<{
+      firstName: string;
+      lastName: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+    }>
+  ) => {
+    const { confirmPassword, ...rest } = values;
+    try {
+      const res = await registerNewUser(rest);
+      console.log("res", res)
+      if (res?.statusCode === 200) {
+        // Registration successful, you can redirect or show a success message here
+        console.log("Registration successful:", res);
+        toast.success(res?.message)
+        router.push('/dashboard')
+      } else {
+        // Handle unexpected response
+        console.log("Unexpected response from registerNewUser:", res);
+      }
+    } catch (error) {
+      // Handle network or unexpected errors
+      console.log("An error occurred during registration:", error);
+    }
+    
+  };
 
   return (
     <div
@@ -85,20 +126,7 @@ export default function RegisterPage() {
             confirmPassword: "",
           }}
           validationSchema={RegisterSchema}
-          onSubmit={(
-            values,
-            { setSubmitting }: FormikHelpers<{
-              firstName: string;
-              lastName: string;
-              email: string;
-              password: string;
-              confirmPassword: string;
-            }>
-          ) => {
-            const { confirmPassword, ...rest } = values;
-            console.log(rest);
-            setSubmitting(false);
-          }}
+          onSubmit={handleSubmit}
         >
           {({ isSubmitting }) => (
             <Form className="space-y-6">
