@@ -123,16 +123,13 @@ export default function BlogsPage() {
             setLoading(true);
             try {
                 const res = await getAllCategories();
+                console.log("cate", res)
                 if (mounted && res?.data) {
                     setCategories(res.data);
                 }
             } catch (e) {
                 // fallback to dummy categories if API fails
-                setCategories([
-                    { name: "Development", slug: "development" },
-                    { name: "Productivity", slug: "productivity" },
-                    { name: "Design", slug: "design" },
-                ]);
+                setCategories([]);
             } finally {
                 setLoading(false);
             }

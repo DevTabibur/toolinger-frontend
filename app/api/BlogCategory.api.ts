@@ -27,7 +27,7 @@ export async function createCategory(data: any) {
 // Get a category by slug
 export async function getCategoryBySlug(slug: string) {
   try {
-    const res = await axios.get(buildUrl(`/slug/${slug}`));
+    const res = await axios.get(`${API_BASE_URL}/blog-category/${slug}`);
     return res.data;
   } catch (error: any) {
     throw error?.response?.data || error;
@@ -37,7 +37,7 @@ export async function getCategoryBySlug(slug: string) {
 // Get a single category by ID
 export async function getCategoryDetails(categoryId: string) {
   try {
-    const res = await axios.get(buildUrl(`/${categoryId}`));
+    const res = await axios.get(`${API_BASE_URL}/blog-category/${categoryId}`);
     return res.data;
   } catch (error: any) {
     throw error?.response?.data || error;
@@ -45,41 +45,35 @@ export async function getCategoryDetails(categoryId: string) {
 }
 
 // Get all categories
-export async function getAllCategories(params?: any) {
+export async function getAllCategories() {
   try {
-    const res = await axios.get(buildUrl("/"), { params });
+    const res = await axios.get(`${API_BASE_URL}/blog-category`);
     return res.data;
   } catch (error: any) {
-    throw error?.response?.data || error;
+    console.log("failed to fetched the category", error)
+    // throw error?.response?.data || error;
   }
 }
 
 // Delete a category by ID
 export async function deleteCategory(categoryId: string) {
   try {
-    const res = await axios.delete(buildUrl(`/${categoryId}`));
+    const res = await axios.delete(`${API_BASE_URL}/blog-category/${categoryId}`);
     return res.data;
   } catch (error: any) {
-    throw error?.response?.data || error;
+    // throw error?.response?.data || error;
+    console.log("delete category failed", error)
   }
 }
 
-// Toggle category status (active/inactive)
-export async function toggleCategoryStatus(categoryId: string) {
-  try {
-    const res = await axios.patch(buildUrl(`/${categoryId}/toggle-status`));
-    return res.data;
-  } catch (error: any) {
-    throw error?.response?.data || error;
-  }
-}
 
 // Update a category (full update: name, description, images, etc.)
 export async function updateCategory(categoryId: string, data: any) {
   try {
-    const res = await axios.patch(buildUrl(`/${categoryId}`), data);
+    const res = await axios.patch(`${API_BASE_URL}/blog-category/${categoryId}`, data);
     return res.data;
   } catch (error: any) {
-    throw error?.response?.data || error;
+    console.log("update category failed", error)
+    // throw error?.response?.data || error;
   }
 }

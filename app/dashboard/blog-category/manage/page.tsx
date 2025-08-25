@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, useEffect } from "react"
 import {
     Pencil,
     Trash2,
@@ -10,21 +10,7 @@ import {
     ChevronRight,
 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-
-const mockCategories = [
-    { id: 1, name: "Tech", slug: "tech", status: "Active", createdAt: "2024-05-01" },
-    { id: 2, name: "Lifestyle", slug: "lifestyle", status: "Inactive", createdAt: "2024-04-15" },
-    { id: 3, name: "Finance", slug: "finance", status: "Active", createdAt: "2024-03-20" },
-    { id: 4, name: "Travel", slug: "travel", status: "Active", createdAt: "2024-02-10" },
-    { id: 5, name: "Food", slug: "food", status: "Inactive", createdAt: "2024-01-05" },
-    { id: 6, name: "Health", slug: "health", status: "Active", createdAt: "2023-12-22" },
-    { id: 7, name: "Education", slug: "education", status: "Active", createdAt: "2023-11-30" },
-    { id: 8, name: "Gaming", slug: "gaming", status: "Inactive", createdAt: "2023-10-18" },
-    { id: 9, name: "Business", slug: "business", status: "Active", createdAt: "2023-09-12" },
-    { id: 10, name: "Science", slug: "science", status: "Active", createdAt: "2023-08-01" },
-    { id: 11, name: "Sports", slug: "sports", status: "Inactive", createdAt: "2023-07-15" },
-    { id: 12, name: "News", slug: "news", status: "Active", createdAt: "2023-06-10" },
-]
+import { getAllCategories, updateCategory, deleteCategory } from "@/app/api/BlogCategory.api"
 
 const PAGE_SIZE = 6
 const statusOptions = ["All", "Active", "Inactive"]
@@ -82,12 +68,55 @@ function Breadcrumb() {
     )
 }
 
+function formatStatus(status: string) {
+    // API returns "active" or "inactive", UI expects "Active" or "Inactive"
+    if (!status) return ""
+    return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+}
+
+function formatDate(dateString: string) {
+    if (!dateString) return ""
+    const date = new Date(dateString)
+    // Format as YYYY-MM-DD
+    return date.toISOString().split("T")[0]
+}
+
 function CategoryManagePage() {
     const [search, setSearch] = useState("")
     const [statusFilter, setStatusFilter] = useState("All")
     const [page, setPage] = useState(1)
-    const [editModal, setEditModal] = useState<null | { id: number; name: string; slug: string; status: string }>(null)
-    const [categories, setCategories] = useState(mockCategories)
+    const [editModal, setEditModal] = useState<null | { _id: string; name: string; slug: string; status: string }>(null)
+    const [categories, setCategories] = useState<any[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+    const [editLoading, setEditLoading] = useState(false)
+    const [editError, setEditError] = useState<string | null>(null)
+    const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
+    const [deleteError, setDeleteError] = useState<string | null>(null)
+
+    // Fetch categories from API
+    useEffect(() => {
+        let ignore = false
+        async function fetchCategories() {
+            setLoading(true)
+            setError(null)
+            try {
+                const res = await getAllCategories()
+                // If API returns { statusCode, success, data, message }
+                if (res && res.success && Array.isArray(res.data)) {
+                    if (!ignore) setCategories(res.data)
+                } else {
+                    if (!ignore) setError("Failed to fetch categories.")
+                }
+            } catch (err) {
+                if (!ignore) setError("Failed to fetch categories.")
+            } finally {
+                if (!ignore) setLoading(false)
+            }
+        }
+        fetchCategories()
+        return () => { ignore = true }
+    }, [])
 
     // Filtering
     const filteredCategories = useMemo(() => {
@@ -95,12 +124,12 @@ function CategoryManagePage() {
         if (search.trim()) {
             filtered = filtered.filter(
                 (cat) =>
-                    cat.name.toLowerCase().includes(search.toLowerCase()) ||
-                    cat.slug.toLowerCase().includes(search.toLowerCase())
+                    cat.name?.toLowerCase().includes(search.toLowerCase()) ||
+                    cat.slug?.toLowerCase().includes(search.toLowerCase())
             )
         }
         if (statusFilter !== "All") {
-            filtered = filtered.filter((cat) => cat.status === statusFilter)
+            filtered = filtered.filter((cat) => formatStatus(cat.status) === statusFilter)
         }
         return filtered
     }, [categories, search, statusFilter])
@@ -114,32 +143,72 @@ function CategoryManagePage() {
 
     // Edit Modal Handlers
     const [editForm, setEditForm] = useState({ name: "", slug: "", status: "Active" })
-    React.useEffect(() => {
+    useEffect(() => {
         if (editModal) {
             setEditForm({
                 name: editModal.name,
                 slug: editModal.slug,
-                status: editModal.status,
+                status: formatStatus(editModal.status),
             })
         }
     }, [editModal])
 
-    function handleEditSave() {
-        setCategories((prev) =>
-            prev.map((cat) =>
-                cat.id === editModal?.id
-                    ? { ...cat, ...editForm }
-                    : cat
-            )
-        )
-        setEditModal(null)
-    }
-
-    function handleDelete(id: number) {
-        if (window.confirm("Are you sure you want to delete this category?")) {
-            setCategories((prev) => prev.filter((cat) => cat.id !== id))
+    async function handleEditSave() {
+        if (!editModal) return
+        setEditLoading(true)
+        setEditError(null)
+        try {
+            // Call the API to update the category
+            const res = await updateCategory(editModal._id, {
+                name: editForm.name,
+                slug: editForm.slug,
+                status: editForm.status.toLowerCase(),
+            })
+            if (res && res.success && res.data) {
+                // Update the local state with the updated category
+                setCategories((prev) =>
+                    prev.map((cat) =>
+                        cat._id === editModal._id
+                            ? { ...cat, ...res.data }
+                            : cat
+                    )
+                )
+                setEditModal(null)
+            } else {
+                setEditError(res?.message || "Failed to update category.")
+            }
+        } catch (err: any) {
+            setEditError("Failed to update category.")
+        } finally {
+            setEditLoading(false)
         }
     }
+
+    async function handleDelete(_id: string) {
+        if (!window.confirm("Are you sure you want to delete this category?")) {
+            return
+        }
+        setDeleteLoading(_id)
+        setDeleteError(null)
+        try {
+            const res = await deleteCategory(_id)
+            console.log("res", res)
+            if (res && res.success) {
+                setCategories((prev) => prev.filter((cat) => cat._id !== _id))
+            } else {
+                setDeleteError(res?.message || "Failed to delete category.")
+            }
+        } catch (err: any) {
+            setDeleteError("Failed to delete category.")
+        } finally {
+            setDeleteLoading(null)
+        }
+    }
+
+    // Reset page if filter/search changes and page is out of range
+    useEffect(() => {
+        if (page > totalPages) setPage(1)
+    }, [filteredCategories, totalPages, page])
 
     return (
         <motion.div
@@ -149,8 +218,6 @@ function CategoryManagePage() {
             animate="visible"
             exit="exit"
         >
-
-
             <motion.div
                 className="mb-2 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
                 initial={{ opacity: 0, y: 24 }}
@@ -166,14 +233,6 @@ function CategoryManagePage() {
                     >
                         Manage Blog Categories
                     </motion.h1>
-                    {/* <motion.p
-                        className="text-gray-600 dark:text-gray-400 mt-1 text-sm"
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.18, duration: 0.4 }}
-                    >
-                        View, search, filter, edit, and delete blog categories.
-                    </motion.p> */}
                 </div>
                 <motion.div
                     className="flex gap-2"
@@ -217,7 +276,6 @@ function CategoryManagePage() {
 
             <Breadcrumb />
 
-
             <motion.div
                 className="overflow-x-auto rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
                 initial={{ opacity: 0, y: 24 }}
@@ -229,6 +287,7 @@ function CategoryManagePage() {
                         <tr>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Name</th>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Slug</th>
+                            <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Description</th>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th>
                             <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Created</th>
                             <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Action</th>
@@ -236,7 +295,19 @@ function CategoryManagePage() {
                     </thead>
                     <AnimatePresence>
                         <tbody>
-                            {paginatedCategories.length === 0 ? (
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                                        Loading...
+                                    </td>
+                                </tr>
+                            ) : error ? (
+                                <tr>
+                                    <td colSpan={5} className="px-4 py-8 text-center text-red-500 dark:text-red-400">
+                                        {error}
+                                    </td>
+                                </tr>
+                            ) : paginatedCategories.length === 0 ? (
                                 <tr>
                                     <td colSpan={5} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
                                         No categories found.
@@ -245,7 +316,7 @@ function CategoryManagePage() {
                             ) : (
                                 paginatedCategories.map((cat, i) => (
                                     <motion.tr
-                                        key={cat.id}
+                                        key={cat._id}
                                         className="hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                                         custom={i}
                                         initial="hidden"
@@ -255,19 +326,20 @@ function CategoryManagePage() {
                                     >
                                         <td className="px-4 py-3 text-gray-900 dark:text-white">{cat.name}</td>
                                         <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{cat.slug}</td>
+                                        <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{cat.description}</td>
                                         <td className="px-4 py-3">
                                             <span
                                                 className={classNames(
                                                     "inline-block px-2 py-1 rounded text-xs font-medium",
-                                                    cat.status === "Active"
+                                                    formatStatus(cat.status) === "Active"
                                                         ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
                                                         : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
                                                 )}
                                             >
-                                                {cat.status}
+                                                {formatStatus(cat.status)}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{cat.createdAt}</td>
+                                        <td className="px-4 py-3 text-gray-600 dark:text-gray-400">{formatDate(cat.createdAt)}</td>
                                         <td className="px-4 py-3 text-center">
                                             <motion.button
                                                 whileTap={{ scale: 0.92 }}
@@ -283,10 +355,18 @@ function CategoryManagePage() {
                                                 whileHover={{ scale: 1.08, backgroundColor: "rgba(239,68,68,0.08)" }}
                                                 className="inline-flex items-center justify-center p-2 rounded hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400 transition"
                                                 title="Delete"
-                                                onClick={() => handleDelete(cat.id)}
+                                                onClick={() => handleDelete(cat._id)}
+                                                disabled={deleteLoading === cat._id}
                                             >
-                                                <Trash2 className="w-4 h-4" />
+                                                {deleteLoading === cat._id ? (
+                                                    <span className="w-4 h-4 animate-spin border-2 border-t-transparent border-red-600 rounded-full inline-block"></span>
+                                                ) : (
+                                                    <Trash2 className="w-4 h-4" />
+                                                )}
                                             </motion.button>
+                                            {deleteError && deleteLoading === null && (
+                                                <div className="text-xs text-red-500 mt-1">{deleteError}</div>
+                                            )}
                                         </td>
                                     </motion.tr>
                                 ))
@@ -432,6 +512,9 @@ function CategoryManagePage() {
                                         <option value="Inactive">Inactive</option>
                                     </select>
                                 </motion.div>
+                                {editError && (
+                                    <div className="text-red-500 text-sm">{editError}</div>
+                                )}
                                 <motion.div
                                     className="flex justify-end gap-2 pt-2"
                                     initial={{ opacity: 0, y: 8 }}
@@ -443,6 +526,7 @@ function CategoryManagePage() {
                                         className="px-4 py-2 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
                                         onClick={() => setEditModal(null)}
                                         whileTap={{ scale: 0.95 }}
+                                        disabled={editLoading}
                                     >
                                         Cancel
                                     </motion.button>
@@ -450,8 +534,9 @@ function CategoryManagePage() {
                                         type="submit"
                                         className="px-4 py-2 rounded bg-gradient-to-r from-[#005c82] to-[#00dbed] text-white font-semibold hover:from-[#007fa3] hover:to-[#00b8c6] transition"
                                         whileTap={{ scale: 0.97 }}
+                                        disabled={editLoading}
                                     >
-                                        Save
+                                        {editLoading ? "Saving..." : "Save"}
                                     </motion.button>
                                 </motion.div>
                             </form>

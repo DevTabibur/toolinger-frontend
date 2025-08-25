@@ -40,12 +40,12 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-6">
-            <Link
+            {/* <Link
               href="/"
               className="text-sm font-medium hover:text-primary transition-colors"
             >
               Home
-            </Link>
+            </Link> */}
             <div className="relative group">
               <button className="text-sm font-medium hover:text-primary transition-colors flex items-center">
                 Categories
@@ -81,6 +81,24 @@ export function Header() {
             >
               Contact
             </Link>
+            <Link
+              href="/blogs"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
+              Blog
+            </Link>
+            {/* <Link
+            href="/login"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
+            Login
+          </Link>
+          <Link
+            href="/register"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
+            Registration
+          </Link> */}
           </nav>
 
           {/* Search Bar */}
@@ -88,12 +106,14 @@ export function Header() {
             <GlobalSearch placeholder="Search tools..." variant="header" />
           </div>
 
+          
+
           {/* Theme Toggle & Mobile Menu */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 ">
 
             <button
               aria-label="Toggle theme"
-              className="mt-4 md:mt-0 p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+              className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             >
               {theme === "dark" ? (
@@ -156,6 +176,24 @@ export function Header() {
                 className="text-sm font-medium hover:text-primary transition-colors"
               >
                 Contact
+              </Link>
+              <Link
+                href="/blogs"
+                className="text-sm font-medium hover:text-primary transition-colors"
+              >
+                Blog
+              </Link>
+              <Link
+                href="/auth/login"
+                className="text-sm font-medium hover:text-primary transition-colors"
+              >
+                Login
+              </Link>
+              <Link
+                href="/auth/register"
+                className="text-sm font-medium hover:text-primary transition-colors"
+              >
+                Registration
               </Link>
             </div>
           </div>
