@@ -6,6 +6,10 @@ import * as Yup from "yup";
 import Link from "next/link";
 import { Wrench } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
+import { loginExistingUser } from "@/app/api/auth.Api";
+import { useRouter } from "next/navigation";
+import { setToLocalStorage } from "@/lib/local-storage";
 
 // Toolinger brand color (from image): #00b6d6
 const TOOLINGER_COLOR = "#00b6d6";
@@ -23,6 +27,44 @@ const LoginSchema = Yup.object().shape({
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
+
+    const router = useRouter()
+
+
+
+    // handleSubmit function
+    const handleSubmit = async (
+        values: {
+
+            email: string;
+            password: string;
+        },
+        { setSubmitting }: FormikHelpers<{
+
+            email: string;
+            password: string;
+        }>
+    ) => {
+        try {
+            const res = await loginExistingUser(values);
+            console.log("res", res)
+            if (res?.statusCode === 200) {
+                // Registration successful, you can redirect or show a success message here
+                console.log("login successful:", res);
+                toast.success(res?.message)
+                setToLocalStorage("accessToken", res?.data?.accessToken)
+                router.push('/dashboard')
+            } else {
+                // Handle unexpected response
+                toast.error("Something went wrong")
+                console.log("Unexpected response from login:", res);
+            }
+        } catch (error) {
+            // Handle network or unexpected errors
+            console.log("An error occurred during login:", error);
+        }
+
+    };
 
     return (
         <motion.div
@@ -91,13 +133,7 @@ export default function LoginPage() {
                 <Formik
                     initialValues={{ email: "", password: "" }}
                     validationSchema={LoginSchema}
-                    onSubmit={(
-                        values,
-                        { setSubmitting }: FormikHelpers<{ email: string; password: string }>
-                    ) => {
-                        console.log(values);
-                        setSubmitting(false);
-                    }}
+                    onSubmit={handleSubmit}
                 >
                     {({ isSubmitting }) => (
                         <Form className="space-y-6">
@@ -161,15 +197,15 @@ export default function LoginPage() {
                                         className="absolute top-1/2 -translate-y-1/2 right-3 flex items-center text-gray-400 hover:text-cyan-400"
                                         onClick={() => setShowPassword((v) => !v)}
                                         aria-label={showPassword ? "Hide password" : "Show password"}
-                                        // style={{
-                                        //     height: "2rem", // Ensures the button is tall enough for vertical centering
-                                        //     display: "flex",
-                                        //     alignItems: "center",
-                                        //     justifyContent: "center",
-                                        //     padding: 0,
-                                        //     background: "none",
-                                        //     border: "none",
-                                        // }}
+                                    // style={{
+                                    //     height: "2rem", // Ensures the button is tall enough for vertical centering
+                                    //     display: "flex",
+                                    //     alignItems: "center",
+                                    //     justifyContent: "center",
+                                    //     padding: 0,
+                                    //     background: "none",
+                                    //     border: "none",
+                                    // }}
                                     >
                                         <AnimatePresence mode="wait" initial={false}>
                                             {showPassword ? (

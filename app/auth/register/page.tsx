@@ -8,6 +8,7 @@ import { Wrench, Eye, EyeOff } from "lucide-react";
 import { registerNewUser } from "@/app/api/auth.Api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { setToLocalStorage } from "@/lib/local-storage";
 
 const TOOLINGER_COLOR = "#00b6d6";
 const TOOLINGER_GRADIENT_FROM = "#00b6d6";
@@ -61,6 +62,7 @@ export default function RegisterPage() {
         // Registration successful, you can redirect or show a success message here
         console.log("Registration successful:", res);
         toast.success(res?.message)
+        setToLocalStorage("accessToken", res?.data?.accessToken)
         router.push('/dashboard')
       } else {
         // Handle unexpected response
@@ -70,7 +72,7 @@ export default function RegisterPage() {
       // Handle network or unexpected errors
       console.log("An error occurred during registration:", error);
     }
-    
+
   };
 
   return (

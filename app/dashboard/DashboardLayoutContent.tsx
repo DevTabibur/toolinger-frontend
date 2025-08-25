@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTheme } from "next-themes"
+import { useRouter } from "next/navigation";
 import {
     LayoutDashboard,
     Settings,
@@ -26,6 +27,7 @@ import {
 } from "lucide-react"
 import { useRole } from "@/contexts/RoleContext"
 import Link from "next/link"
+import { getFromLocalStorage } from "@/lib/local-storage"
 
 interface MenuItem {
     id: string
@@ -35,7 +37,7 @@ interface MenuItem {
     permission?: string
     children?: MenuItem[]
 }
- 
+
 const menuItems: MenuItem[] = [
     {
         id: "overview",
@@ -205,6 +207,15 @@ export default function DashboardLayoutClient({
 
     console.log("mobileMenuOpen", mobileMenuOpen)
     console.log("sidebarCollapsed", sidebarCollapsed)
+    const router = useRouter()
+
+    const token = getFromLocalStorage("accessToken")
+    useEffect(() => {
+
+        if (!token) {
+            router.push("/auth/login")
+        }
+    }, [token]);
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
@@ -488,7 +499,7 @@ export default function DashboardLayoutClient({
                 </header>
 
                 {/* Page Content */}
-                
+
                 <main className="p-6 flex-1 flex flex-col">{children}</main>
             </div>
         </div>

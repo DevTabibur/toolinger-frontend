@@ -28,7 +28,7 @@ export async function registerNewUser(data: any) {
 // Login Existing User
 export async function loginExistingUser(data: any) {
     try {
-        const res = await axios.post(buildUrl("/auth/login"), data);
+        const res = await axios.post(`${API_BASE_URL}/auth/login`, data);
         return res.data;
     } catch (error: any) {
         console.log("Login error", error);
