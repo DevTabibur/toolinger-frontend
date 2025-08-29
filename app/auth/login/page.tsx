@@ -47,12 +47,12 @@ export default function LoginPage() {
     ) => {
         try {
             const res = await loginExistingUser(values);
-            console.log("res", res)
+            // console.log("res", res)
             if (res?.statusCode === 200) {
                 // Registration successful, you can redirect or show a success message here
-                console.log("login successful:", res);
+                // console.log("login successful:", res);
                 toast.success(res?.message)
-                setToLocalStorage("accessToken", res?.data?.accessToken)
+                setToLocalStorage("toolinger", res?.data?.accessToken)
                 router.push('/dashboard')
             } else {
                 // Handle unexpected response
@@ -121,7 +121,7 @@ export default function LoginPage() {
                         Or{" "}
                         <Link
                             href="/auth/register"
-                            className="font-medium"
+                            className="font-medium underline"
                             style={{
                                 color: TOOLINGER_COLOR,
                             }}

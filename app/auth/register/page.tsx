@@ -45,6 +45,8 @@ export default function RegisterPage() {
       email: string;
       password: string;
       confirmPassword: string;
+      role: "user";
+      status: "active";
     },
     { setSubmitting }: FormikHelpers<{
       firstName: string;
@@ -52,6 +54,8 @@ export default function RegisterPage() {
       email: string;
       password: string;
       confirmPassword: string;
+      role: "user";
+      status: "active";
     }>
   ) => {
     const { confirmPassword, ...rest } = values;
@@ -60,9 +64,9 @@ export default function RegisterPage() {
       console.log("res", res)
       if (res?.statusCode === 200) {
         // Registration successful, you can redirect or show a success message here
-        console.log("Registration successful:", res);
+        // console.log("Registration successful:", res);
         toast.success(res?.message)
-        setToLocalStorage("accessToken", res?.data?.accessToken)
+        setToLocalStorage("toolinger", res?.data?.accessToken)
         router.push('/dashboard')
       } else {
         // Handle unexpected response
@@ -110,7 +114,7 @@ export default function RegisterPage() {
             Or{" "}
             <Link
               href="/auth/login"
-              className="font-medium"
+              className="font-medium underline"
               style={{
                 color: TOOLINGER_COLOR,
               }}
@@ -126,6 +130,8 @@ export default function RegisterPage() {
             email: "",
             password: "",
             confirmPassword: "",
+            status: "active",
+            role: "user",
           }}
           validationSchema={RegisterSchema}
           onSubmit={handleSubmit}

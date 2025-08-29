@@ -1,3 +1,4 @@
+import { getFromLocalStorage } from "@/lib/local-storage";
 import axios from "axios";
 
 const API_BASE_URL = 'http://localhost:5000/api/v1';
@@ -70,12 +71,43 @@ export async function resetPassword(data: any) {
 }
 
 // Log Out User
-export async function logOutUser(userId: string) {
+export async function logOutUser() {
     try {
-        const res = await axios.post(buildUrl(`/auth/log-out/${userId}`));
+        const adsToken = getFromLocalStorage("toolinger")
+
+
+        if (!adsToken) {
+            console.log("No toolinger found in localStorage");
+        }
+        const res = await axios.post(`${API_BASE_URL}/auth/logout`, {
+            headers: {
+                Authorization: `Bearer ${adsToken}`
+            }
+        });
         return res.data;
     } catch (error: any) {
         console.log("Log out error", error);
         // throw error?.response?.data || error;
     }
 }
+
+
+export const getMe = async () => {
+    try {
+        const adsToken = getFromLocalStorage("toolinger")
+
+
+        if (!adsToken) {
+            console.log("No toolinger found in localStorage");
+        }
+        const response = await axios.get(`${API_BASE_URL}/auth/get-me`, {
+            headers: {
+                Authorization: `${adsToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.log("Error getting me", error);
+        // throw error;
+    }
+};

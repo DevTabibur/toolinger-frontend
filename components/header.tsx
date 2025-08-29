@@ -5,12 +5,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { Menu, X, Sun, Moon, Wrench } from "lucide-react";
+import { Menu, X, Sun, Moon, Wrench, Loader2 } from "lucide-react";
 import { GlobalSearch } from "@/components/global-search";
+import { useUserContext } from "@/contexts/UserContext";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { user, isLoading, loggedIn, logout } = useUserContext()
+  console.log("user", user)
+
 
   const categories = [
     "Text Tools",
@@ -25,6 +29,10 @@ export function Header() {
     "Website Management",
     // "More Tools",
   ];
+
+  // if (isLoading) {
+  //   return <Loader2 />
+  // }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -87,14 +95,20 @@ export function Header() {
             >
               Blog
             </Link>
-            {/* <Link
-            href="/login"
-            className="text-sm font-medium hover:text-primary transition-colors"
-          >
-            Login
-          </Link>
-          <Link
-            href="/register"
+            {user?.email ? <Link
+              href="/dashboard"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
+              Dashboard
+            </Link> : <Link
+              href="/auth/login"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
+              Login
+            </Link>}
+
+            {/*<Link
+            href="/auth/register"
             className="text-sm font-medium hover:text-primary transition-colors"
           >
             Registration
@@ -106,7 +120,7 @@ export function Header() {
             <GlobalSearch placeholder="Search tools..." variant="header" />
           </div>
 
-          
+
 
           {/* Theme Toggle & Mobile Menu */}
           <div className="flex items-center space-x-2 ">
@@ -183,18 +197,23 @@ export function Header() {
               >
                 Blog
               </Link>
-              <Link
-                href="/auth/login"
-                className="text-sm font-medium hover:text-primary transition-colors"
-              >
-                Login
-              </Link>
-              <Link
+              {user?.email ? <Link
+              href="/dashboard"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
+              Dashboard
+            </Link> : <Link
+              href="/auth/login"
+              className="text-sm font-medium hover:text-primary transition-colors"
+            >
+              Login
+            </Link>}
+              {/* <Link
                 href="/auth/register"
                 className="text-sm font-medium hover:text-primary transition-colors"
               >
                 Registration
-              </Link>
+              </Link> */}
             </div>
           </div>
         )}
