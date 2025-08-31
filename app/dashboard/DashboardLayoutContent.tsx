@@ -22,6 +22,8 @@ import {
   BookOpen,
   Edit3,
   PenTool,
+  FilePlus2,
+  FileStack,
 } from "lucide-react";
 import { useRole } from "@/contexts/RoleContext";
 import Link from "next/link";
@@ -92,46 +94,66 @@ const menuItems: MenuItem[] = [
     ],
   },
   {
-    id: "seo",
+    id: "seo-management",
     label: "SEO Management",
     icon: <Search className="w-5 h-5" />,
-    permission: "seo_management",
+    permission: "seo__management",
     children: [
       {
-        id: "seo-pages",
-        label: "Page SEO",
+        id: "seo-create",
+        label: "Create SEO",
         icon: <FileText className="w-4 h-4" />,
-        href: "/dashboard/seo",
+        href: "/dashboard/seo/create",
       },
       {
-        id: "seo-tools",
-        label: "Tool SEO",
+        id: "seo-manage",
+        label: "Manage SEO",
         icon: <Settings className="w-4 h-4" />,
-        href: "/dashboard/seo/tools",
+        href: "/dashboard/seo/manage",
       },
     ],
   },
   {
-    id: "analytics",
-    label: "Analytics",
-    icon: <BarChart3 className="w-5 h-5" />,
-    permission: "analytics",
-    href: "/dashboard/analytics",
+    id: "article-management",
+    label: "Article Management",
+    icon: <FileStack className="w-5 h-5" />,
+    permission: "article_management",
+    children: [
+      {
+        id: "article-create",
+        label: "Create Article",
+        icon: <FilePlus2 className="w-4 h-4" />,
+        href: "/dashboard/article/create",
+      },
+      {
+        id: "article-manage",
+        label: "Manage Article",
+        icon: <BookOpen className="w-4 h-4" />,
+        href: "/dashboard/article/manage",
+      },
+    ],
   },
-  {
-    id: "users",
-    label: "User Management",
-    icon: <Users className="w-5 h-5" />,
-    permission: "user_management",
-    href: "/dashboard/users",
-  },
-  {
-    id: "settings",
-    label: "Settings",
-    icon: <Settings className="w-5 h-5" />,
-    permission: "settings",
-    href: "/dashboard/settings",
-  },
+  // {
+  //   id: "analytics",
+  //   label: "Analytics",
+  //   icon: <BarChart3 className="w-5 h-5" />,
+  //   permission: "analytics",
+  //   href: "/dashboard/analytics",
+  // },
+  // {
+  //   id: "users",
+  //   label: "User Management",
+  //   icon: <Users className="w-5 h-5" />,
+  //   permission: "user_management",
+  //   href: "/dashboard/users",
+  // },
+  // {
+  //   id: "settings",
+  //   label: "Settings",
+  //   icon: <Settings className="w-5 h-5" />,
+  //   permission: "settings",
+  //   href: "/dashboard/settings",
+  // },
 ];
 
 // Sidebar width constants for layout
