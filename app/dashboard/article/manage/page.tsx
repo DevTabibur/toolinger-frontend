@@ -1,297 +1,344 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { Loader2, Pencil, Trash2, ArrowUp, ArrowDown, Search } from "lucide-react";
-import { getDynamicPagesArticleAndSeoById } from "@/app/api/pageManagement.Api";
+import { Home } from "lucide-react";
+import {
+  deleteDynamicPagesArticleAndSeo,
+  getAllArticlesOrSeo,
+  updateDynamicPagesArticleAndSeo,
+} from "@/app/api/pageManagement.Api";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { DynamicTable } from "@/components/ui/table";
+import toast from "react-hot-toast";
+import { QuillField } from "@/form/QuillField";
 
 const PAGE_SIZE = 10;
 
-const columns = [
-  { key: "slug", label: "Slug", sortable: true },
-  { key: "createdAt", label: "Created At", sortable: true },
-  { key: "updatedAt", label: "Updated At", sortable: true },
-  { key: "actions", label: "Actions", sortable: false },
-];
 
-function formatDate(dateStr: string) {
-  if (!dateStr) return "-";
-  const d = new Date(dateStr);
-  return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+
+// Simple Modal component
+function Modal({ open, onClose, children }: { open: boolean; onClose: () => void; children: React.ReactNode }) {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 min-w-[350px] max-w-lg w-full relative">
+        <button
+          className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          ×
+        </button>
+        {children}
+      </div>
+    </div>
+  );
 }
 
 export default function ManageArticlesPage() {
   const router = useRouter();
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all");
-  const [sortKey, setSortKey] = useState("createdAt");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [page, setPage] = useState(1);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch articles
-//   useEffect(() => {
-//     let ignore = false;
-//     setLoading(true);
-//     getDynamicPagesArticleAndSeoById()
-//       .then((data: any) => {
-//         if (!ignore) {
-//           setArticles(Array.isArray(data) ? data : []);
-//         }
-//       })
-//       .catch(() => {
-//         if (!ignore) setError("Failed to load articles.");
-//       })
-//       .finally(() => {
-//         if (!ignore) setLoading(false);
-//       });
-//     return () => {
-//       ignore = true;
-//     };
-//   }, []);
-
-  // Filtering and searching
-  const filteredArticles = useMemo(() => {
-    let filtered = articles;
-    if (search.trim()) {
-      const s = search.trim().toLowerCase();
-      filtered = filtered.filter(
-        (a) =>
-          a.slug?.toLowerCase().includes(s) ||
-          a.content?.toLowerCase().includes(s) ||
-          a.imageAlt?.toLowerCase().includes(s)
-      );
-    }
-    if (filter !== "all") {
-      // Example: filter by published/unpublished if such field exists
-      filtered = filtered.filter((a) => a.status === filter);
-    }
-    return filtered;
-  }, [articles, search, filter]);
-
-  // Sorting
-  const sortedArticles = useMemo(() => {
-    const sorted = [...filteredArticles];
-    if (sortKey !== "actions") {
-      sorted.sort((a, b) => {
-        let vA = a[sortKey];
-        let vB = b[sortKey];
-        if (sortKey === "createdAt" || sortKey === "updatedAt") {
-          vA = vA ? new Date(vA).getTime() : 0;
-          vB = vB ? new Date(vB).getTime() : 0;
-        }
-        if (vA < vB) return sortOrder === "asc" ? -1 : 1;
-        if (vA > vB) return sortOrder === "asc" ? 1 : -1;
-        return 0;
-      });
-    }
-    return sorted;
-  }, [filteredArticles, sortKey, sortOrder]);
-
-  // Pagination
-  const totalPages = Math.max(1, Math.ceil(sortedArticles.length / PAGE_SIZE));
-  const paginatedArticles = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return sortedArticles.slice(start, start + PAGE_SIZE);
-  }, [sortedArticles, page]);
-
-  // Handle sort
-  const handleSort = (key: string) => {
-    if (key === sortKey) {
-      setSortOrder((o) => (o === "asc" ? "desc" : "asc"));
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-  };
-
   // Handle delete
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const handleDelete = async (id: string) => {
-    if (!window.confirm("Are you sure you want to delete this article?")) return;
-    setDeletingId(id);
-    setError(null);
-    try {
-    //   await deleteDynamicPagesArticle(id);
-      setArticles((prev) => prev.filter((a) => a.id !== id));
-    } catch (e) {
-      setError("Failed to delete article.");
+    const confirm = window.confirm("Are you sure you want to delete this article?");
+    if (confirm) {
+      setDeletingId(id);
+      const res = await deleteDynamicPagesArticleAndSeo(id, "article");
+      setDeletingId(null);
+      if (res?.statusCode === 200) {
+        toast.success("Article deleted successfully");
+        setArticles((prev) => prev.filter((a) => a.id !== id && a._id !== id));
+      } else {
+        toast.error("Something went wrong");
+      }
     }
-    setDeletingId(null);
   };
 
-  // Responsive table: horizontal scroll on small screens
-  return (
-    <div className="p-4 md:p-8 container mx-auto max-w-6xl">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Manage Articles</h1>
-        <button
-          className="px-4 py-2 rounded-lg bg-[#00dbed] text-white font-semibold hover:bg-[#009bbd] transition"
-          onClick={() => router.push("/dashboard/article/create")}
-        >
-          + Create Article
-        </button>
-      </div>
-      <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
-        <div className="relative w-full md:w-72">
-          <input
-            type="text"
-            placeholder="Search articles..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#00dbed] focus:border-transparent transition"
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
+  // Modal state for editing
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editArticle, setEditArticle] = useState<any>(null);
+  const [editContent, setEditContent] = useState<string>("");
+  const [editLoading, setEditLoading] = useState(false);
+
+  // Open modal and set current article
+  const openEditModal = (row: any) => {
+    setEditArticle(row);
+    // Try to get content from row.PageArticle.content or row.content
+    let content = "";
+    if (row?.PageArticle?.content) {
+      content = row.PageArticle.content;
+    } else if (row?.content) {
+      content = row.content;
+    }
+    setEditContent(content);
+    setEditModalOpen(true);
+  };
+
+  // Handle save in modal
+  const handleEditSave = async () => {
+    if (!editArticle) return;
+    setEditLoading(true);
+    try {
+      // Only update the content field
+      const id = editArticle._id || editArticle.id;
+      // The API expects the content inside PageArticle as an object, not a string
+      // So we must send: { PageArticle: { content: ... } }
+      const data = {
+        slug: editArticle.slug,
+        PageArticle: {
+          content: editContent,
+        },
+      };
+      const res = await updateDynamicPagesArticleAndSeo(id, data);
+      if (res?.statusCode === 200) {
+        toast.success("Article updated successfully");
+        // Update articles in state
+        setArticles((prev) =>
+          prev.map((a) => {
+            if ((a._id || a.id) === id) {
+              // Update content in PageArticle if exists, else in root
+              if (a.PageArticle) {
+                return {
+                  ...a,
+                  PageArticle: { ...a.PageArticle, content: editContent },
+                };
+              } else {
+                return { ...a, content: editContent };
+              }
+            }
+            return a;
+          })
+        );
+        setEditModalOpen(false);
+        setEditArticle(null);
+      } else {
+        // Try to show backend error message if available
+        if (res?.message) {
+          toast.error(res.message);
+        } else {
+          toast.error("Failed to update article");
+        }
+      }
+    } catch (e: any) {
+      toast.error("Error updating article");
+    }
+    setEditLoading(false);
+  };
+
+  // Table columns, with content preview from PageArticle.content
+  const columns: any[] = [
+    {
+      key: "sl",
+      label: "SL",
+      sortable: false,
+      render: (_row: any, _col: any, index: number) => Number(_row + 1),
+    },
+    {
+      key: "slug",
+      label: "Slug / Page",
+      sortable: true,
+      render: (row: any) => row.slug,
+    },
+    {
+      key: "id",
+      label: "Id",
+      sortable: false,
+      render: (row: any) => row._id || row.id,
+    },
+    {
+      key: "content",
+      label: "Content",
+      sortable: false,
+      render: (row: any) => {
+        return row?.PageArticle ? (
+          <span
+            className="line-clamp-2 block max-w-xs"
+            style={{
+              maxWidth: 300,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
             }}
+            dangerouslySetInnerHTML={{ __html: row?.PageArticle?.content }}
           />
-          <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
-        </div>
-        {/* Example filter: status (if available) */}
-        {/* <select
-          className="w-full md:w-48 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-          value={filter}
-          onChange={(e) => {
-            setFilter(e.target.value);
-            setPage(1);
-          }}
-        >
-          <option value="all">All Status</option>
-          <option value="published">Published</option>
-          <option value="draft">Draft</option>
-        </select> */}
-      </div>
-      <div className="overflow-x-auto rounded-lg shadow bg-white dark:bg-gray-900">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead>
-            <tr>
-              {columns.map((col) => (
-                <th
-                  key={col.key}
-                  className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider select-none"
-                  style={{ cursor: col.sortable ? "pointer" : "default" }}
-                  onClick={col.sortable ? () => handleSort(col.key) : undefined}
-                >
-                  <div className="flex items-center gap-1">
-                    {col.label}
-                    {col.sortable && sortKey === col.key && (
-                      sortOrder === "asc" ? (
-                        <ArrowUp className="w-3 h-3 inline" />
-                      ) : (
-                        <ArrowDown className="w-3 h-3 inline" />
-                      )
-                    )}
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={columns.length} className="py-10 text-center">
-                  <Loader2 className="w-6 h-6 mx-auto animate-spin text-gray-400" />
-                </td>
-              </tr>
-            ) : paginatedArticles.length === 0 ? (
-              <tr>
-                <td colSpan={columns.length} className="py-10 text-center text-gray-500 dark:text-gray-400">
-                  No articles found.
-                </td>
-              </tr>
-            ) : (
-              paginatedArticles.map((article) => (
-                <tr
-                  key={article.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-800 transition"
-                >
-                  <td className="px-4 py-3 whitespace-nowrap font-mono text-sm text-[#00dbed]">
-                    {article.slug}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm">
-                    {formatDate(article.createdAt)}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm">
-                    {formatDate(article.updatedAt)}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="flex gap-2">
-                      <button
-                        className="p-2 rounded hover:bg-[#00dbed]/10 text-[#00dbed] transition"
-                        title="Edit"
-                        onClick={() => router.push(`/dashboard/article/edit/${article.id}`)}
-                        aria-label="Edit"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </button>
-                      <button
-                        className="p-2 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 transition"
-                        title="Delete"
-                        onClick={() => handleDelete(article.id)}
-                        aria-label="Delete"
-                        disabled={deletingId === article.id}
-                      >
-                        {deletingId === article.id ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-      {/* Pagination */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-6">
-        <div className="text-sm text-gray-600 dark:text-gray-400">
-          Page {page} of {totalPages}
-        </div>
+        ) : (
+          <span className="text-gray-400 italic">No content</span>
+        );
+      },
+    },
+    {
+      key: "actions",
+      label: "Actions",
+      sortable: false,
+      render: (row: any) => (
         <div className="flex gap-2">
           <button
-            className="px-3 py-1 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition disabled:opacity-50"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
+            className="px-2 py-1 bg-blue-500 text-white rounded"
+            onClick={(e) => {
+              e.stopPropagation();
+              openEditModal(row);
+            }}
           >
-            Previous
+            Edit
           </button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) =>
-            (p === 1 || p === totalPages || Math.abs(p - page) <= 1) ? (
-              <button
-                key={p}
-                className={`px-3 py-1 rounded border ${
-                  p === page
-                    ? "bg-[#00dbed] text-white border-[#00dbed]"
-                    : "border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                } transition`}
-                onClick={() => setPage(p)}
-                disabled={p === page}
-              >
-                {p}
-              </button>
-            ) : (
-              (p === page - 2 || p === page + 2) && (
-                <span key={p} className="px-2 py-1 text-gray-400">...</span>
-              )
-            )
-          )}
           <button
-            className="px-3 py-1 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition disabled:opacity-50"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
+            className="px-2 py-1 bg-red-500 text-white rounded"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(row._id || row.id);
+            }}
+            disabled={deletingId === (row._id || row.id)}
           >
-            Next
+            {deletingId === (row._id || row.id) ? "Deleting..." : "Delete"}
           </button>
         </div>
+      ),
+    },
+  ];
+
+  // Fetch articles from /article API
+  useEffect(() => {
+    const fetchArticles = async () => {
+      setLoading(true);
+      try {
+        const res = await getAllArticlesOrSeo("article");
+        if (res?.statusCode === 200) {
+          setArticles(res?.data);
+        }
+      } catch (e) {
+        setError("Failed to fetch articles.");
+      }
+      setLoading(false);
+    };
+    fetchArticles();
+  }, []);
+
+  return (
+    <div className="p-4  container mx-auto">
+      {/* heading */}
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-0">
+            Manage Articles
+          </h1>
+          <button
+            className="px-4 py-2 rounded-lg bg-[#00dbed] text-white font-semibold hover:bg-[#009bbd] transition self-start sm:self-auto"
+            onClick={() => router.push("/dashboard/article/create")}
+          >
+            + Create Article
+          </button>
+        </div>
+        {/* BreadCrumb */}
+        <div className="mt-2">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/dashboard">
+                  <Home className="h-4 w-4" />
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/dashboard/article/manage">
+                  Article Management
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Create Article</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
       </div>
-      {error && (
-        <div className="mt-4 text-red-500 text-sm">{error}</div>
-      )}
+
+      <DynamicTable
+        columns={columns}
+        data={articles}
+        pageSize={5}
+        searchPlaceholder="Search articles..."
+        loading={loading}
+      />
+
+      {error && <div className="mt-4 text-red-500 text-sm">{error}</div>}
+
+      {/* Edit Modal */}
+      <Modal open={editModalOpen} onClose={() => setEditModalOpen(false)}>
+        <h2 className="text-lg font-semibold mb-4">Edit Article Content</h2>
+        {editArticle && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleEditSave();
+            }}
+            className="flex flex-col gap-4"
+          >
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Slug / Page
+              </label>
+              <input
+                type="text"
+                value={editArticle.slug}
+                disabled
+                className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Id
+              </label>
+              <input
+                type="text"
+                value={editArticle._id || editArticle.id}
+                disabled
+                className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                Content
+              </label>
+              <QuillField
+                value={editContent}
+                onChange={setEditContent}
+              // className="bg-white dark:bg-gray-900"
+              // style={{ minHeight: 150 }}
+              />
+            </div>
+            <div className="flex justify-end gap-2 mt-2">
+              <button
+                type="button"
+                className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+                onClick={() => setEditModalOpen(false)}
+                disabled={editLoading}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600"
+                disabled={editLoading}
+              >
+                {editLoading ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </form>
+        )}
+      </Modal>
     </div>
   );
 }

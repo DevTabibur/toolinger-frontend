@@ -107,21 +107,37 @@ export async function updateDynamicPagesArticleAndSeo(id: string, data: any) {
     }
 }
 
-// Delete dynamic pages article and SEO by ID (requires auth)
-export async function deleteDynamicPagesArticleAndSeo(id: string, token?: string) {
+// Delete dynamic pages article and SEO by ID and type (requires auth)
+export async function deleteDynamicPagesArticleAndSeo(id: string, type: "seo" | "article") {
     try {
-
-        const toolingerToken = getFromLocalStorage("toolinger")
-
+        const toolingerToken = getFromLocalStorage("toolinger");
 
         if (!toolingerToken) {
             console.log("No toolinger found in localStorage");
         }
-        const res = await axios.delete(`${API_BASE_URL}/pages-article-and-seo/${id}`, {
+        const res = await axios.delete(`${API_BASE_URL}/pages-article-and-seo/${id}/${type}`, {
             headers: { Authorization: `${toolingerToken}` }
         });
         return res.data;
     } catch (error) {
         console.log("Error deleting dynamic page article and SEO", error);
+    }
+}
+
+
+export async function getAllArticlesOrSeo(type: "article" | "seo") {
+    try {
+        const toolingerToken = getFromLocalStorage("toolinger");
+        if (!toolingerToken) {
+            console.log("No toolinger found in localStorage");
+            return null;
+        }
+        const res = await axios.get(`${API_BASE_URL}/pages-article-and-seo/${type}`, {
+            headers: { Authorization: `${toolingerToken}` }
+        });
+        return res.data;
+    } catch (error) {
+        console.log(`Error fetching all ${type}`, error);
+        return null;
     }
 }
