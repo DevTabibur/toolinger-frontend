@@ -23,22 +23,43 @@ import { QuillField } from "@/form/QuillField";
 
 const PAGE_SIZE = 10;
 
-
-
-// Simple Modal component
-function Modal({ open, onClose, children }: { open: boolean; onClose: () => void; children: React.ReactNode }) {
+// Improved Modal component: beautiful, centered, scrollable content
+function Modal({
+  open,
+  onClose,
+  children,
+}: {
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 min-w-[350px] max-w-lg w-full relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div
+        className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 flex flex-col"
+        style={{
+          maxHeight: "90vh",
+          minWidth: 350,
+        }}
+      >
         <button
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+          className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-2xl font-bold z-10"
           onClick={onClose}
           aria-label="Close"
+          type="button"
         >
           ×
         </button>
-        {children}
+        <div
+          className="overflow-y-auto p-8"
+          style={{
+            maxHeight: "80vh",
+            minHeight: "200px",
+          }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -172,7 +193,12 @@ export default function ManageArticlesPage() {
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
             }}
-            dangerouslySetInnerHTML={{ __html: row?.PageArticle?.content }}
+            dangerouslySetInnerHTML={{
+              __html:
+                row?.PageArticle?.content.length > 100
+                  ? row?.PageArticle?.content.substring(0, 100) + "..."
+                  : row?.PageArticle?.content,
+            }}
           />
         ) : (
           <span className="text-gray-400 italic">No content</span>
@@ -315,8 +341,6 @@ export default function ManageArticlesPage() {
               <QuillField
                 value={editContent}
                 onChange={setEditContent}
-              // className="bg-white dark:bg-gray-900"
-              // style={{ minHeight: 150 }}
               />
             </div>
             <div className="flex justify-end gap-2 mt-2">

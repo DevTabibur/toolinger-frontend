@@ -90,20 +90,119 @@ import {
   RomanNumeralsDate,
   TextToHex
 } from "@/components/tools/Converters";
+import { Metadata } from "next";
+import { getPageArticleSeoBySlug } from "@/lib/pageMgmt.server";
+
+
+//============================================
 
 
 
-export default function ToolDetailsPage({
+
+
+
+
+
+
+
+// চাইলে পেজ-লেভেল ISR সেট করতে পারো
+export const revalidate = 300;
+
+// ----------------- SEO (generateMetadata) -----------------
+export async function generateMetadata(
+  { params }: { params: { slug: string; tool: string } }
+): Promise<Metadata> {
+  const data = await getPageArticleSeoBySlug(params.tool);
+  // console.log("data", data)
+  // const article = data?.data?.PageArticle 
+  // const seo = data?.data?.PageSEO
+
+  // console.log("article", article)
+  // console.log("seo", seo)
+  // if (data?.statusCode === 200) {
+  //   const seo = data?.data?.PageSEO;
+  //   return {
+  //     title: seo.metaTitle ?? fallbackTitle,
+  //     description: seo.metaDescription,
+  //     keywords: seo.keywords,
+  //     alternates: { canonical: seo.canonicalUrl || `https://yourdomain.com/category/${params.slug}/${params.tool}` },
+  //     robots: seo.noindex ? { index: false, follow: false } : undefined,
+  //   };
+  // } else {
+  //   return {
+  //     title: fallbackTitle,
+  //     description: "Free online tool.",
+  //     alternates: { canonical: `https://yourdomain.com/category/${params.slug}/${params.tool}` },
+  //   };
+  // }
+
+  // fallback
+  const fallbackTitle = params.tool.replace(/-/g, " ");
+
+  // if (!seo) {
+  //   return {
+  //     title: fallbackTitle,
+  //     description: "Free online tool.",
+  //     alternates: { canonical: `https://yourdomain.com/category/${params.slug}/${params.tool}` },
+  //   };
+  // }
+
+  // return {
+  //   title: seo.metaTitle ?? fallbackTitle,
+  //   description: seo.metaDescription,
+  //   keywords: seo.keywords,
+  //   alternates: { canonical: seo.canonicalUrl || `https://yourdomain.com/category/${params.slug}/${params.tool}` },
+  //   robots: seo.noindex ? { index: false, follow: false } : undefined,
+  //   openGraph: {
+  //     title: seo.ogTitle || seo.metaTitle || fallbackTitle,
+  //     description: seo.ogDescription || seo.metaDescription,
+  //     url: seo.canonicalUrl,
+  //     images: seo.ogImageUrl ? [{ url: seo.ogImageUrl }] : undefined,
+  //     type: seo.ogType || "website",
+  //     siteName: seo.ogSiteName,
+  //     locale: seo.ogLocale,
+  //   },
+  //   twitter: {
+  //     card: seo.twitterCard || "summary_large_image",
+  //     site: seo.twitterSite,
+  //     creator: seo.twitterCreator,
+  //     images: seo.twitterImageUrl ? [seo.twitterImageUrl] : (seo.ogImageUrl ? [seo.ogImageUrl] : undefined),
+  //   },
+  // };
+}
+
+
+
+
+
+
+
+
+
+
+//=============================================================================
+
+
+
+export default async function  ToolDetailsPage({
   params,
 }: {
   params: { slug: string; tool: string };
 }) {
+
+
+  const data = await getPageArticleSeoBySlug(params.tool);
+  const articleHtml: string | undefined = data?.data?.PageArticle?.content;
+  const seo = data?.data?.PageSEO
+  // const schemas: any[] = data?.PageSEO?.schemas || [];
+
+
   const renderToolComponent = () => {
     switch (params.tool) {
       // ==========================calculator================
       case "link-price-calculator":
         return <LinkPriceCalculator />;
-        case "binary-translator":
+      case "binary-translator":
         return <BinaryCalculator />;
       case "adsense-calculator":
         return <AdsenseCalculator />;
@@ -211,12 +310,12 @@ export default function ToolDetailsPage({
         return <TextToImage />;
       // case "crop-image-online":
       //   return <CropImageOnline />;
-      
+
       // case "pdf-to-word":
       //   return <PdfToWord />;
       // =====================website management=================
       case "google-malware-checker":
-        return <GoogleMalwareChecker />;
+        return <GoogleMalwareChecker article={articleHtml} seo={seo}/>;
       case "cms-checker":
         return <DetectCMS />;
       case "links-count-checker":
@@ -274,7 +373,7 @@ export default function ToolDetailsPage({
         return <ToolNotFound />;
     }
   };
- 
+
   return (
     <div className="min-h-screen bg-background">
       <Header />

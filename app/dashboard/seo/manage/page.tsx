@@ -194,7 +194,7 @@ export default function ManageSEOPage() {
   async function handleDelete(id: string) {
     setDeleting(true);
     try {
-      await deleteDynamicPagesArticleAndSeo(id);
+      await deleteDynamicPagesArticleAndSeo(id, "seo");
       setData(prev => prev.filter(item => item._id !== id));
       setDeleteId(null);
     } catch (e) {

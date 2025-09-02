@@ -1,17 +1,8 @@
 import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:5000/api/v1'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-// Helper to build dynamic API URLs
-function buildUrl(path: string) {
-  if (API_BASE_URL.endsWith("/") && path.startsWith("/")) {
-    return API_BASE_URL + path.slice(1);
-  }
-  if (!API_BASE_URL.endsWith("/") && !path.startsWith("/")) {
-    return API_BASE_URL + "/" + path;
-  }
-  return API_BASE_URL + path;
-}
+
 
 // Create a new category
 export async function createCategory(data: any) {
