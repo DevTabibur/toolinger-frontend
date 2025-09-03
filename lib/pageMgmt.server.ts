@@ -18,3 +18,7 @@ export async function getPageArticleSeoBySlug(slug: string) {
     });
     return res.json();
 }
+
+
+
+

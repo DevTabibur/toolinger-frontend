@@ -111,7 +111,7 @@ export const revalidate = 300;
 // ----------------- SEO (generateMetadata) -----------------
 export async function generateMetadata(
   { params }: { params: { slug: string; tool: string } }
-): Promise<Metadata> {
+): Promise<any> {
   const data = await getPageArticleSeoBySlug(params.tool);
   // console.log("data", data)
   // const article = data?.data?.PageArticle 
@@ -200,10 +200,10 @@ export default async function  ToolDetailsPage({
   const renderToolComponent = () => {
     switch (params.tool) {
       // ==========================calculator================
-      case "link-price-calculator":
-        return <LinkPriceCalculator />;
-      case "binary-translator":
-        return <BinaryCalculator />;
+      // case "link-price-calculator":
+      //   return <LinkPriceCalculator />;
+      // case "binary-translator":
+      //   return <BinaryCalculator />;
       case "adsense-calculator":
         return <AdsenseCalculator />;
       case "paypal-fee-calculator":

@@ -14,3 +14,4 @@ export default function DashboardLayout({
 }) {
     return <DashboardLayoutClient>{children}</DashboardLayoutClient>
 }
+ 

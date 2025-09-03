@@ -4,9 +4,13 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
-import { Search, Save, Globe, BarChart3, Settings, Code, Link, FileText } from "lucide-react"
+import { Search, Save, Globe, BarChart3, Settings, Code, Link, FileText, Home } from "lucide-react"
 import { createDynamicPagesArticleAndSeo } from "@/app/api/pageManagement.Api"
 import toast from "react-hot-toast"
+import { Breadcrumb, BreadcrumbSeparator, BreadcrumbPage, BreadcrumbItem, BreadcrumbList, BreadcrumbLink } from "@/components/ui/breadcrumb"
+
+// Slug validation: only lowercase letters, numbers, and hyphens, no leading/trailing/multiple hyphens, no slashes
+const slugRegex = /^(?!-)(?!.*--)[a-z0-9]+(?:-[a-z0-9]+)*(?<!-)$/;
 
 interface SEOData {
   page: string
@@ -35,7 +39,12 @@ interface SEOData {
 }
 
 const seoValidationSchema = Yup.object({
-  page: Yup.string().required("Page selection is required"),
+  page: Yup.string()
+    .required("Slug is required")
+    .matches(
+      slugRegex,
+      "Slug must be lowercase, use only letters, numbers, and hyphens (no slashes, no spaces, no leading/trailing hyphens)"
+    ),
   metaTitle: Yup.string()
     .min(10, "Meta title must be at least 10 characters")
     .max(60, "Meta title should not exceed 60 characters")
@@ -60,22 +69,6 @@ const seoValidationSchema = Yup.object({
   articleImage: Yup.string().url("Must be a valid URL"),
   articleImageAlt: Yup.string(),
 })
-
-const pageOptions = [
-  { value: "home", label: "Homepage" },
-  { value: "about", label: "About Page" },
-  { value: "contact", label: "Contact Page" },
-  { value: "privacy", label: "Privacy Policy" },
-  { value: "terms", label: "Terms of Service" },
-  { value: "domain-tools", label: "Domain Tools Category" },
-  { value: "text-tools", label: "Text Tools Category" },
-  { value: "image-tools", label: "Image Tools Category" },
-  { value: "seo-tools", label: "SEO Tools Category" },
-  { value: "calculators", label: "Calculators Category" },
-  { value: "converters", label: "Converters Category" },
-  { value: "generators", label: "Generators Category" },
-  { value: "productivity-tools", label: "Productivity Tools Category" },
-]
 
 const initialValues: SEOData = {
   page: "",
@@ -200,10 +193,29 @@ export default function SEOManagementClient() {
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6">
       {/* Header */}
       <motion.div variants={itemVariants}>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Advanced SEO Management</h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Comprehensive SEO optimization for all pages with advanced features and analytics
-        </p>
+        <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Create SEO</h1>
+        {/* BreadCrumb */}
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/dashboard">
+                <Home className="h-4 w-4" />
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/dashboard/seo/manage">
+                SEO Management
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>
+                Create SEO
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       </motion.div>
 
       {/* SEO Form */}
@@ -222,24 +234,34 @@ export default function SEOManagementClient() {
           <Formik initialValues={initialValues} validationSchema={seoValidationSchema} onSubmit={handleSubmit}>
             {({ values, setFieldValue }) => (
               <Form className="space-y-6">
-                {/* Page Selection */}
+                {/* Page Slug Input */}
                 <motion.div variants={itemVariants}>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Select Page/Category *
+                    Page Slug * (e.g. <span className="font-mono">about-us</span>, <span className="font-mono">contact</span>)
                   </label>
                   <Field
-                    as="select"
                     name="page"
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  >
-                    <option value="">Choose a page or category</option>
-                    {pageOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Field>
+                    type="text"
+                    autoComplete="off"
+                    spellCheck={false}
+                    placeholder="e.g. about-us, contact, privacy-policy"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono"
+                    onBlur={e => {
+                      // Optionally, auto-format: trim, to lower, replace spaces/underscores with hyphens, remove slashes
+                      const val = e.target.value
+                        .trim()
+                        .toLowerCase()
+                        .replace(/[_\s]+/g, "-")
+                        .replace(/\//g, "")
+                        .replace(/^-+|-+$/g, "")
+                        .replace(/--+/g, "-")
+                      setFieldValue("page", val)
+                    }}
+                  />
                   <ErrorMessage name="page" component="div" className="text-red-500 text-sm mt-1" />
+                  <div className="text-xs text-gray-500 mt-1">
+                    Only lowercase letters, numbers, and hyphens allowed. No slashes, spaces, or leading/trailing hyphens.
+                  </div>
                 </motion.div>
 
                 {/* Tabs */}
