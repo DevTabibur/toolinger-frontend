@@ -1,6 +1,6 @@
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-
+ 
 // calculator tools
 import {
   AdsenseCalculator,
@@ -205,7 +205,7 @@ export default async function  ToolDetailsPage({
       // case "binary-translator":
       //   return <BinaryCalculator />;
       case "adsense-calculator":
-        return <AdsenseCalculator />;
+        return <AdsenseCalculator article={articleHtml} seo={seo}/>;
       case "paypal-fee-calculator":
         return <PaypalFeeCalculator />;
       case "ltv-calculator":

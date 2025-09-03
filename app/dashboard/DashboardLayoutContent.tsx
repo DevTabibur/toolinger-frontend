@@ -294,18 +294,20 @@ export default function DashboardLayoutClient({
               {/* Header */}
               <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between">
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="flex items-center space-x-2"
-                  >
-                    <div className="w-8 h-8 bg-gradient-to-r from-[#005c82] to-[#00dbed] rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold text-sm">T</span>
-                    </div>
-                    <span className="font-bold text-gray-900 dark:text-white">
-                      Toolinger
-                    </span>
-                  </motion.div>
+                  <Link href="/" className="block">
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex items-center space-x-2"
+                    >
+                      <div className="w-8 h-8 bg-gradient-to-r from-[#005c82] to-[#00dbed] rounded-lg flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">T</span>
+                      </div>
+                      <span className="font-bold text-gray-900 dark:text-white">
+                        Toolinger
+                      </span>
+                    </motion.div>
+                  </Link>
                   {isMobile && (
                     <button
                       onClick={() => setMobileMenuOpen(false)}

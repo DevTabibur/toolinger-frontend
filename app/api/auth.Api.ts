@@ -93,7 +93,7 @@ export const getMe = async () => {
         }
         const response = await axios.get(`${API_BASE_URL}/auth/get-me`, {
             headers: {
-                Authorization: `Bearer ${adsToken}`,
+                Authorization: `${adsToken}`,
             },
         });
         return response.data;
