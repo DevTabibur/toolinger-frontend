@@ -1,8 +1,7 @@
 import axios from "axios";
 import { getFromLocalStorage } from "@/lib/local-storage";
 
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const API_BASE_URL = "http://localhost:5000/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 // Create a new blog post
 export async function createBlogPost(data: any) {
