@@ -50,10 +50,9 @@ export async function getBlogDetails(blogId: string) {
 }
 
 // Get all blog posts
-export async function getAllBlogs(params: any = {}) {
+export async function getAllBlogs() {
   try {
-    const searchParams = new URLSearchParams(params).toString();
-    const res = await axios.get(`${API_BASE_URL}/blog${searchParams ? `?${searchParams}` : ""}`);
+    const res = await axios.get(`${API_BASE_URL}/blog`);
     return res.data;
   } catch (error) {
     console.log("Error fetching all blogs", error);

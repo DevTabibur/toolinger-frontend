@@ -7,6 +7,8 @@ import { Sun, Moon, Search } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import Link from "next/link";
+import { getAllBlogs } from "../api/Blog.Api";
+import Image from "next/image";
 
 // Dummy blog data for demonstration
 const dummyBlogs = [
@@ -111,6 +113,7 @@ const BLOGS_PER_PAGE = 6;
 export default function BlogsPage() {
     const { theme, setTheme } = useTheme();
     const [categories, setCategories] = useState<{ name: string; slug: string }[]>([]);
+    const [blogs, setBlogs] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState<string>("all");
     const [loading, setLoading] = useState<boolean>(true);
     const [search, setSearch] = useState<string>("");
@@ -123,7 +126,6 @@ export default function BlogsPage() {
             setLoading(true);
             try {
                 const res = await getAllCategories();
-                console.log("cate", res)
                 if (mounted && res?.data) {
                     setCategories(res.data);
                 }
@@ -134,18 +136,34 @@ export default function BlogsPage() {
                 setLoading(false);
             }
         }
+        async function fetchBlogs() {
+            setLoading(true);
+            try {
+                const res = await getAllBlogs();
+                if (mounted && res?.data) {
+                    setBlogs(res.data);
+                }
+            } catch (e) {
+                // fallback to dummy categories if API fails
+                setBlogs([]);
+            } finally {
+                setLoading(false);
+            }
+        }
         fetchCategories();
+        fetchBlogs()
         return () => {
             mounted = false;
         };
     }, []);
 
     // Filter blogs by category and search
-    const filteredBlogs = dummyBlogs.filter((blog) => {
-        const matchesCategory = activeTab === "all" || blog.category.toLowerCase() === activeTab;
+    const filteredBlogs = blogs.filter((blog) => {
+        const matchesCategory = activeTab === "all" || blog.category?.name.toLowerCase() === activeTab;
         const matchesSearch =
-            blog.title.toLowerCase().includes(search.toLowerCase()) ||
-            blog.excerpt.toLowerCase().includes(search.toLowerCase());
+            blog?.title?.toLowerCase().includes(search.toLowerCase()) ||
+            blog?.slug?.toLowerCase().includes(search.toLowerCase()) ||
+            blog?.excerpt?.toLowerCase().includes(search.toLowerCase());
         return matchesCategory && matchesSearch;
     });
 
@@ -230,12 +248,128 @@ export default function BlogsPage() {
     }
     // --- End Pagination Component ---
 
+
+    console.log("blogs", blogs)
     return (
         <>
             <Header />
+            <section className="relative w-full bg-gradient-to-br from-[#00dbed] via-[#005c82] to-[#101827] py-12 md:py-20 overflow-hidden">
+                {/* Animated Particles (Bubbles/Stars) */}
+                <div className="absolute inset-0 pointer-events-none z-0">
+                    {/* Example: 8 animated bubbles/stars */}
+                    {[...Array(8)].map((_, i) => {
+                        // Randomize initial position, size, duration, and type (bubble/star)
+                        const isStar = i % 2 === 0;
+                        const size = isStar
+                            ? Math.floor(Math.random() * 18) + 12
+                            : Math.floor(Math.random() * 32) + 24;
+                        const left = Math.random() * 90 + "%";
+                        const delay = Math.random() * 2;
+                        const duration = Math.random() * 8 + 8;
+                        const topStart = Math.random() * 80 + 10;
+                        const topEnd = topStart + (Math.random() * 20 + 10);
+
+                        return (
+                            <motion.div
+                                key={i}
+                                initial={{
+                                    opacity: 0.5,
+                                    y: 0,
+                                    left,
+                                    top: `${topStart}%`,
+                                }}
+                                animate={{
+                                    opacity: [0.5, 1, 0.5],
+                                    y: [0, -40],
+                                    top: [`${topStart}%`, `${topEnd}%`],
+                                }}
+                                transition={{
+                                    repeat: Infinity,
+                                    repeatType: "loop",
+                                    duration,
+                                    delay,
+                                    ease: "easeInOut",
+                                }}
+                                style={{
+                                    position: "absolute",
+                                    left,
+                                    top: `${topStart}%`,
+                                    zIndex: 1,
+                                }}
+                            >
+                                {isStar ? (
+                                    <svg
+                                        width={size}
+                                        height={size}
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        className="opacity-70"
+                                    >
+                                        <polygon
+                                            points="12,2 15,10 24,10 17,15 19,24 12,19 5,24 7,15 0,10 9,10"
+                                            fill="#fff"
+                                            fillOpacity="0.13"
+                                        />
+                                    </svg>
+                                ) : (
+                                    <svg
+                                        width={size}
+                                        height={size}
+                                        viewBox="0 0 40 40"
+                                        fill="none"
+                                        className="opacity-40"
+                                    >
+                                        <circle
+                                            cx="20"
+                                            cy="20"
+                                            r="18"
+                                            fill="#fff"
+                                            fillOpacity="0.09"
+                                        />
+                                    </svg>
+                                )}
+                            </motion.div>
+                        );
+                    })}
+                    {/* Static decorative SVGs (optional, can keep for extra depth) */}
+                    <svg
+                        className="absolute top-0 left-0 w-40 h-40 opacity-30"
+                        viewBox="0 0 200 200"
+                        fill="none"
+                    >
+                        <circle cx="100" cy="100" r="100" fill="#fff" fillOpacity="0.08" />
+                    </svg>
+                    <svg
+                        className="absolute bottom-0 right-0 w-64 h-64 opacity-20"
+                        viewBox="0 0 300 300"
+                        fill="none"
+                    >
+                        <rect x="0" y="0" width="300" height="300" rx="80" fill="#fff" fillOpacity="0.06" />
+                    </svg>
+                </div>
+                <div className="relative z-10 max-w-4xl mx-auto px-4 flex flex-col items-center text-center">
+                    <motion.h2
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.7 }}
+                        className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg mb-4"
+                    >
+                        Welcome to <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#00dbed] to-[#005c82]">Toolinger Blog</span>
+                    </motion.h2>
+                    <motion.p
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2, duration: 0.7 }}
+                        className="text-lg md:text-xl text-white/90 max-w-2xl mb-6"
+                    >
+                        Insights, tutorials, and stories from the world of development, design, and productivity. Stay ahead with the latest trends, tips, and inspiration for creators and innovators.
+                    </motion.p>
+                </div>
+
+            </section>
 
             <div className="min-h-screen bg-gray-50 dark:bg-[#101827] transition-colors duration-300">
-                <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col lg:flex-row gap-8">
+                <div className="container mx-auto px-4 py-24 flex flex-col lg:flex-row gap-8">
                     {/* Left: Main Content */}
                     <div className="flex-1 min-w-0">
                         {/* Top Bar: Title, Search, Theme */}
@@ -270,13 +404,13 @@ export default function BlogsPage() {
                                         className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#00dbed] focus:border-transparent transition"
                                     />
                                 </div>
-                               
+
                             </div>
                         </motion.header>
 
                         {/* Category Tabs */}
                         <motion.div
-                            className="mb-6"
+                            className="my-12"
                             initial={{ opacity: 0, y: 12 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.1, duration: 0.4 }}
@@ -341,14 +475,23 @@ export default function BlogsPage() {
                                                 initial="hidden"
                                                 animate="visible"
                                                 exit="exit"
-                                                className="bg-white dark:bg-gray-900 rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col"
+                                                className="bg-white dark:bg-gray-900 rounded-xl shadow border hover:shadow-lg transition overflow-hidden flex flex-col"
                                             >
                                                 <Link href={`/blogs/${blog.slug}`} className="block">
-                                                    <img
-                                                        src={blog.image}
-                                                        alt={blog.title}
-                                                        className="w-full h-40 object-cover"
-                                                    />
+                                                    {blog?.blogFeaturedImage ? (
+                                                        <Image
+                                                            src={`${process.env.NEXT_PUBLIC_IMAGE_API}/${blog.blogFeaturedImage}`}
+                                                            alt={blog.title || "Blog featured image"}
+                                                            className="w-full h-40 object-cover"
+                                                            width={600}
+                                                            height={160}
+                                                            priority={false}
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full h-40 bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-gray-400 text-sm">
+                                                            No Image
+                                                        </div>
+                                                    )}
                                                 </Link>
                                                 <div className="p-5 flex flex-col flex-1">
                                                     <span className="text-xs uppercase tracking-wider text-[#00dbed] font-semibold mb-2">

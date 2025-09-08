@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Manage Blogs - Toolinger Dashboard",
   description: "Manage and edit existing blog posts",
 }
-
+ 
 export default function BlogManagePage() {
   return <BlogManageClient />
 }

@@ -1,8 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Search, Edit, Trash2, Eye, Calendar, Tag, User } from "lucide-react"
+import { getAllCategories } from "@/app/api/BlogCategory.api"
+import { deleteBlog, getAllBlogs } from "@/app/api/Blog.Api"
+import toast from "react-hot-toast"
 
 // Mock blog data
 const mockBlogs = [
@@ -54,7 +57,7 @@ const mockBlogs = [
 ]
 
 export default function BlogManageClient() {
-  const [blogs, setBlogs] = useState(mockBlogs)
+  const [blogs, setBlogs] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [categoryFilter, setCategoryFilter] = useState("all")
@@ -69,16 +72,39 @@ export default function BlogManageClient() {
     return matchesSearch && matchesStatus && matchesCategory
   })
 
-  const handleDelete = (id: number) => {
-    console.log("=== BLOG DELETE ACTION ===")
-    console.log("Deleting blog with ID:", id)
-    console.log(
-      "Blog details:",
-      blogs.find((blog) => blog.id === id),
-    )
-    console.log("=== END DELETE ACTION ===")
+  // Categories state
+  const [categories, setCategories] = useState<
+    { id: string; name: string }[]
+  >([])
+  const [categoriesLoading, setCategoriesLoading] = useState(true)
+  const [categoriesError, setCategoriesError] = useState<string | null>(null)
 
-    setBlogs(blogs.filter((blog) => blog.id !== id))
+
+  // Blogs state
+
+  const [blogsLoading, setBlogsLoading] = useState(true)
+
+
+
+  const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this blog?");
+    if (!confirmDelete) return;
+
+    // Optimistically remove the blog from UI
+    setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog._id !== id && blog.id !== id));
+
+    try {
+      const res = await deleteBlog(id);
+      if (res?.statusCode === 200) {
+        toast.success("Blog Deleted successfully!");
+      } else {
+        toast.error("Failed to delete blog. Please try again.");
+        // Optionally: refetch blogs from server here to ensure UI consistency
+      }
+    } catch (error) {
+      toast.error("Error deleting blog. Please try again.");
+      // Optionally: refetch blogs from server here to ensure UI consistency
+    }
   }
 
   const handleEdit = (blog: any) => {
@@ -127,6 +153,44 @@ export default function BlogManageClient() {
     visible: { opacity: 1, y: 0 },
   }
 
+
+  // Fetch categories from API
+  useEffect(() => {
+    async function fetchCategories() {
+      setCategoriesLoading(true)
+      setCategoriesError(null)
+      try {
+        const res = await getAllCategories()
+        if (res?.statusCode == 200) {
+          setCategories(res.data)
+        }
+
+      } catch (err: any) {
+        setCategoriesError(err.message || "Error fetching categories")
+        setCategories([])
+      } finally {
+        setCategoriesLoading(false)
+      }
+    }
+    async function fetchBlogs() {
+      setBlogsLoading(true)
+      try {
+        const res = await getAllBlogs()
+        if (res?.statusCode == 200) {
+          setBlogs(res.data)
+        }
+
+      } catch (err: any) {
+        setBlogs([])
+      } finally {
+        setBlogsLoading(false)
+      }
+    }
+
+    fetchCategories()
+    fetchBlogs()
+  }, [])
+
   return (
     <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-7xl mx-auto">
       <motion.div variants={itemVariants} className="mb-8">
@@ -162,7 +226,8 @@ export default function BlogManageClient() {
               <option value="all">All Status</option>
               <option value="published">Published</option>
               <option value="draft">Draft</option>
-              <option value="scheduled">Scheduled</option>
+              <option value="archived">Archived</option>
+              {/* <option value="scheduled">Scheduled</option> */}
             </select>
 
             <select
@@ -171,11 +236,11 @@ export default function BlogManageClient() {
               className="px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="all">All Categories</option>
-              <option value="tutorials">Tutorials</option>
-              <option value="news">News</option>
-              <option value="reviews">Reviews</option>
-              <option value="tips">Tips & Tricks</option>
-              <option value="tools">Tools</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -195,8 +260,8 @@ export default function BlogManageClient() {
                 {/* Featured Image */}
                 <div className="lg:w-48 flex-shrink-0">
                   <img
-                    src={blog.featuredImage || "/placeholder.svg"}
-                    alt={blog.title}
+                    src={`${process.env.NEXT_PUBLIC_IMAGE_API}/${blog.blogFeaturedImage}` || "/placeholder.svg"}
+                    alt={blog?.title}
                     className="w-full h-32 lg:h-24 object-cover rounded-lg"
                   />
                 </div>
@@ -227,7 +292,7 @@ export default function BlogManageClient() {
                         <Edit className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(blog.id)}
+                        onClick={() => handleDelete(blog._id)}
                         className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                         title="Delete"
                       >
@@ -249,7 +314,7 @@ export default function BlogManageClient() {
 
                     <div className="flex items-center">
                       <Calendar className="w-4 h-4 mr-1" />
-                      {new Date(blog.publishDate).toLocaleDateString()}
+                      {new Date(blog.createdAt).toLocaleDateString()}
                     </div>
 
                     <div className="flex items-center">
@@ -265,7 +330,7 @@ export default function BlogManageClient() {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mt-3">
-                    {blog.tags.map((tag) => (
+                    {blog.tags.map((tag: any) => (
                       <span
                         key={tag}
                         className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-md"

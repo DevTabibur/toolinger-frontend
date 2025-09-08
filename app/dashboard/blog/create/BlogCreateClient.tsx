@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 import { ErrorMessage, useFormik } from "formik"
 import * as Yup from "yup"
@@ -88,7 +88,7 @@ export default function BlogCreateClient() {
   }, [tagsArray])
 
   // Fetch categories from API
-  React.useEffect(() => {
+  useEffect(() => {
     async function fetchCategories() {
       setCategoriesLoading(true)
       setCategoriesError(null)
