@@ -1,10 +1,25 @@
 "use client"
 
-import React from "react"
+import React, { useRef, useState } from "react"
 import { motion } from "framer-motion"
-import { useFormik } from "formik"
+import { ErrorMessage, useFormik } from "formik"
 import * as Yup from "yup"
-import { Save, Eye, Upload, Tag, Calendar, Edit3 } from "lucide-react"
+import { Save, Eye, Upload, Tag, Calendar, Edit3, X, ImageIcon } from "lucide-react"
+import { getAllCategories } from "@/app/api/BlogCategory.api"
+import { QuillField } from "@/form/QuillField"
+import { Button } from "@/components/ui/button"
+import toast from "react-hot-toast"
+import { createBlogPost } from "@/app/api/Blog.Api"
+
+// Slugify function: generates a slug like "how-to-use-ai"
+function slugify(str: string) {
+  return str
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "") // remove invalid chars
+    .replace(/\s+/g, "-") // spaces to hyphens
+    .replace(/-+/g, "-") // collapse multiple hyphens
+}
 
 const validationSchema = Yup.object({
   title: Yup.string()
@@ -21,18 +36,79 @@ const validationSchema = Yup.object({
   content: Yup.string().min(100, "Content must be at least 100 characters").required("Content is required"),
   category: Yup.string().required("Category is required"),
   tags: Yup.string().required("At least one tag is required"),
-  featuredImage: Yup.string().url("Must be a valid URL"),
+  // featuredImage: Yup.string().url("Must be a valid URL"), // Remove URL validation for file upload
   metaTitle: Yup.string().max(60, "Meta title should be under 60 characters"),
   metaDescription: Yup.string().max(160, "Meta description should be under 160 characters"),
-  status: Yup.string().oneOf(["draft", "published", "scheduled"]).required("Status is required"),
-  publishDate: Yup.date().when("status", {
-    is: "scheduled",
-    then: (schema) => schema.required("Publish date is required for scheduled posts"),
-    otherwise: (schema) => schema.nullable(),
-  }),
+  status: Yup.string().oneOf(["draft", "published", "archived"]).required("Status is required"),
+  isAllowComments: Yup.boolean().optional(),
+  isFeaturedPost: Yup.boolean().optional()
 })
 
 export default function BlogCreateClient() {
+  // Track if user has manually edited the slug
+  const [slugManuallyEdited, setSlugManuallyEdited] = React.useState(false)
+
+  // Categories state
+  const [categories, setCategories] = React.useState<
+    { id: string; name: string }[]
+  >([])
+  const [categoriesLoading, setCategoriesLoading] = React.useState(true)
+  const [categoriesError, setCategoriesError] = React.useState<string | null>(null)
+
+  // Tag input state for UI
+  const [tagInput, setTagInput] = React.useState("")
+  // Tags as array for UI
+  const [tagsArray, setTagsArray] = React.useState<string[]>([])
+
+  // Featured image state
+  const [featuredImageError, setFeaturedImageError] = useState<string | null>(null)
+  const [featuredImage, setFeaturedImage] = useState<File | null>(null)
+  const [featuredImagePreview, setFeaturedImagePreview] = useState<string | null>(null)
+  const [dragActive, setDragActive] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+
+  // Sync tagsArray <-> formik.values.tags
+  React.useEffect(() => {
+    // On mount, if formik.values.tags is not empty, split and set
+    if (formik.values.tags && tagsArray.length === 0) {
+      setTagsArray(
+        formik.values.tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter((t) => t)
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  React.useEffect(() => {
+    // Whenever tagsArray changes, update formik.values.tags
+    formik.setFieldValue("tags", tagsArray.join(", "))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tagsArray])
+
+  // Fetch categories from API
+  React.useEffect(() => {
+    async function fetchCategories() {
+      setCategoriesLoading(true)
+      setCategoriesError(null)
+      try {
+        const res = await getAllCategories()
+        console.log("res", res)
+        if (res?.statusCode == 200) {
+          setCategories(res.data)
+        }
+
+      } catch (err: any) {
+        setCategoriesError(err.message || "Error fetching categories")
+        setCategories([])
+      } finally {
+        setCategoriesLoading(false)
+      }
+    }
+    fetchCategories()
+  }, [])
+
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -45,50 +121,122 @@ export default function BlogCreateClient() {
       metaTitle: "",
       metaDescription: "",
       status: "draft",
-      publishDate: "",
       author: "",
-      readingTime: "",
       allowComments: true,
       isFeatured: false,
     },
     validationSchema,
-    onSubmit: (values) => {
-      console.log("=== BLOG CREATE FORM SUBMISSION ===")
+    onSubmit: async (values: any, { setSubmitting, setFieldError, resetForm }: any) => {
       console.log("Form Values:", values)
-      console.log("Title:", values.title)
-      console.log("Slug:", values.slug)
-      console.log("Excerpt:", values.excerpt)
-      console.log("Content Length:", values.content.length)
-      console.log("Category:", values.category)
-      console.log(
-        "Tags:",
-        values.tags.split(",").map((tag) => tag.trim()),
-      )
-      console.log("Featured Image:", values.featuredImage)
-      console.log("Meta Title:", values.metaTitle)
-      console.log("Meta Description:", values.metaDescription)
-      console.log("Status:", values.status)
-      console.log("Publish Date:", values.publishDate)
-      console.log("Author:", values.author)
-      console.log("Reading Time:", values.readingTime)
-      console.log("Allow Comments:", values.allowComments)
-      console.log("Is Featured:", values.isFeatured)
-      console.log("=== END FORM SUBMISSION ===")
+
+
+
+      let categoryId = ""
+      setFeaturedImageError(null)
+      // setTagsError(null)
+      // setCategoryError(null)
+      try {
+        const parsed = JSON.parse(values.category)
+        categoryId = parsed._id
+      } catch {
+        categoryId = values.category
+      }
+
+      let hasError = false
+
+      // if (!tags.length) {
+      //   setFieldError("tags", "At least one tag is required")
+      //   setTagsError("At least one tag is required")
+      //   hasError = true
+      // }
+
+      if (!featuredImage) {
+        setFieldError("featuredImage", "Featured image is required")
+        setFeaturedImageError("Featured image is required")
+        hasError = true
+      }
+
+      // if (!values.category) {
+      //   setFieldError("category", "Category is required")
+      //   setCategoryError("Category is required")
+      //   hasError = true
+      // }
+
+      if (hasError) {
+        setSubmitting(false)
+        return
+      }
+
+      // Prepare FormData to send image and all blog data
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("slug", values.slug);
+      formData.append("content", values.content);
+      formData.append("status", values.status);
+      formData.append("excerpt", values.excerpt);
+      formData.append("author", values.author);
+      formData.append("category", categoryId);
+      formData.append("tags", values.tags);
+      formData.append("blogFeaturedImage", featuredImage as any);
+      formData.append("isAllowComments", values.allowComments);
+      formData.append("isFeaturedPost", values.isFeatured);
+
+
+      //=================
+      formData.append("seoTitle", values.metaTitle);
+      formData.append("seoDescription", values.metaDescription);
+      formData.append("seoKeywords", values.seoKeywords);
+
+      try {
+        const res = await createBlogPost(formData)
+        // console.log("res", res)
+        if (res.statusCode === 200) {
+          resetForm()
+          // setTags([])
+          setFeaturedImage(null)
+          setFeaturedImagePreview(null)
+          setFeaturedImageError(null)
+          // setTagsError(null)
+          // setCategoryError(null)
+          // Reset QuillField by dispatching an event to clear content
+          const quillEditor = document.querySelector('.ql-editor');
+          if (quillEditor) {
+            quillEditor.innerHTML = '';
+          }
+          toast.success("Blog Created Successfully")
+          // router.push("/dashboard/blog")
+        }
+      } catch (err: any) {
+        toast.error("Error creating blog")
+      } finally {
+        setSubmitting(false)
+      }
+
     },
   })
 
-  // Auto-generate slug from title
+  // Auto-generate slug from title, unless user has manually edited slug
   React.useEffect(() => {
-    if (formik.values.title && !formik.touched.slug) {
-      const slug = formik.values.title
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-")
-        .replace(/-+/g, "-")
-        .trim()
+    if (formik.values.title && !slugManuallyEdited) {
+      const slug = slugify(formik.values.title)
       formik.setFieldValue("slug", slug)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formik.values.title])
+
+  // Handler for slug field: if user types in slug, mark as manually edited
+  const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSlugManuallyEdited(true)
+    formik.setFieldValue("slug", e.target.value)
+  }
+
+  // Handler for title field: if user edits title, and slug was previously manually edited and then cleared, allow auto-generation again
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    formik.handleChange(e)
+    if (slugManuallyEdited && formik.values.slug === "") {
+      setSlugManuallyEdited(false)
+    }
+  }
 
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -105,6 +253,59 @@ export default function BlogCreateClient() {
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 },
+
+
+  }
+
+
+
+
+  // Handle file input change, store File object and preview URL
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0]
+    if (file) {
+      setFeaturedImage(file)
+      setFeaturedImagePreview(URL.createObjectURL(file))
+      setFeaturedImageError(null)
+    }
+  }
+
+  // Handle drag and drop, store File object and preview URL
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+  }
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0]
+      setFeaturedImage(file)
+      setFeaturedImagePreview(URL.createObjectURL(file))
+      setFeaturedImageError(null)
+    }
+  }
+
+  const handleChooseImageClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleRemoveImage = () => {
+    setFeaturedImage(null)
+    setFeaturedImagePreview(null)
+    setFeaturedImageError("Featured image is required")
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
   }
 
   return (
@@ -133,7 +334,10 @@ export default function BlogCreateClient() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title *</label>
                   <input
                     type="text"
-                    {...formik.getFieldProps("title")}
+                    name="title"
+                    value={formik.values.title}
+                    onChange={handleTitleChange}
+                    onBlur={formik.handleBlur}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="Enter blog post title..."
                   />
@@ -142,18 +346,24 @@ export default function BlogCreateClient() {
                   )}
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Slug *</label>
-                  <input
-                    type="text"
-                    {...formik.getFieldProps("slug")}
-                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    placeholder="blog-post-url-slug"
-                  />
-                  {formik.touched.slug && formik.errors.slug && (
-                    <p className="mt-1 text-sm text-red-600">{formik.errors.slug}</p>
-                  )}
-                </div>
+                {/* Show slug field only when title is not empty */}
+                {formik.values.title && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Slug *</label>
+                    <input
+                      type="text"
+                      name="slug"
+                      value={formik.values.slug}
+                      onChange={handleSlugChange}
+                      onBlur={formik.handleBlur}
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      placeholder="how-to-use-ai"
+                    />
+                    {formik.touched.slug && formik.errors.slug && (
+                      <p className="mt-1 text-sm text-red-600">{formik.errors.slug}</p>
+                    )}
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Excerpt *</label>
@@ -176,15 +386,20 @@ export default function BlogCreateClient() {
               className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6"
             >
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">Content *</h2>
-              <textarea
-                {...formik.getFieldProps("content")}
-                rows={15}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="Write your blog content here..."
-              />
+
+              <div
+                className={`quill-field-wrapper rounded-md border px-3 py-2 min-h-[180px] bg-white dark:bg-gray-900 text-gray-900 dark:text-white border-gray-300 dark:border-gray-700 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-colors duration-200 ${formik.touched.content && formik.errors.content ? "border-red-500 dark:border-red-500" : ""
+                  }`}
+              >
+                <QuillField
+                  value={formik.values.content}
+                  onChange={(val) => formik.setFieldValue("content", val)}
+                />
+              </div>
               {formik.touched.content && formik.errors.content && (
                 <p className="mt-1 text-sm text-red-600">{formik.errors.content}</p>
               )}
+
             </motion.div>
 
             {/* SEO Settings */}
@@ -247,11 +462,12 @@ export default function BlogCreateClient() {
                   >
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
-                    <option value="scheduled">Scheduled</option>
+                    <option value="archived">Archived</option>
+                    {/* <option value="scheduled">Scheduled</option> */}
                   </select>
                 </div>
 
-                {formik.values.status === "scheduled" && (
+                {/* {formik.values.status === "scheduled" && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Publish Date *
@@ -265,7 +481,7 @@ export default function BlogCreateClient() {
                       <p className="mt-1 text-sm text-red-600">{formik.errors.publishDate}</p>
                     )}
                   </div>
-                )}
+                )} */}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Author</label>
@@ -277,7 +493,7 @@ export default function BlogCreateClient() {
                   />
                 </div>
 
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Reading Time (minutes)
                   </label>
@@ -287,7 +503,7 @@ export default function BlogCreateClient() {
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="5"
                   />
-                </div>
+                </div> */}
               </div>
             </motion.div>
 
@@ -307,13 +523,26 @@ export default function BlogCreateClient() {
                   <select
                     {...formik.getFieldProps("category")}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                    disabled={categoriesLoading}
                   >
                     <option value="">Select Category</option>
-                    <option value="tutorials">Tutorials</option>
-                    <option value="news">News</option>
-                    <option value="reviews">Reviews</option>
-                    <option value="tips">Tips & Tricks</option>
-                    <option value="tools">Tools</option>
+                    {categoriesLoading && (
+                      <option value="" disabled>
+                        Loading categories...
+                      </option>
+                    )}
+                    {categoriesError && (
+                      <option value="" disabled>
+                        {categoriesError}
+                      </option>
+                    )}
+                    {!categoriesLoading &&
+                      !categoriesError &&
+                      categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </option>
+                      ))}
                   </select>
                   {formik.touched.category && formik.errors.category && (
                     <p className="mt-1 text-sm text-red-600">{formik.errors.category}</p>
@@ -347,7 +576,62 @@ export default function BlogCreateClient() {
                 Featured Image
               </h3>
 
-              <div>
+              {featuredImagePreview ? (
+                <div className="relative">
+                  <img
+                    src={featuredImagePreview || "/placeholder.svg"}
+                    alt="Featured"
+                    className="w-full h-32 object-cover rounded-lg"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="sm"
+                    className="absolute top-2 right-2"
+                    onClick={handleRemoveImage}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ) : (
+                <div
+                  className={`border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 text-center bg-white dark:bg-gray-900 transition-colors duration-150 ${dragActive ? "border-blue-400 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/30" : ""}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={handleChooseImageClick}
+                  style={{ cursor: "pointer" }}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                  />
+                  <ImageIcon className="h-8 w-8 mx-auto text-gray-400 dark:text-gray-500 mb-2 pointer-events-none" />
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 pointer-events-none">
+                    {dragActive ? "Drop image here..." : "Upload featured image"}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white pointer-events-none"
+                    tabIndex={-1}
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Choose Image
+                  </Button>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-2 pointer-events-none">Drag & drop or click to select</p>
+                </div>
+              )}
+              {/* <ErrorMessage name="featuredImage" component="div" className="text-red-500 dark:text-red-400 text-sm mt-1" /> */}
+              {/* {featuredImageError && (
+                          <div className="text-red-500 dark:text-red-400 text-sm mt-1">{featuredImageError}</div>
+                        )} */}
+
+              {/* <div>
                 <input
                   type="url"
                   {...formik.getFieldProps("featuredImage")}
@@ -357,7 +641,7 @@ export default function BlogCreateClient() {
                 {formik.touched.featuredImage && formik.errors.featuredImage && (
                   <p className="mt-1 text-sm text-red-600">{formik.errors.featuredImage}</p>
                 )}
-              </div>
+              </div> */}
             </motion.div>
 
             {/* Additional Options */}
