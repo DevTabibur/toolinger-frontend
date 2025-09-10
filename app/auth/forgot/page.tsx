@@ -1,151 +1,99 @@
-"use client";
+import ForgotClientPage from "@/components/pages/ForgotClientPage";
 
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
-import * as Yup from "yup";
-import Link from "next/link";
-import { Wrench } from "lucide-react";
-import { useState } from "react";
 
-// Toolinger brand color and gradient
-const TOOLINGER_COLOR = "#00b6d6";
-const TOOLINGER_GRADIENT_FROM = "#00b6d6";
-const TOOLINGER_GRADIENT_TO = "#1ed6e6";
+import { getDynamicPagesArticleAndSeoBySlug } from "@/app/api/pageManagement.Api";
+import { Metadata } from "next";
 
-const ForgotPasswordSchema = Yup.object().shape({
-  email: Yup.string()
-    .email("Enter a valid email address")
-    .required("Email is required"),
-});
+
+export async function generateMetadata(): Promise<Metadata> {
+    const slug = "forgot";
+    const page: any = await getDynamicPagesArticleAndSeoBySlug(slug);
+    const seo = page?.data?.PageSEO || {};
+
+    // Fallbacks only for metaTitle and metaDescription
+    const fallbackMetaTitle = 'Forgot Password - Toolinger | Reset Your Account Access';
+    const fallbackMetaDescription = 'Forgot your Toolinger password? Enter your email to receive a password reset link and regain access to your account.';
+
+    // Keywords: array or string, optional
+    let keywords: string | undefined;
+    if (Array.isArray(seo.keywords) && seo.keywords.length) {
+        keywords = seo.keywords.join(", ");
+    } else if (typeof seo.keywords === "string" && seo.keywords) {
+        keywords = seo.keywords;
+    }
+
+    // Canonical URL
+    const canonicalUrl = typeof seo.canonicalUrl === "string" && seo.canonicalUrl ? seo.canonicalUrl : undefined;
+
+    // Robots
+    let robots: Metadata["robots"] | undefined;
+    if (typeof seo.noindex === "boolean") {
+        robots = seo.noindex
+            ? { index: false, follow: false }
+            : { index: true, follow: true };
+    }
+
+    // Open Graph Image
+    let ogImage: any[] | undefined;
+    if (seo.ogImageUrl && typeof seo.ogImageUrl === "string") {
+        const url = seo.ogImageUrl.startsWith("http")
+            ? seo.ogImageUrl
+            : `${process.env.NEXT_PUBLIC_IMAGE_API || "https://toolinger.com"}/${seo.ogImageUrl}`;
+        ogImage = [
+            {
+                url,
+                width: 1200,
+                height: 630,
+                alt: typeof seo.ogTitle === "string" ? seo.ogTitle : undefined,
+            },
+        ];
+    }
+
+    // Twitter Image
+    let twitterImages: string[] | undefined;
+    if (seo.twitterImageUrl && typeof seo.twitterImageUrl === "string") {
+        const url = seo.twitterImageUrl.startsWith("http")
+            ? seo.twitterImageUrl
+            : `${process.env.NEXT_PUBLIC_IMAGE_API || "https://toolinger.com"}/${seo.twitterImageUrl}`;
+        twitterImages = [url];
+    }
+
+    // Build metadata object, only including fields if present
+    const metadata: Metadata = {
+        title: typeof seo.metaTitle === "string" && seo.metaTitle ? seo.metaTitle : fallbackMetaTitle,
+        description: typeof seo.metaDescription === "string" && seo.metaDescription ? seo.metaDescription : fallbackMetaDescription,
+        ...(keywords ? { keywords } : {}),
+        ...(canonicalUrl ? { alternates: { canonical: canonicalUrl } } : {}),
+        ...(robots ? { robots } : {}),
+        openGraph: {
+            ...(typeof seo.ogTitle === "string" && seo.ogTitle ? { title: seo.ogTitle } : {}),
+            ...(typeof seo.ogDescription === "string" && seo.ogDescription ? { description: seo.ogDescription } : {}),
+            ...(canonicalUrl ? { url: canonicalUrl } : {}),
+            ...(typeof seo.ogType === "string" && seo.ogType ? { type: seo.ogType } : {}),
+            ...(typeof seo.ogSiteName === "string" && seo.ogSiteName ? { siteName: seo.ogSiteName } : {}),
+            ...(ogImage ? { images: ogImage } : {}),
+            ...(typeof seo.ogLocale === "string" && seo.ogLocale ? { locale: seo.ogLocale } : {}),
+        },
+        twitter: {
+            ...(typeof seo.twitterCard === "string" && seo.twitterCard ? { card: seo.twitterCard } : {}),
+            ...(typeof seo.twitterSite === "string" && seo.twitterSite ? { site: seo.twitterSite } : {}),
+            ...(typeof seo.twitterCreator === "string" && seo.twitterCreator ? { creator: seo.twitterCreator } : {}),
+            ...(twitterImages ? { images: twitterImages } : {}),
+        },
+    };
+
+    // Remove empty openGraph/twitter objects if all fields are missing
+    if (Object.keys(metadata.openGraph || {}).length === 0) delete metadata.openGraph;
+    if (Object.keys(metadata.twitter || {}).length === 0) delete metadata.twitter;
+
+    return metadata;
+}
+
 
 export default function ForgotPasswordPage() {
-  const [submitted, setSubmitted] = useState(false);
 
-  // handleSubmit function that logs the values
-  const handleSubmit = (
-    values: { email: string },
-    { setSubmitting }: FormikHelpers<{ email: string }>
-  ) => {
-    console.log("Forgot password form values:", values);
-    // Here you would typically call your API to send the reset email
-    
-  };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-background px-4 py-8"
-      style={{ backgroundColor: "#0a1622" }}
-    >
-      <div className="w-full max-w-md bg-white dark:bg-[#101c2b] rounded-2xl shadow-xl p-8 border border-[#0e2a3a]">
-        <div className="mb-8 text-center">
-          <Link href="/" className="flex items-center space-x-2 justify-center">
-            <div
-              className="gradient-bg p-2 rounded-lg"
-              style={{
-                background: `linear-gradient(135deg, ${TOOLINGER_GRADIENT_FROM}, ${TOOLINGER_GRADIENT_TO})`,
-              }}
-            >
-              <Wrench className="h-6 w-6 text-white" />
-            </div>
-            <span
-              className="text-xl font-bold gradient-text"
-              style={{
-                background: `linear-gradient(90deg, ${TOOLINGER_GRADIENT_FROM}, ${TOOLINGER_GRADIENT_TO})`,
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-                color: "transparent",
-              }}
-            >
-              Toolinger
-            </span>
-          </Link>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
-            Forgot your password?
-          </h2>
-          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            Enter your email address and we'll send you a link to reset your password.
-          </p>
-        </div>
-        {submitted ? (
-          <div className="text-center py-8">
-            <div className="text-2xl mb-2" style={{ color: TOOLINGER_COLOR }}>
-              Check your email
-            </div>
-            <div className="text-gray-600 dark:text-gray-300">
-              If an account exists for that email, you’ll receive a password reset link shortly.
-            </div>
-            <Link
-              href="/auth/login"
-              className="inline-block mt-6 px-4 py-2 rounded-lg font-semibold gradient-bg text-white"
-              style={{
-                background: `linear-gradient(90deg, ${TOOLINGER_GRADIENT_FROM}, ${TOOLINGER_GRADIENT_TO})`,
-              }}
-            >
-              Back to Sign In
-            </Link>
-          </div>
-        ) : (
-          <Formik
-            initialValues={{ email: "" }}
-            validationSchema={ForgotPasswordSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ isSubmitting }) => (
-              <Form className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-                  >
-                    Email address
-                  </label>
-                  <div className="mt-1">
-                    <Field
-                      id="email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      placeholder="you@example.com"
-                      className="block w-full rounded-lg border border-gray-300 dark:border-[#1ed6e6] bg-gray-50 dark:bg-[#14283a] px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2"
-                      style={{
-                        borderColor: TOOLINGER_COLOR,
-                        boxShadow: "none",
-                      }}
-                    />
-                  </div>
-                  <ErrorMessage
-                    name="email"
-                    component="div"
-                    className="mt-1 text-sm text-red-600 dark:text-red-400"
-                  />
-                </div>
-                <div>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white gradient-bg focus:outline-none focus:ring-2 focus:ring-offset-2"
-                    style={{
-                      background: `linear-gradient(90deg, ${TOOLINGER_GRADIENT_FROM}, ${TOOLINGER_GRADIENT_TO})`,
-                      opacity: isSubmitting ? 0.7 : 1,
-                      cursor: isSubmitting ? "not-allowed" : "pointer",
-                    }}
-                  >
-                    {isSubmitting ? "Sending..." : "Send Reset Link"}
-                  </button>
-                </div>
-                <div className="text-center mt-4">
-                  <Link
-                    href="/auth/login"
-                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
-                  >
-                    Back to Sign In
-                  </Link>
-                </div>
-              </Form>
-            )}
-          </Formik>
-        )}
-      </div>
-    </div>
+    <><ForgotClientPage /></>
   );
 }

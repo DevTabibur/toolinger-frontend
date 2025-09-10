@@ -27,7 +27,7 @@ export default function CreateArticlePage() {
     const router = useRouter();
     const [submitError, setSubmitError] = useState<string | null>(null);
 
- 
+
 
     const handleSubmit = async (
         values: FormValues,
@@ -35,10 +35,11 @@ export default function CreateArticlePage() {
     ) => {
         setSubmitError(null);
         try {
-            const formData: any = {
-                slug: values.slug,
-                PageArticle: { content: values.content }
-            };
+
+
+            const formData = new FormData()
+            formData.append("slug", values.slug)
+            formData.append("content", values.content)
 
             const res = await createDynamicPagesArticleAndSeo(formData);
 

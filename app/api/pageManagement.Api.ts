@@ -2,8 +2,7 @@ import { getFromLocalStorage } from "@/lib/local-storage";
 import axios from "axios";
 
 
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-const API_BASE_URL = "http://localhost:5000/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
 
@@ -49,14 +48,27 @@ export async function getAllDynamicPagesArticleAndSeo({
 }
 
 // Get dynamic pages article and SEO by slug (requires auth)
-export async function getDynamicPagesArticleAndSeoBySlug(slug: string, token?: string) {
+// export async function getDynamicPagesArticleAndSeoBySlug(slug: string, token?: string) {
+//     try {
+//         const res = await axios.get(`${API_BASE_URL}/pages-article-and-seo/slug/${slug}`, {
+//             headers: token ? { Authorization: `Bearer ${token}` } : {},
+//         });
+//         return res.data;
+//     } catch (error) {
+//         console.log("Error fetching dynamic page article and SEO by slug", error);
+//     }
+// }
+
+export async function getDynamicPagesArticleAndSeoBySlug(slug: string) {
     try {
-        const res = await axios.get(`${API_BASE_URL}/pages-article-and-seo/slug/${slug}`, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
+        const res = await fetch(`${API_BASE_URL}/pages-article-and-seo/slug/${slug}`, {
+            cache: "no-store" //  Always fresh data (no cache)
         });
-        return res.data;
+        console.log("res", res)
+        return res.json();
     } catch (error) {
-        console.log("Error fetching dynamic page article and SEO by slug", error);
+        console.error("Error fetching dynamic page article and SEO by slug", error);
+        return null;
     }
 }
 
