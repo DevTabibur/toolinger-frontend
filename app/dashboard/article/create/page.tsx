@@ -27,9 +27,7 @@ export default function CreateArticlePage() {
     const router = useRouter();
     const [submitError, setSubmitError] = useState<string | null>(null);
 
-    // No need for quillLoaded state, dynamic import handles client-only rendering
-
-
+ 
 
     const handleSubmit = async (
         values: FormValues,
@@ -37,44 +35,33 @@ export default function CreateArticlePage() {
     ) => {
         setSubmitError(null);
         try {
-            // Prepare form data
             const formData: any = {
                 slug: values.slug,
-                PageArticle: {
-                    content: values.content,
-                }
-
+                PageArticle: { content: values.content }
             };
 
-            console.log("formData", formData)
-            // if (values.image) {
-            //     formData.image = values.image;
-            // }
-            // if (values.imageAlt) {
-            //     formData.imageAlt = values.imageAlt;
-            // }
             const res = await createDynamicPagesArticleAndSeo(formData);
+
             if (res?.statusCode === 200) {
-                toast.success("Article created succesfully")
-                resetForm()
-                // Reset Quill editor content as well
+                toast.success("Article created succesfully");
+                resetForm();
+
                 if (typeof window !== "undefined") {
                     const quill = document.querySelector(".ql-editor");
-                    if (quill) {
-                        quill.innerHTML = "";
-                    }
+                    if (quill) quill.innerHTML = "";
                 }
             } else {
-                toast.error("Something went wrong.")
+                toast.error(res?.message || "Something went wrong.");
             }
-            console.log("res", res)
 
-        } catch (error) {
-            setSubmitError("Failed to create article. Please try again.");
+        } catch (error: any) {
+            toast.error(error.message || "Failed to create article. Please try again.");
+            setSubmitError(error.message);
         } finally {
             setSubmitting(false);
         }
     };
+
 
     return (
         <div className="p-4 container mx-auto ">

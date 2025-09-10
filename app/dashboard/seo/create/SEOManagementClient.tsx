@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { motion } from "framer-motion"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
@@ -8,20 +8,26 @@ import { Search, Save, Globe, BarChart3, Settings, Code, Link, FileText, Home } 
 import { createDynamicPagesArticleAndSeo } from "@/app/api/pageManagement.Api"
 import toast from "react-hot-toast"
 import { Breadcrumb, BreadcrumbSeparator, BreadcrumbPage, BreadcrumbItem, BreadcrumbList, BreadcrumbLink } from "@/components/ui/breadcrumb"
+import BasicSEOForm from "@/form/BasicSEOForm"
+import SocialMediaForm from "@/form/SocialMediaForm"
+import TechnicalForm from "@/form/TechnicalForm"
+import SchemaForm from "@/form/SchemaForm"
 
 // Slug validation: only lowercase letters, numbers, and hyphens, no leading/trailing/multiple hyphens, no slashes
 const slugRegex = /^(?!-)(?!.*--)[a-z0-9]+(?:-[a-z0-9]+)*(?<!-)$/;
 
 interface SEOData {
   page: string
+  // ========================basic seo
   metaTitle: string
   metaDescription: string
   keywords: string
   canonicalUrl: string
   noindex: boolean
+  // ========================social media
   ogTitle: string
   ogDescription: string
-  ogImageUrl: string
+  ogImage: string
   ogType: string
   ogSiteName: string
   ogLocale: string
@@ -29,13 +35,11 @@ interface SEOData {
   twitterSite: string
   twitterCreator: string
   twitterImageUrl: string
+  // ==================schema
   schemas: string // JSON string, will be parsed to array
+  // ==========================technical
   changefreq: string
   priority: number
-  // Article fields
-  articleContent: string
-  articleImage: string
-  articleImageAlt: string
 }
 
 const seoValidationSchema = Yup.object({
@@ -45,41 +49,45 @@ const seoValidationSchema = Yup.object({
       slugRegex,
       "Slug must be lowercase, use only letters, numbers, and hyphens (no slashes, no spaces, no leading/trailing hyphens)"
     ),
+  // ===================================basic seo
   metaTitle: Yup.string()
     .min(10, "Meta title must be at least 10 characters")
     .max(60, "Meta title should not exceed 60 characters")
     .required("Meta title is required"),
+  noindex: Yup.string().optional(),
   metaDescription: Yup.string()
     .min(30, "Meta description should be at least 30 characters")
     .max(160, "Meta description should not exceed 160 characters")
     .required("Meta description is required"),
   keywords: Yup.string().required("Keywords are required"),
   canonicalUrl: Yup.string().url("Must be a valid URL"),
+  // =========================================siocial media
   ogTitle: Yup.string().max(60, "OG title should not exceed 60 characters"),
   ogDescription: Yup.string().max(160, "OG description should not exceed 160 characters"),
-  ogImageUrl: Yup.string().url("Must be a valid URL"),
+  // ogImage: Yup.string().url("Must be a valid URL"),
   ogSiteName: Yup.string().max(50, "Site name should not exceed 50 characters"),
   twitterTitle: Yup.string().max(60, "Twitter title should not exceed 60 characters"),
   twitterDescription: Yup.string().max(160, "Twitter description should not exceed 160 characters"),
   twitterImageUrl: Yup.string().url("Must be a valid URL"),
+  //=====================================================schema
   schemas: Yup.string(),
+  // ========================================technical
   changefreq: Yup.string(),
   priority: Yup.number().min(0).max(1),
-  articleContent: Yup.string(),
-  articleImage: Yup.string().url("Must be a valid URL"),
-  articleImageAlt: Yup.string(),
 })
 
 const initialValues: SEOData = {
   page: "",
+  // ====================basic seo
   metaTitle: "",
   metaDescription: "",
   keywords: "",
   canonicalUrl: "",
   noindex: false,
+  // ==========================social media
   ogTitle: "",
   ogDescription: "",
-  ogImageUrl: "",
+  ogImage: "",
   ogType: "website",
   ogSiteName: "Toolinger",
   ogLocale: "en_US",
@@ -87,12 +95,12 @@ const initialValues: SEOData = {
   twitterSite: "@toolinger",
   twitterCreator: "@toolinger",
   twitterImageUrl: "",
+  //=========== ======================schema
   schemas: "",
+  // =============================// technical
   changefreq: "daily",
+
   priority: 1.0,
-  articleContent: "",
-  articleImage: "",
-  articleImageAlt: "",
 }
 
 const containerVariants = {
@@ -119,11 +127,75 @@ export default function SEOManagementClient() {
     { id: "social", label: "Social Media", icon: Globe },
     { id: "technical", label: "Technical", icon: Settings },
     { id: "schema", label: "Schema", icon: Link },
-    { id: "sitemap", label: "Sitemap", icon: Code },
-    { id: "article", label: "Article", icon: FileText },
+    // { id: "sitemap", label: "Sitemap", icon: Code },
+    // { id: "article", label: "Article", icon: FileText },
   ]
 
-  const handleSubmit = async (values: SEOData) => {
+
+
+
+
+  //======================================IMAGE
+
+  const [ogImage, setOgImage] = useState<File | null>(null)
+  const [ogImagePreview, setOgImagePreview] = useState<string | null>(null)
+  const [dragActive, setDragActive] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [ogImageError, setOgImageError] = useState<string | null>(null)
+
+
+  // Handle file input change, store File object and preview URL
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0]
+    if (file) {
+      setOgImage(file)
+      setOgImagePreview(URL.createObjectURL(file))
+      setOgImageError(null)
+    }
+  }
+
+  // Handle drag and drop, store File object and preview URL
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+  }
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0]
+      setOgImage(file)
+      setOgImagePreview(URL.createObjectURL(file))
+      setOgImageError(null)
+    }
+  }
+
+  const handleChooseImageClick = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleRemoveImage = () => {
+    setOgImage(null)
+    setOgImagePreview(null)
+    setOgImageError("")
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+
+  const handleSubmit = async (
+    values: SEOData,
+    { resetForm }: { resetForm: () => void }
+  ) => {
     setIsSubmitting(true)
     try {
       // Prepare keywords as array
@@ -144,47 +216,51 @@ export default function SEOManagementClient() {
         }
       }
 
-      // Compose payload
-      const payload = {
-        slug: values.page,
-        PageSEO: {
-          metaTitle: values.metaTitle,
-          metaDescription: values.metaDescription,
-          keywords: keywordsArr,
-          canonicalUrl: values.canonicalUrl,
-          noindex: values.noindex,
-          ogTitle: values.ogTitle,
-          ogDescription: values.ogDescription,
-          ogImageUrl: values.ogImageUrl,
-          ogType: values.ogType,
-          ogSiteName: values.ogSiteName,
-          ogLocale: values.ogLocale,
-          twitterCard: values.twitterCard,
-          twitterSite: values.twitterSite,
-          twitterCreator: values.twitterCreator,
-          twitterImageUrl: values.twitterImageUrl,
-          schemas: schemasArr,
-          changefreq: values.changefreq,
-          priority: values.priority,
-        },
-        PageArticle: {
-          content: values.articleContent,
-          image: values.articleImage,
-          imageAlt: values.articleImageAlt,
-        },
-      }
+      // Create FormData
+      const formData = new FormData()
+      formData.append("slug", values.page)
+      // ==========================================================basic seo
+      formData.append("metaTitle", values.metaTitle)
+      formData.append("noindex", values.noindex.toString())
+      formData.append("metaDescription", values.metaDescription)
+      formData.append("keywords", values.keywords)
+      formData.append("canonicalUrl", values.canonicalUrl)
+      // ========================================================social media seo
+      formData.append("ogTitle", values.ogTitle)
+      formData.append("ogType", values.ogType)
+      formData.append("ogSiteName", values.ogSiteName)
+      formData.append("ogLocale", values.ogLocale)
+      formData.append("ogImage", ogImage as any)
+      formData.append("ogDescription", values.ogDescription)
+      formData.append("twitterCard", values.twitterCard)
+      formData.append("twitterSite", values.twitterSite)
+      formData.append("twitterCreator", values.twitterCreator)
+      formData.append("twitterImageUrl", values.twitterImageUrl)
+      // ========================================================================= technical seo
+      formData.append("changefreq", values.changefreq)
+      formData.append("priority", values.priority as any)
+      //========================================================schema
+      formData.append("schemas", JSON.stringify(schemasArr))
+
 
       // Call API
-      const result = await createDynamicPagesArticleAndSeo(payload)
+      const result = await createDynamicPagesArticleAndSeo(formData)
       console.log("result", result)
       if (result.statusCode === 200) {
         toast.success("Page Data created Successfully")
+        resetForm()
+        // Reset the ogImage file input as well
+        setOgImage(null)
+        setOgImagePreview(null)
+        setOgImageError(null)
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ""
+        }
       } else {
-        toast.error("Something went wrong")
+        toast.error(result?.message || "Something went wrong.");
       }
-    } catch (err) {
-      toast.error("Something went wrong")
-      console.log("cathc block err", err)
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create article. Please try again.");
     }
     setIsSubmitting(false)
   }
@@ -246,7 +322,7 @@ export default function SEOManagementClient() {
                     spellCheck={false}
                     placeholder="e.g. about-us, contact, privacy-policy"
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono"
-                    onBlur={e => {
+                    onBlur={(e: any) => {
                       // Optionally, auto-format: trim, to lower, replace spaces/underscores with hyphens, remove slashes
                       const val = e.target.value
                         .trim()
@@ -291,354 +367,27 @@ export default function SEOManagementClient() {
 
                 {/* Basic SEO Tab */}
                 {activeTab === "basic" && (
-                  <motion.div variants={itemVariants} className="space-y-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Meta Title * (10-60 characters)
-                        </label>
-                        <Field
-                          name="metaTitle"
-                          type="text"
-                          placeholder="Enter meta title"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                        <div className="flex justify-between text-xs mt-1">
-                          <ErrorMessage name="metaTitle" component="span" className="text-red-500" />
-                          <span className={`${values.metaTitle.length > 60 ? "text-red-500" : "text-gray-500"}`}>
-                            {values.metaTitle.length}/60
-                          </span>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Noindex
-                        </label>
-                        <Field
-                          as="select"
-                          name="noindex"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        >
-                          <option value="false">Index (default)</option>
-                          <option value="true">Noindex</option>
-                        </Field>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Keywords * (Comma separated)
-                      </label>
-                      <Field
-                        name="keywords"
-                        type="text"
-                        placeholder="keyword1, keyword2, keyword3, long-tail keyword"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      />
-                      <ErrorMessage name="keywords" component="div" className="text-red-500 text-sm mt-1" />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Meta Description * (30-160 characters)
-                      </label>
-                      <Field
-                        as="textarea"
-                        name="metaDescription"
-                        rows={3}
-                        placeholder="Compelling description that includes your focus keyword and encourages clicks"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      />
-                      <div className="flex justify-between text-xs mt-1">
-                        <ErrorMessage name="metaDescription" component="span" className="text-red-500" />
-                        <span className={`${values.metaDescription.length > 160 ? "text-red-500" : "text-gray-500"}`}>
-                          {values.metaDescription.length}/160
-                        </span>
-                      </div>
-                    </div>
-                  </motion.div>
+                  <BasicSEOForm itemVariants={itemVariants} values={values} />
                 )}
 
                 {/* Social Media Tab */}
                 {activeTab === "social" && (
-                  <motion.div variants={itemVariants} className="space-y-6">
-                    {/* Open Graph */}
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                        <Globe className="w-5 h-5 mr-2 text-[#005c82] dark:text-[#00dbed]" />
-                        Open Graph (Facebook, LinkedIn)
-                      </h3>
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            OG Title
-                          </label>
-                          <Field
-                            name="ogTitle"
-                            type="text"
-                            placeholder="Facebook/LinkedIn share title"
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          />
-                          <ErrorMessage name="ogTitle" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            OG Type
-                          </label>
-                          <Field
-                            as="select"
-                            name="ogType"
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          >
-                            <option value="website">Website</option>
-                            <option value="article">Article</option>
-                            <option value="product">Product</option>
-                            <option value="profile">Profile</option>
-                          </Field>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Site Name
-                          </label>
-                          <Field
-                            name="ogSiteName"
-                            type="text"
-                            placeholder="Toolinger"
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Locale
-                          </label>
-                          <Field
-                            as="select"
-                            name="ogLocale"
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          >
-                            <option value="en_US">English (US)</option>
-                            <option value="en_GB">English (UK)</option>
-                            <option value="es_ES">Spanish</option>
-                            <option value="fr_FR">French</option>
-                            <option value="de_DE">German</option>
-                          </Field>
-                        </div>
-                      </div>
-
-                      <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          OG Image URL (1200x630px recommended)
-                        </label>
-                        <Field
-                          name="ogImageUrl"
-                          type="url"
-                          placeholder="https://toolinger.com/images/og-image.jpg"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                        <ErrorMessage name="ogImageUrl" component="div" className="text-red-500 text-sm mt-1" />
-                      </div>
-
-                      <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          OG Description
-                        </label>
-                        <Field
-                          as="textarea"
-                          name="ogDescription"
-                          rows={2}
-                          placeholder="Description for social media shares"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                        <ErrorMessage name="ogDescription" component="div" className="text-red-500 text-sm mt-1" />
-                      </div>
-                    </div>
-
-                    {/* Twitter Cards */}
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Twitter Cards</h3>
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Card Type
-                          </label>
-                          <Field
-                            as="select"
-                            name="twitterCard"
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          >
-                            <option value="summary">Summary</option>
-                            <option value="summary_large_image">Summary Large Image</option>
-                            <option value="app">App</option>
-                            <option value="player">Player</option>
-                          </Field>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Twitter Site Handle
-                          </label>
-                          <Field
-                            name="twitterSite"
-                            type="text"
-                            placeholder="@toolinger"
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Twitter Creator Handle
-                          </label>
-                          <Field
-                            name="twitterCreator"
-                            type="text"
-                            placeholder="@creator_handle"
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          />
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Twitter Image URL
-                          </label>
-                          <Field
-                            name="twitterImageUrl"
-                            type="url"
-                            placeholder="https://toolinger.com/images/twitter-card.jpg"
-                            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                          />
-                          <ErrorMessage name="twitterImageUrl" component="div" className="text-red-500 text-sm mt-1" />
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
+                  <SocialMediaForm itemVariants={itemVariants} values={values} ogImage={ogImage} setOgImage={setOgImage} ogImagePreview={ogImagePreview} setOgImagePreview={setOgImagePreview} setOgImageError={setOgImageError} dragActive={dragActive} fileInputRef={fileInputRef} handleChooseImageClick={handleChooseImageClick} handleRemoveImage={handleRemoveImage} handleFileChange={handleFileChange} handleDragOver={handleDragOver} handleDragLeave={handleDragLeave} handleDrop={handleDrop} />
                 )}
 
                 {/* Technical SEO Tab */}
                 {activeTab === "technical" && (
-                  <motion.div variants={itemVariants} className="space-y-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Canonical URL
-                        </label>
-                        <Field
-                          name="canonicalUrl"
-                          type="url"
-                          placeholder="https://toolinger.com/page"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                        <ErrorMessage name="canonicalUrl" component="div" className="text-red-500 text-sm mt-1" />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Changefreq
-                        </label>
-                        <Field
-                          as="select"
-                          name="changefreq"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        >
-                          <option value="daily">Daily</option>
-                          <option value="weekly">Weekly</option>
-                          <option value="monthly">Monthly</option>
-                          <option value="yearly">Yearly</option>
-                        </Field>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Priority (0.0 - 1.0)
-                        </label>
-                        <Field
-                          name="priority"
-                          type="number"
-                          min={0}
-                          max={1}
-                          step={0.1}
-                          placeholder="1.0"
-                          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                      </div>
-                    </div>
-                  </motion.div>
+                  <TechnicalForm itemVariants={itemVariants}
+                    values={values} />
                 )}
 
                 {/* Schema Tab */}
                 {activeTab === "schema" && (
-                  <motion.div variants={itemVariants} className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Schema Markup (JSON-LD, array or object)
-                      </label>
-                      <Field
-                        as="textarea"
-                        name="schemas"
-                        rows={12}
-                        placeholder={`[
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "Toolinger",
-    "url": "https://toolinger.com",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://toolinger.com/search?query={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-]`}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
-                      />
-                      <ErrorMessage name="schemas" component="div" className="text-red-500 text-sm mt-1" />
-                    </div>
-                  </motion.div>
+                  <SchemaForm itemVariants={itemVariants}
+                    values={values} />
                 )}
 
-                {/* Article Tab */}
-                {activeTab === "article" && (
-                  <motion.div variants={itemVariants} className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Article Content (HTML allowed)
-                      </label>
-                      <Field
-                        as="textarea"
-                        name="articleContent"
-                        rows={6}
-                        placeholder={`<h1>200+ Free Online Tools</h1><p>Browse categories and find the tools you need.</p>`}
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Article Image URL
-                      </label>
-                      <Field
-                        name="articleImage"
-                        type="url"
-                        placeholder="https://toolinger.com/static/hero.png"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Article Image Alt
-                      </label>
-                      <Field
-                        name="articleImageAlt"
-                        type="text"
-                        placeholder="Toolinger hero"
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      />
-                    </div>
-                  </motion.div>
-                )}
+
 
                 {/* Submit Button */}
                 <motion.div

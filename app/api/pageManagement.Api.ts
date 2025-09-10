@@ -2,7 +2,9 @@ import { getFromLocalStorage } from "@/lib/local-storage";
 import axios from "axios";
 
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL = "http://localhost:5000/api/v1";
+
 
 
 
@@ -62,18 +64,28 @@ export async function getDynamicPagesArticleAndSeoBySlug(slug: string, token?: s
 export async function createDynamicPagesArticleAndSeo(data: any) {
     try {
         console.log("data", data)
-        const toolingerToken = getFromLocalStorage("toolinger")
 
-
-        if (!toolingerToken) {
-            console.log("No toolinger found in localStorage");
-        }
-        const res = await axios.post(`${API_BASE_URL}/pages-article-and-seo`, data, {
-            headers: { Authorization: `${toolingerToken}` }
-        });
+        const toolingerToken = getFromLocalStorage("toolinger");
+        const res = await axios.post(
+            `${API_BASE_URL}/pages-article-and-seo`,
+            data,
+            {
+                headers: {
+                    Authorization: `${toolingerToken}`,
+                    "Content-Type": "multipart/form-data"
+                }
+            }
+        );
         return res.data;
-    } catch (error) {
+    } catch (error: any) {
         console.log("Error creating dynamic page article and SEO", error);
+
+
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message || "Something went wrong");
+        }
+
+        throw new Error(error.message || "Something went wrong");
     }
 }
 
