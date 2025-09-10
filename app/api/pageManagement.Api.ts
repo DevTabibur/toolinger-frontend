@@ -64,7 +64,6 @@ export async function getDynamicPagesArticleAndSeoBySlug(slug: string) {
         const res = await fetch(`${API_BASE_URL}/pages-article-and-seo/slug/${slug}`, {
             cache: "no-store" //  Always fresh data (no cache)
         });
-        console.log("res", res)
         return res.json();
     } catch (error) {
         console.error("Error fetching dynamic page article and SEO by slug", error);

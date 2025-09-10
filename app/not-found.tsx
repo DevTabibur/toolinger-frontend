@@ -1,58 +1,97 @@
-"use client";
+import NotfoundClientPage from "@/components/pages/NotfoundClientPage";
 
-import Link from "next/link";
-import { GlobalSearch } from "@/components/global-search";
-import { ArrowLeft } from "lucide-react";
 
-// This file is the default 404 page for Next.js. 
-// If you are not seeing this page for not found routes, 
-// make sure you do NOT have a `notFound()` call in your page or layout files 
-// that returns a custom error boundary, and that your custom 404.tsx is at the root of the `app` directory.
+import { getDynamicPagesArticleAndSeoBySlug } from "@/app/api/pageManagement.Api";
+import { Metadata } from "next";
+
+
+export async function generateMetadata(): Promise<Metadata> {
+    const slug = "not-found";
+    const page: any = await getDynamicPagesArticleAndSeoBySlug(slug);
+    const seo = page?.data?.PageSEO || {};
+
+    // Fallbacks only for metaTitle and metaDescription
+    const fallbackMetaTitle = '404 Not Found - Toolinger | Page Does Not Exist';
+    const fallbackMetaDescription = 'Sorry, the page you are looking for could not be found. Please check the URL or return to the Toolinger homepage.';
+
+    // Keywords: array or string, optional
+    let keywords: string | undefined;
+    if (Array.isArray(seo.keywords) && seo.keywords.length) {
+        keywords = seo.keywords.join(", ");
+    } else if (typeof seo.keywords === "string" && seo.keywords) {
+        keywords = seo.keywords;
+    }
+
+    // Canonical URL
+    const canonicalUrl = typeof seo.canonicalUrl === "string" && seo.canonicalUrl ? seo.canonicalUrl : undefined;
+
+    // Robots
+    let robots: Metadata["robots"] | undefined;
+    if (typeof seo.noindex === "boolean") {
+        robots = seo.noindex
+            ? { index: false, follow: false }
+            : { index: true, follow: true };
+    }
+
+    // Open Graph Image
+    let ogImage: any[] | undefined;
+    if (seo.ogImageUrl && typeof seo.ogImageUrl === "string") {
+        const url = seo.ogImageUrl.startsWith("http")
+            ? seo.ogImageUrl
+            : `${process.env.NEXT_PUBLIC_IMAGE_API || "https://toolinger.com"}/${seo.ogImageUrl}`;
+        ogImage = [
+            {
+                url,
+                width: 1200,
+                height: 630,
+                alt: typeof seo.ogTitle === "string" ? seo.ogTitle : undefined,
+            },
+        ];
+    }
+
+    // Twitter Image
+    let twitterImages: string[] | undefined;
+    if (seo.twitterImageUrl && typeof seo.twitterImageUrl === "string") {
+        const url = seo.twitterImageUrl.startsWith("http")
+            ? seo.twitterImageUrl
+            : `${process.env.NEXT_PUBLIC_IMAGE_API || "https://toolinger.com"}/${seo.twitterImageUrl}`;
+        twitterImages = [url];
+    }
+
+    // Build metadata object, only including fields if present
+    const metadata: Metadata = {
+        title: typeof seo.metaTitle === "string" && seo.metaTitle ? seo.metaTitle : fallbackMetaTitle,
+        description: typeof seo.metaDescription === "string" && seo.metaDescription ? seo.metaDescription : fallbackMetaDescription,
+        ...(keywords ? { keywords } : {}),
+        ...(canonicalUrl ? { alternates: { canonical: canonicalUrl } } : {}),
+        ...(robots ? { robots } : {}),
+        openGraph: {
+            ...(typeof seo.ogTitle === "string" && seo.ogTitle ? { title: seo.ogTitle } : {}),
+            ...(typeof seo.ogDescription === "string" && seo.ogDescription ? { description: seo.ogDescription } : {}),
+            ...(canonicalUrl ? { url: canonicalUrl } : {}),
+            ...(typeof seo.ogType === "string" && seo.ogType ? { type: seo.ogType } : {}),
+            ...(typeof seo.ogSiteName === "string" && seo.ogSiteName ? { siteName: seo.ogSiteName } : {}),
+            ...(ogImage ? { images: ogImage } : {}),
+            ...(typeof seo.ogLocale === "string" && seo.ogLocale ? { locale: seo.ogLocale } : {}),
+        },
+        twitter: {
+            ...(typeof seo.twitterCard === "string" && seo.twitterCard ? { card: seo.twitterCard } : {}),
+            ...(typeof seo.twitterSite === "string" && seo.twitterSite ? { site: seo.twitterSite } : {}),
+            ...(typeof seo.twitterCreator === "string" && seo.twitterCreator ? { creator: seo.twitterCreator } : {}),
+            ...(twitterImages ? { images: twitterImages } : {}),
+        },
+    };
+
+    // Remove empty openGraph/twitter objects if all fields are missing
+    if (Object.keys(metadata.openGraph || {}).length === 0) delete metadata.openGraph;
+    if (Object.keys(metadata.twitter || {}).length === 0) delete metadata.twitter;
+
+    return metadata;
+}
+
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground px-4">
-      <div className="flex flex-col items-center max-w-lg w-full">
-        <div className="flex items-center space-x-4 mb-8">
-          <span className="text-5xl font-extrabold text-primary drop-shadow-lg">404</span>
-          <span className="h-10 w-px bg-muted/40" />
-          <span className="text-lg md:text-xl font-medium text-muted-foreground">
-            This page could not be found.
-          </span>
-        </div>
-        <div className="w-full mb-8">
-          <GlobalSearch
-            placeholder="Search for tools, categories, or features..."
-            className="w-full max-w-md mx-auto"
-            variant="header"
-          />
-        </div>
-        <Link
-          href="/"
-          className="inline-flex items-center px-5 py-2 rounded-lg bg-primary text-white font-semibold shadow-lg hover:bg-primary/90 transition-colors text-base"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Go back home
-        </Link>
-        <div className="mt-10 text-center text-muted-foreground text-sm">
-          <span>
-            Lost? Try searching for a tool above or&nbsp;
-            <Link href="/" className="text-primary hover:underline">
-              browse all categories
-            </Link>
-            .
-          </span>
-        </div>
-      </div>
-      <div className="fixed inset-0 -z-10 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
-        <div className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 opacity-30 blur-3xl pointer-events-none select-none">
-          <svg width="600" height="300" viewBox="0 0 600 300" fill="none">
-            <ellipse cx="300" cy="150" rx="250" ry="80" fill="#6366f1" fillOpacity="0.15" />
-            <ellipse cx="300" cy="150" rx="180" ry="60" fill="#818cf8" fillOpacity="0.10" />
-          </svg>
-        </div>
-      </div>
-    </div>
+    <NotfoundClientPage />
   );
 }

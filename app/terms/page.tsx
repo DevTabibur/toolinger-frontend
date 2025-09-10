@@ -1,45 +1,93 @@
-// import type { Metadata } from "next"
-// import TermsClient from "./TermsClient"
 
-// export const metadata: Metadata = {
-//   title: "Terms of Service - Toolinger Usage Agreement",
-//   description:
-//     "Read Toolinger's terms of service to understand the rules and guidelines for using our free online tools platform.",
-//   keywords: "terms of service, usage agreement, toolinger terms, legal agreement, user agreement",
-//   openGraph: {
-//     title: "Terms of Service - Toolinger",
-//     description: "Terms and conditions for using Toolinger's free online tools.",
-//     url: "https://toolinger.com/terms",
-//   },
-// }
-
-// export default function TermsPage() {
-//   return <TermsClient />
-// }
-
-
-
-
-
-
-
-
-
-
-
-import type { Metadata } from "next";
+import { getDynamicPagesArticleAndSeoBySlug } from "@/app/api/pageManagement.Api";
+import { Metadata } from "next";
 import TermsClient from "./TermsClient";
-import { getPageSEO, buildMetadataFromSEO } from "@/lib/seo.server";
 
-// ← স্ট্যাটিক `metadata` অবজেক্ট বাদ, বদলে generateMetadata ব্যবহার করো
+
 export async function generateMetadata(): Promise<Metadata> {
-  const seo = await getPageSEO("terms"); // pageKey: "terms"
-  return buildMetadataFromSEO(seo, {
-    title: "Terms of Service",
-    description: "Read our terms and conditions.",
-    url: "https://toolinger.com/terms",
-  });
+    const slug = "terms";
+    const page: any = await getDynamicPagesArticleAndSeoBySlug(slug);
+    const seo = page?.data?.PageSEO || {};
+
+    // Fallbacks only for metaTitle and metaDescription
+    const fallbackMetaTitle = 'Terms of Service - Toolinger | User Agreement & Policies';
+    const fallbackMetaDescription = 'Read the Toolinger Terms of Service to understand your rights, responsibilities, and our policies regarding the use of our platform and premium tools.';
+
+    // Keywords: array or string, optional
+    let keywords: string | undefined;
+    if (Array.isArray(seo.keywords) && seo.keywords.length) {
+        keywords = seo.keywords.join(", ");
+    } else if (typeof seo.keywords === "string" && seo.keywords) {
+        keywords = seo.keywords;
+    }
+
+    // Canonical URL
+    const canonicalUrl = typeof seo.canonicalUrl === "string" && seo.canonicalUrl ? seo.canonicalUrl : undefined;
+
+    // Robots
+    let robots: Metadata["robots"] | undefined;
+    if (typeof seo.noindex === "boolean") {
+        robots = seo.noindex
+            ? { index: false, follow: false }
+            : { index: true, follow: true };
+    }
+
+    // Open Graph Image
+    let ogImage: any[] | undefined;
+    if (seo.ogImageUrl && typeof seo.ogImageUrl === "string") {
+        const url = seo.ogImageUrl.startsWith("http")
+            ? seo.ogImageUrl
+            : `${process.env.NEXT_PUBLIC_IMAGE_API || "https://toolinger.com"}/${seo.ogImageUrl}`;
+        ogImage = [
+            {
+                url,
+                width: 1200,
+                height: 630,
+                alt: typeof seo.ogTitle === "string" ? seo.ogTitle : undefined,
+            },
+        ];
+    }
+
+    // Twitter Image
+    let twitterImages: string[] | undefined;
+    if (seo.twitterImageUrl && typeof seo.twitterImageUrl === "string") {
+        const url = seo.twitterImageUrl.startsWith("http")
+            ? seo.twitterImageUrl
+            : `${process.env.NEXT_PUBLIC_IMAGE_API || "https://toolinger.com"}/${seo.twitterImageUrl}`;
+        twitterImages = [url];
+    }
+
+    // Build metadata object, only including fields if present
+    const metadata: Metadata = {
+        title: typeof seo.metaTitle === "string" && seo.metaTitle ? seo.metaTitle : fallbackMetaTitle,
+        description: typeof seo.metaDescription === "string" && seo.metaDescription ? seo.metaDescription : fallbackMetaDescription,
+        ...(keywords ? { keywords } : {}),
+        ...(canonicalUrl ? { alternates: { canonical: canonicalUrl } } : {}),
+        ...(robots ? { robots } : {}),
+        openGraph: {
+            ...(typeof seo.ogTitle === "string" && seo.ogTitle ? { title: seo.ogTitle } : {}),
+            ...(typeof seo.ogDescription === "string" && seo.ogDescription ? { description: seo.ogDescription } : {}),
+            ...(canonicalUrl ? { url: canonicalUrl } : {}),
+            ...(typeof seo.ogType === "string" && seo.ogType ? { type: seo.ogType } : {}),
+            ...(typeof seo.ogSiteName === "string" && seo.ogSiteName ? { siteName: seo.ogSiteName } : {}),
+            ...(ogImage ? { images: ogImage } : {}),
+            ...(typeof seo.ogLocale === "string" && seo.ogLocale ? { locale: seo.ogLocale } : {}),
+        },
+        twitter: {
+            ...(typeof seo.twitterCard === "string" && seo.twitterCard ? { card: seo.twitterCard } : {}),
+            ...(typeof seo.twitterSite === "string" && seo.twitterSite ? { site: seo.twitterSite } : {}),
+            ...(typeof seo.twitterCreator === "string" && seo.twitterCreator ? { creator: seo.twitterCreator } : {}),
+            ...(twitterImages ? { images: twitterImages } : {}),
+        },
+    };
+
+    // Remove empty openGraph/twitter objects if all fields are missing
+    if (Object.keys(metadata.openGraph || {}).length === 0) delete metadata.openGraph;
+    if (Object.keys(metadata.twitter || {}).length === 0) delete metadata.twitter;
+
+    return metadata;
 }
+
 
 export default function TermsPage() {
   return <TermsClient />;
