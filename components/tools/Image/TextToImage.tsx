@@ -43,7 +43,7 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
     return lines;
 }
 
-export default function TextToImage() {
+export default function TextToImage(props: { article?: any, seo?: any }) {
     const [inputText, setInputText] = useState(DEFAULT_TEXT);
     const [bgColor, setBgColor] = useState("#ffffff");
     const [textColor, setTextColor] = useState("#000000");
@@ -227,7 +227,7 @@ export default function TextToImage() {
 
 
             <div className="container mx-auto py-8 px-4">
-                
+
                 <h1 className="text-2xl font-bold mb-4">Text to Image Generator</h1>
                 <div className="grid md:grid-cols-2 gap-8">
                     {/* Controls */}
@@ -393,7 +393,7 @@ export default function TextToImage() {
                     {/* Canvas and actions */}
                     <div className="flex flex-col items-center gap-4">
                         <div
-                        className="overflow-auto"
+                            className="overflow-auto"
                             style={{
                                 width: imgWidth,
                                 height: imgHeight,
@@ -441,6 +441,26 @@ export default function TextToImage() {
                                 {copied ? "Copied!" : "Copy"}
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div className="container mx-auto p-4">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+                    {/* First column: col-span-7 on md+ */}
+                    <div className="md:col-span-7 col-span-1 ">
+                        <div className="border-t border-gray-200 dark:border-gray-700">
+                            {props?.article && (
+                                <div
+                                    className="prose max-w-none mt-8 "
+                                    dangerouslySetInnerHTML={{ __html: props.article }}
+                                />
+                            )}
+                        </div>
+                    </div>
+                    {/* Second column: col-span-5 on md+ */}
+                    <div className="md:col-span-5 col-span-1 ">
+                        {/* You can place content for the second column here */}
+                        {/* Advertiesment */}
                     </div>
                 </div>
             </div>
