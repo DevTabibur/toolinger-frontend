@@ -161,6 +161,7 @@ export default function ManageSEOPage() {
           sortDir,
           noindex: filterNoindex,
         });
+        console.log("res", res)
         if (!ignore) {
           setData(res?.data?.data || []);
           setMeta(res?.data?.meta || { page: 1, limit: 10, total: 0 });
@@ -224,13 +225,13 @@ export default function ManageSEOPage() {
         prev.map(item =>
           item._id === editId
             ? {
-                ...item,
-                PageSEO: {
-                  ...item.PageSEO,
-                  metaTitle: editMetaTitle,
-                  metaDescription: editMetaDescription,
-                },
-              }
+              ...item,
+              PageSEO: {
+                ...item.PageSEO,
+                metaTitle: editMetaTitle,
+                metaDescription: editMetaDescription,
+              },
+            }
             : item
         )
       );
@@ -289,7 +290,7 @@ export default function ManageSEOPage() {
           </select>
         </div>
       </div>
-      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow">
+      {/* <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
@@ -390,7 +391,110 @@ export default function ManageSEOPage() {
             )}
           </tbody>
         </table>
+      </div> */}
+
+      <div className="w-full max-w-full overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow">
+        <table className="min-w-max divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="bg-gray-50 dark:bg-gray-800">
+            <tr>
+              {columns.map(col => (
+                <th
+                  key={col.id}
+                  className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider cursor-pointer select-none"
+                  onClick={() => handleSort(col.id)}
+                >
+                  <span className="flex items-center gap-1">
+                    {col.label}
+                    <ArrowUpDown
+                      className={`w-4 h-4 transition ${sortBy === col.id
+                        ? sortDir === "asc"
+                          ? "text-[#005c82] dark:text-[#00dbed]"
+                          : "text-[#005c82] dark:text-[#00dbed] rotate-180"
+                        : "text-gray-400"
+                        }`}
+                    />
+                  </span>
+                </th>
+              ))}
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-100 dark:divide-gray-800">
+            {loading ? (
+              <tr>
+                <td colSpan={columns.length + 1} className="py-8 text-center text-gray-500 dark:text-gray-400">
+                  Loading...
+                </td>
+              </tr>
+            ) : data.length === 0 ? (
+              <tr>
+                <td colSpan={columns.length + 1} className="py-8 text-center text-gray-500 dark:text-gray-400">
+                  No SEO data found.
+                </td>
+              </tr>
+            ) : (
+              data.map(item => (
+                <tr key={item._id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                  <td className="px-4 py-3 font-mono text-sm text-[#005c82] dark:text-[#00dbed]">{item.slug}</td>
+                  <td className="px-4 py-3 text-sm">{item.PageSEO?.metaTitle || "-"}</td>
+                  <td className="px-4 py-3 text-xs max-w-xs truncate" title={item.PageSEO?.metaDescription}>
+                    {item.PageSEO?.metaDescription || "-"}
+                  </td>
+                  <td className="px-4 py-3 text-xs">
+                    {item.PageSEO?.keywords && item.PageSEO.keywords.length > 0
+                      ? item.PageSEO.keywords.join(", ")
+                      : "-"}
+                  </td>
+                  <td className="px-4 py-3 text-xs break-all">
+                    {item.PageSEO?.canonicalUrl ? (
+                      <a
+                        href={item.PageSEO.canonicalUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 dark:text-blue-400 underline"
+                      >
+                        {item.PageSEO.canonicalUrl}
+                      </a>
+                    ) : (
+                      <span className="text-gray-400">-</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-xs">
+                    {item.PageSEO?.noindex ? (
+                      <span className="inline-block px-2 py-1 rounded bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 text-xs">Noindex</span>
+                    ) : (
+                      <span className="inline-block px-2 py-1 rounded bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs">Index</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-xs">{item.PageSEO?.changefreq || "-"}</td>
+                  <td className="px-4 py-3 text-xs">{item.PageSEO?.priority ?? "-"}</td>
+                  <td className="px-4 py-3 text-xs">{formatDate(item.updatedAt)}</td>
+                  <td className="px-4 py-3 text-xs">
+                    <div className="flex gap-2">
+                      <button
+                        className="p-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900 text-blue-600 dark:text-blue-400"
+                        title="Edit"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button
+                        className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900 text-red-600 dark:text-red-400"
+                        title="Delete"
+                        onClick={() => setDeleteId(item._id)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
+
 
       {/* Edit Modal */}
       <AnimatePresence>
@@ -537,3 +641,4 @@ export default function ManageSEOPage() {
     </div>
   );
 }
+
