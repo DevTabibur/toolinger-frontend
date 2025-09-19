@@ -715,6 +715,7 @@ import { QuillField } from "@/form/QuillField"
 import { Button } from "@/components/ui/button"
 import toast from "react-hot-toast"
 import { createBlogPost } from "@/app/api/Blog.Api"
+import { IBlogFormValues } from "@/types/global-type"
 
 // Slugify function
 const slugify = (str: string) =>
@@ -727,17 +728,23 @@ const slugify = (str: string) =>
 
 const validationSchema = Yup.object({
   title: Yup.string().min(10).max(100).required("Title is required"),
-  slug: Yup.string().matches(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens").required("Slug is required"),
-  excerpt: Yup.string().min(50).max(300).required("Excerpt is required"),
-  content: Yup.string().min(100).required("Content is required"),
+  slug: Yup.string()
+    .matches(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens")
+    .required("Slug is required"),
+  excerpt: Yup.string()
+    .min(50, "Excerpt must be at least 50 characters")
+    .max(160, "Excerpt cannot exceed 160 characters") // ✅ match backend
+    .required("Excerpt is required"),
+  content: Yup.string().min(100, "Content must be at least 100 characters").required("Content is required"),
   category: Yup.string().required("Category is required"),
   tags: Yup.string().required("At least one tag is required"),
-  metaTitle: Yup.string().max(60),
-  metaDescription: Yup.string().max(160),
+  metaTitle: Yup.string().max(60, "Meta title cannot exceed 60 characters").required("Meta title is required"), // ✅ required
+  metaDescription: Yup.string().max(160, "Meta description cannot exceed 160 characters").required("Meta description is required"), // ✅ required
   status: Yup.string().oneOf(["draft", "published", "archived"]).required(),
   allowComments: Yup.boolean(),
   isFeatured: Yup.boolean(),
 })
+
 
 export default function BlogCreateClient() {
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false)
@@ -749,7 +756,7 @@ export default function BlogCreateClient() {
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
-  const formik = useFormik({
+  const formik = useFormik<IBlogFormValues>({
     initialValues: {
       title: "",
       slug: "",
@@ -757,7 +764,7 @@ export default function BlogCreateClient() {
       content: "",
       category: "",
       tags: "",
-      featuredImage: "",
+      featuredImage: null,
       metaTitle: "",
       metaDescription: "",
       status: "draft",
@@ -808,20 +815,25 @@ export default function BlogCreateClient() {
       
 
       try {
-        const res = await createBlogPost(formData)
-        if (res.statusCode === 200) {
-          resetForm()
-          setFeaturedImage(null)
-          setFeaturedImagePreview(null)
-          const quillEditor = document.querySelector(".ql-editor")
-          if (quillEditor) quillEditor.innerHTML = ""
-          toast.success("Blog Created Successfully")
-        }
-      } catch {
-        toast.error("Error creating blog")
-      } finally {
-        setSubmitting(false)
-      }
+  const res = await createBlogPost(formData)
+  if (res.statusCode === 200) {
+    resetForm()
+    setFeaturedImage(null)
+    setFeaturedImagePreview(null)
+    const quillEditor = document.querySelector(".ql-editor")
+    if (quillEditor) quillEditor.innerHTML = ""
+    toast.success("Blog Created Successfully")
+  }
+} catch (err: any) {
+  if (err?.response?.data?.errorMessages) {
+    err.response.data.errorMessages.forEach((e: { path: string; message: string }) => {
+      formik.setFieldError(e.path, e.message)
+    })
+  } else {
+    toast.error("Error creating blog")
+  }
+}
+
     },
   })
 
