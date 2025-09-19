@@ -781,6 +781,10 @@ export default function BlogCreateClient() {
         hasError = true
       }
 
+      if(!values.author){
+        setFieldError("author","Author is required")
+      }
+
       if (!values.category) {
         setFieldError("category", "Category is required")
         hasError = true
@@ -1018,6 +1022,7 @@ export default function BlogCreateClient() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Author</label>
                   <input type="text" {...formik.getFieldProps("author")} className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-[#005c82] focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Author name..." />
+                  {formik.touched.author && formik.errors.author && <p className="mt-1 text-sm text-red-600">{formik.errors.author}</p>}
                 </div>
               </div>
             </motion.div>
