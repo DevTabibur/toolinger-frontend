@@ -50,10 +50,11 @@ export default function BlogCreateClient() {
 
   // Categories state
   const [categories, setCategories] = React.useState<
-    { id: string; name: string }[]
+    { _id: string; name: string }[]
   >([])
   const [categoriesLoading, setCategoriesLoading] = React.useState(true)
   const [categoriesError, setCategoriesError] = React.useState<string | null>(null)
+console.log('category ',categories);
 
   // Tag input state for UI
   const [tagInput, setTagInput] = React.useState("")
@@ -539,7 +540,7 @@ export default function BlogCreateClient() {
                     {!categoriesLoading &&
                       !categoriesError &&
                       categories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
+                        <option key={cat._id} value={cat._id}>
                           {cat.name}
                         </option>
                       ))}
