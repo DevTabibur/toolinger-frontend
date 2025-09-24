@@ -91,9 +91,19 @@ export async function createDynamicPagesArticleAndSeo(data: any) {
     } catch (error: any) {
         console.log("Error creating dynamic page article and SEO", error);
 
-
         if (error.response && error.response.data) {
-            throw new Error(error.response.data.message || "Something went wrong");
+            // Check for errorMessages array first
+            if (error.response.data.errorMessages && Array.isArray(error.response.data.errorMessages) && error.response.data.errorMessages.length > 0) {
+                throw new Error(error.response.data.errorMessages[0]);
+            }
+            // Fallback to message property
+            if (error.response.data.message) {
+                throw new Error(error.response.data.message);
+            }
+            // Fallback to error property
+            if (error.response.data.error) {
+                throw new Error(error.response.data.error);
+            }
         }
 
         throw new Error(error.message || "Something went wrong");

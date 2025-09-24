@@ -47,52 +47,121 @@ const menuItems: MenuItem[] = [
     icon: <LayoutDashboard className="w-5 h-5" />,
     href: "/dashboard",
   },
+  // ── Page Management (NEW)
   {
-    id: "blog",
-    label: "Blog Management",
-    icon: <PenTool className="w-5 h-5" />,
-    permission: "blog_management",
+    id: "page-management",
+    label: "Page Management",
+    icon: <FileText className="w-5 h-5" />,
+    permission: "page_management",
     children: [
+      // ── Static Pages (auto-read from project pages, but here hardcoded for now)
       {
-        id: "blog-create",
-        label: "Create Blog",
-        icon: <Edit3 className="w-4 h-4" />,
-        href: "/dashboard/blog/create",
+        id: "static-pages",
+        label: "Static Pages",
+        icon: <FileStack className="w-4 h-4" />,
+        // No href here, so should not render as a Link
+        href: "/dashboard/page-management/static",
       },
       {
-        id: "blog-manage",
-        label: "Manage Blogs",
-        icon: <BookOpen className="w-4 h-4" />,
-        href: "/dashboard/blog/manage",
+        id: "text-tools",
+        label: "Text Tools",
+        icon: <PenTool className="w-4 h-4" />,
+        href: "/dashboard/page-management/text-tools",
       },
       {
-        id: "blog-settings",
-        label: "Blog Settings",
+        id: "image-tools",
+        label: "Image Tools",
+        icon: <FilePlus2 className="w-4 h-4" />,
+        href: "/dashboard/page-management/image-tools",
+      },
+      {
+        id: "developer-tools",
+        label: "Developer Tools",
         icon: <Settings className="w-4 h-4" />,
-        href: "/dashboard/blog/settings",
-      },
-    ],
-  },
-  {
-    id: "blog-category",
-    label: "Blog Category",
-    icon: <Inbox className="w-5 h-5" />,
-    permission: "blog_category_management",
-    children: [
-      {
-        id: "add-category",
-        label: "Add Category",
-        icon: <Edit3 className="w-4 h-4" />,
-        href: "/dashboard/blog-category/add",
+        href: "/dashboard/page-management/developer-tools",
       },
       {
-        id: "manage-category",
-        label: "Manage Category",
+        id: "converters",
+        label: "Converters",
+        icon: <BarChart3 className="w-4 h-4" />,
+        href: "/dashboard/page-management/converters",
+      },
+      {
+        id: "generators",
+        label: "Generators",
+        icon: <FileStack className="w-4 h-4" />,
+        href: "/dashboard/page-management/generators",
+      },
+      {
+        id: "calculators",
+        label: "Calculators",
         icon: <BookOpen className="w-4 h-4" />,
-        href: "/dashboard/blog-category/manage",
+        href: "/dashboard/page-management/calculators",
+      },
+      {
+        id: "website-management-tools",
+        label: "Website Management Tools",
+        icon: <Settings className="w-4 h-4" />,
+        href: "/dashboard/page-management/website-management-tools",
+      },
+      // Editor (hidden route)
+      {
+        id: "page-editor",
+        label: "Editor",
+        icon: <Edit3 className="w-4 h-4" />,
+        href: "/dashboard/page-management/edit/:slug",
+        permission: "page_management_edit",
+        // Optionally, you can add a property to hide this from the menu UI if needed
+        // hidden: true,
       },
     ],
   },
+  // {
+  //   id: "blog",
+  //   label: "Blog Management",
+  //   icon: <PenTool className="w-5 h-5" />,
+  //   permission: "blog_management",
+  //   children: [
+  //     {
+  //       id: "blog-create",
+  //       label: "Create Blog",
+  //       icon: <Edit3 className="w-4 h-4" />,
+  //       href: "/dashboard/blog/create",
+  //     },
+  //     {
+  //       id: "blog-manage",
+  //       label: "Manage Blogs",
+  //       icon: <BookOpen className="w-4 h-4" />,
+  //       href: "/dashboard/blog/manage",
+  //     },
+  //     {
+  //       id: "blog-settings",
+  //       label: "Blog Settings",
+  //       icon: <Settings className="w-4 h-4" />,
+  //       href: "/dashboard/blog/settings",
+  //     },
+  //   ],
+  // },
+  // {
+  //   id: "blog-category",
+  //   label: "Blog Category",
+  //   icon: <Inbox className="w-5 h-5" />,
+  //   permission: "blog_category_management",
+  //   children: [
+  //     {
+  //       id: "add-category",
+  //       label: "Add Category",
+  //       icon: <Edit3 className="w-4 h-4" />,
+  //       href: "/dashboard/blog-category/add",
+  //     },
+  //     {
+  //       id: "manage-category",
+  //       label: "Manage Category",
+  //       icon: <BookOpen className="w-4 h-4" />,
+  //       href: "/dashboard/blog-category/manage",
+  //     },
+  //   ],
+  // },
   {
     id: "seo-management",
     label: "SEO Management",
@@ -385,40 +454,78 @@ export default function DashboardLayoutClient({
                               >
                                 {item.children.map((child) => {
                                   const isChild = isChildActive(child, pathname);
-                                  return (
-                                    <Link
-                                      key={child.id as any}
-                                      href={child.href as any}
-                                      className={`flex items-center space-x-3 p-2 rounded-lg transition-colors group
-                                        hover:bg-gray-100 dark:hover:bg-gray-700
-                                        ${isChild
-                                          ? "bg-gray-100 dark:bg-gray-700 font-semibold text-[#005c82] dark:text-[#00dbed]"
-                                          : ""
-                                        }
-                                      `}
-                                    >
-                                      <span
-                                        className={`group-hover:text-[#005c82] dark:group-hover:text-[#00dbed] transition-colors
+                                  // Only render Link if child.href is defined
+                                  if (child.href) {
+                                    return (
+                                      <Link
+                                        key={child.id as any}
+                                        href={child.href as any}
+                                        className={`flex items-center space-x-3 p-2 rounded-lg transition-colors group
+                                          hover:bg-gray-100 dark:hover:bg-gray-700
                                           ${isChild
-                                            ? "text-[#005c82] dark:text-[#00dbed]"
-                                            : "text-gray-500 dark:text-gray-400"
+                                            ? "bg-gray-100 dark:bg-gray-700 font-semibold text-[#005c82] dark:text-[#00dbed]"
+                                            : ""
                                           }
                                         `}
                                       >
-                                        {child.icon}
-                                      </span>
-                                      <span
-                                        className={`text-sm group-hover:text-gray-900 dark:group-hover:text-white transition-colors
+                                        <span
+                                          className={`group-hover:text-[#005c82] dark:group-hover:text-[#00dbed] transition-colors
+                                            ${isChild
+                                              ? "text-[#005c82] dark:text-[#00dbed]"
+                                              : "text-gray-500 dark:text-gray-400"
+                                            }
+                                          `}
+                                        >
+                                          {child.icon}
+                                        </span>
+                                        <span
+                                          className={`text-sm group-hover:text-gray-900 dark:group-hover:text-white transition-colors
+                                            ${isChild
+                                              ? "text-[#005c82] dark:text-[#00dbed]"
+                                              : "text-gray-600 dark:text-gray-400"
+                                            }
+                                          `}
+                                        >
+                                          {child.label}
+                                        </span>
+                                      </Link>
+                                    );
+                                  } else {
+                                    // Render as a non-link (e.g., a span or div)
+                                    return (
+                                      <div
+                                        key={child.id as any}
+                                        className={`flex items-center space-x-3 p-2 rounded-lg transition-colors group
+                                          cursor-default
                                           ${isChild
-                                            ? "text-[#005c82] dark:text-[#00dbed]"
-                                            : "text-gray-600 dark:text-gray-400"
+                                            ? "bg-gray-100 dark:bg-gray-700 font-semibold text-[#005c82] dark:text-[#00dbed]"
+                                            : ""
                                           }
                                         `}
                                       >
-                                        {child.label}
-                                      </span>
-                                    </Link>
-                                  );
+                                        <span
+                                          className={`group-hover:text-[#005c82] dark:group-hover:text-[#00dbed] transition-colors
+                                            ${isChild
+                                              ? "text-[#005c82] dark:text-[#00dbed]"
+                                              : "text-gray-500 dark:text-gray-400"
+                                            }
+                                          `}
+                                        >
+                                          {child.icon}
+                                        </span>
+                                        <span
+                                          className={`text-sm group-hover:text-gray-900 dark:group-hover:text-white transition-colors
+                                            ${isChild
+                                              ? "text-[#005c82] dark:text-[#00dbed]"
+                                              : "text-gray-600 dark:text-gray-400"
+                                            }
+                                          `}
+                                        >
+                                          {child.label}
+                                        </span>
+                                      </div>
+                                    );
+                                  }
                                 })}
                               </motion.div>
                             )}

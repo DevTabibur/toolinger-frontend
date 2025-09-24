@@ -13,6 +13,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   ChevronLeft,
   ChevronRight,
   Search,
@@ -23,6 +30,8 @@ import {
   ArrowUp,
   ArrowDown,
   ExternalLink,
+  Plus,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -35,7 +44,10 @@ import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
 import { useBulkDeleteConfirmation } from "@/hooks/useBulkDeleteConfirmation";
 import { getApiSupport } from "@/lib/apiSupport";
-import { deleteDynamicPagesArticleAndSeo } from "@/app/api/pageManagement.Api";
+import { deleteDynamicPagesArticleAndSeo, createDynamicPagesArticleAndSeo } from "@/app/api/pageManagement.Api";
+import { QuillField } from "@/form/QuillField";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { ArticleSchema } from "@/schemas/Article.Schema";
 
 interface StaticPage {
   id: string;
@@ -45,6 +57,16 @@ interface StaticPage {
   noindex: boolean;
   updatedAt: string;
   type: "static";
+  pageArticle?: {
+    id: string;
+    content: string;
+    slug: string;
+    updatedAt: string;
+  };
+}
+
+interface PageArticleFormValues {
+  content: string;
 }
 
 // --- Table Components (local, not imported) ---
@@ -115,6 +137,11 @@ export default function StaticPagesClient() {
   const [selectedItems, setSelectedItems] = useState<StaticPage[]>([]);
   const [apiSupport, setApiSupport] = useState(getApiSupport());
   
+  // PageArticle modal states
+  const [isPageArticleModalOpen, setIsPageArticleModalOpen] = useState(false);
+  const [selectedPageForArticle, setSelectedPageForArticle] = useState<StaticPage | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   // Use URL state management
   const { search, sortBy, sortOrder, page, pageSize, filters, updateState } = useUrlState();
   
@@ -177,13 +204,58 @@ export default function StaticPagesClient() {
       updatedAt: new Date().toISOString(),
       type: "static",
     },
+    {
+      id: "login",
+      title: "Login",
+      slug: "/auth/login",
+      canonicalUrl: "/auth/login",
+      noindex: true,
+      updatedAt: new Date().toISOString(),
+      type: "static",
+    },
+    {
+      id: "register",
+      title: "Register",
+      slug: "/auth/register",
+      canonicalUrl: "/auth/register",
+      noindex: true,
+      updatedAt: new Date().toISOString(),
+      type: "static",
+    },
+    {
+      id: "sitemap",
+      title: "Sitemap",
+      slug: "/sitemap",
+      canonicalUrl: "/sitemap",
+      noindex: true,
+      updatedAt: new Date().toISOString(),
+      type: "static",
+    },
   ];
 
   useEffect(() => {
     const loadPages = async () => {
       setLoading(true);
       try {
-        setPages(staticPagesData);
+        // In a real implementation, you would fetch pages with their PageArticle data
+        // For now, we'll simulate some pages having PageArticle content
+        const pagesWithArticles = staticPagesData.map(page => {
+          // Simulate some pages having PageArticle content
+          if (page.id === "about" || page.id === "contact") {
+            return {
+              ...page,
+              pageArticle: {
+                id: `article-${page.id}`,
+                content: `<p>This is sample content for ${page.title} page.</p>`,
+                slug: page.slug,
+                updatedAt: new Date().toISOString(),
+              }
+            };
+          }
+          return page;
+        });
+        
+        setPages(pagesWithArticles);
       } catch (error) {
         toast.error("Failed to load static pages");
         console.error("Error loading static pages:", error);
@@ -211,7 +283,8 @@ export default function StaticPagesClient() {
         (page) =>
           page.title.toLowerCase().includes(searchLower) ||
           page.slug.toLowerCase().includes(searchLower) ||
-          page.canonicalUrl.toLowerCase().includes(searchLower)
+          page.canonicalUrl.toLowerCase().includes(searchLower) ||
+          (page.pageArticle?.content && page.pageArticle.content.toLowerCase().includes(searchLower))
       );
     }
 
@@ -279,26 +352,16 @@ export default function StaticPagesClient() {
     updateState({ pageSize: newPageSize, page: 1 });
   };
 
-  // Handle bulk actions
-//   const handleBulkDelete = async (items: StaticPage[]) => {
-//     try {
-//       // In a real implementation, you would call the bulk delete API
-//       setPages(pages.filter(page => !items.some(item => item.id === page.id)));
-//       setSelectedItems([]);
-//     } catch (error) {
-//       throw error;
-//     }
-//   };
-
   const handleBulkExport = (items: StaticPage[]) => {
     // Export functionality
     const csvContent = [
-      ["Title", "Slug", "Canonical URL", "Noindex", "Updated At"],
+      ["Title", "Slug", "Canonical URL", "Noindex", "Has Article", "Updated At"],
       ...items.map(page => [
         page.title,
         page.slug,
         page.canonicalUrl,
         page.noindex ? "Yes" : "No",
+        page.pageArticle ? "Yes" : "No",
         new Date(page.updatedAt).toLocaleDateString()
       ])
     ].map(row => row.join(",")).join("\n");
@@ -333,6 +396,56 @@ export default function StaticPagesClient() {
     router.push(
       `/dashboard/page-management/edit/${page.slug.replace("/", "") || "home"}`
     );
+  };
+
+  // Handle PageArticle creation/editing
+  const handlePageArticle = (page: StaticPage) => {
+    setSelectedPageForArticle(page);
+    setIsPageArticleModalOpen(true);
+  };
+
+  // Handle PageArticle form submission
+  const handlePageArticleSubmit = async (values: PageArticleFormValues) => {
+    if (!selectedPageForArticle) return;
+    
+    setIsSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append("slug", selectedPageForArticle.slug);
+      formData.append("content", values.content);
+
+      const res = await createDynamicPagesArticleAndSeo(formData);
+
+      if (res?.statusCode === 200) {
+        toast.success("Page article updated successfully");
+        
+        // Update the page in local state
+        setPages(prevPages => 
+          prevPages.map(page => 
+            page.id === selectedPageForArticle.id 
+              ? {
+                  ...page,
+                  pageArticle: {
+                    id: `article-${page.id}`,
+                    content: values.content,
+                    slug: page.slug,
+                    updatedAt: new Date().toISOString(),
+                  }
+                }
+              : page
+          )
+        );
+        
+        setIsPageArticleModalOpen(false);
+        setSelectedPageForArticle(null);
+      } else {
+        toast.error(res?.message || "Something went wrong.");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update page article. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Delete confirmation hooks
@@ -420,6 +533,25 @@ export default function StaticPagesClient() {
       ),
     },
     {
+      key: "pageArticle",
+      label: "Article",
+      sortable: false,
+      render: (page: StaticPage) => (
+        <div className="flex items-center gap-2">
+          {page.pageArticle ? (
+            <Badge variant="default" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+              <FileText className="w-3 h-3 mr-1" />
+              Has Article
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="text-gray-500">
+              No Article
+            </Badge>
+          )}
+        </div>
+      ),
+    },
+    {
       key: "noindex",
       label: "Noindex",
       sortable: true,
@@ -452,16 +584,8 @@ export default function StaticPagesClient() {
             Manage your static pages (Home, Contact, About, Terms, Privacy)
           </p>
         </div>
-        <CreatePageButton />
+        {/* <CreatePageButton /> */}
       </div>
-
-      {/* Bulk Actions */}
-      {/* <BulkActions
-        selectedItems={selectedItems}
-        onClearSelection={() => setSelectedItems([])}
-        onBulkDelete={apiSupport.bulkDelete ? handleBulkDelete : undefined}
-        onBulkExport={apiSupport.export ? handleBulkExport : undefined}
-      /> */}
 
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
@@ -545,10 +669,6 @@ export default function StaticPagesClient() {
                         ? "Try adjusting your search or filters to find what you're looking for."
                         : "Get started by creating your first static page."
                     }
-                    action={{
-                      label: "Create Page",
-                      onClick: () => router.push("/dashboard/page-management/create")
-                    }}
                     onClearFilters={search || noindexFilter !== "all" ? handleClearFilters : undefined}
                     hasFilters={!!(search || noindexFilter !== "all")}
                   />
@@ -598,6 +718,15 @@ export default function StaticPagesClient() {
                         className="h-8 w-8 p-0"
                       >
                         <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handlePageArticle(page)}
+                        className="h-8 w-8 p-0"
+                        title={page.pageArticle ? "Edit Article" : "Create Article"}
+                      >
+                        <FileText className="h-4 w-4" />
                       </Button>
                       {apiSupport.delete && (
                         <Button
@@ -667,28 +796,61 @@ export default function StaticPagesClient() {
         </div>
       </div>
 
-      {/* Delete Confirmation Modals */}
-      {/* <ConfirmationModal
-        isOpen={deleteConfirmation.isOpen}
-        onClose={deleteConfirmation.handleClose}
-        onConfirm={deleteConfirmation.handleDelete}
-        title="Delete Page"
-        description={`Are you sure you want to delete "${deleteConfirmation.itemToDelete?.title}"? This action cannot be undone.`}
-        confirmText="Delete"
-        variant="destructive"
-        // loading={deleteConfirmation.loading}
-      /> */}
+      {/* PageArticle Modal */}
+      <Dialog open={isPageArticleModalOpen} onOpenChange={setIsPageArticleModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedPageForArticle?.pageArticle ? "Edit" : "Create"} Article for {selectedPageForArticle?.title}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <Formik
+            initialValues={{
+              content: selectedPageForArticle?.pageArticle?.content || "",
+            }}
+            validationSchema={ArticleSchema}
+            onSubmit={handlePageArticleSubmit}
+            enableReinitialize
+          >
+            {({ values, setFieldValue, isSubmitting: formSubmitting }) => (
+              <Form className="space-y-4">
+                <div>
+                  <label htmlFor="content" className="block font-medium text-gray-700 dark:text-gray-200 mb-2">
+                    Article Content <span className="text-red-500">*</span>
+                  </label>
+                  <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700">
+                    <QuillField
+                      value={values.content}
+                      onChange={(val) => setFieldValue("content", val)}
+                    />
+                  </div>
+                  <ErrorMessage name="content" component="div" className="text-red-500 text-sm mt-1" />
+                </div>
 
-      {/* <ConfirmationModal
-        isOpen={bulkDeleteConfirmation.isOpen}
-        onClose={bulkDeleteConfirmation.handleClose}
-        onConfirm={bulkDeleteConfirmation.handleBulkDelete}
-        title="Delete Multiple Pages"
-        description={`Are you sure you want to delete ${bulkDeleteConfirmation.itemsToDelete.length} pages? This action cannot be undone.`}
-        confirmText="Delete All"
-        variant="destructive"
-        loading={bulkDeleteConfirmation.loading}
-      /> */}
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsPageArticleModalOpen(false)}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting || formSubmitting}
+                    className="bg-[#00dbed] hover:bg-[#009bbd]"
+                  >
+                    {isSubmitting && <Plus className="w-4 h-4 mr-2 animate-spin" />}
+                    {selectedPageForArticle?.pageArticle ? "Update Article" : "Create Article"}
+                  </Button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
