@@ -1,195 +1,359 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { QuillField } from "@/form/QuillField";
-import { Switch } from "@/components/ui/switch";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
 import {
     Eye,
     ArrowLeft,
     ExternalLink,
-    Save,
-    CheckCircle,
 } from "lucide-react";
-import { toast } from "sonner";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import {
     getDynamicPagesArticleAndSeoBySlug,
     createDynamicPagesArticleAndSeo,
-    updateDynamicPagesArticleAndSeo,
 } from "@/app/api/pageManagement.Api";
 
-
-// UI components for tabs, select, textarea, etc.
-import {
-    Tabs,
-    TabsList,
-    TabsTrigger,
-    TabsContent,
-} from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
-import {
-    Select,
-    SelectTrigger,
-    SelectValue,
-    SelectContent,
-    SelectItem,
-} from "@/components/ui/select";
-import { ValidatedTextarea } from "@/components/forms/ValidatedTextarea";
-import { ValidatedInput } from "@/components/forms/ValidatedInput";
 import SeoAndArticleForm from "@/components/forms/SeoAndArticleForm";
+import toast from "react-hot-toast";
 
 interface EditPageClientProps {
     slug: string;
 }
 
 interface PageContentData {
-    id?: string;
+    slug: string;
+    type: string;
     title: string;
     content: string;
-    // SEO fields
+    // =========================SEO fields
     metaTitle?: string;
     metaDescription?: string;
     keywords?: string;
     canonicalUrl?: string;
     noindex?: boolean;
-    // Social Media
+    //==============================Social Media
     ogTitle?: string;
+    ogType?: string;
+    ogSiteName?: string;
+    ogLocale?: string;
     ogDescription?: string;
-    ogImage?: string;
-    twitterTitle?: string;
-    twitterDescription?: string;
-    twitterImage?: string;
-    // Technical
+    ogImageUrl?: string;
+
+    // twitter card
+    twitterCard?: string;
+    twitterSite?: string;
+    twitterCreator?: string;
+    twitterImageUrl?: string;
+    // ======================================Technical
     changefreq?: string;
     priority?: number | string;
-    // Schema
-    schema?: string;
+    // /=====================Schema
+    // schema?: string;
+    // alternates?: string;
 }
 
 const contentValidationSchema = Yup.object({
     title: Yup.string().required("Title is required"),
+    // slug: Yup.string().required("Slug is required"),
+    // type: Yup.string().required("Type is required"),
+
+    //======================================Article
     content: Yup.string().required("Content is required"),
-    metaTitle: Yup.string().max(60, "Meta title too long"),
-    metaDescription: Yup.string().max(160, "Meta description too long"),
-    canonicalUrl: Yup.string().url("Invalid URL").nullable().notRequired(),
+    // //=============================================Basic SEO
+    metaTitle: Yup.string().max(60, "Meta title too long").optional(),
+    metaDescription: Yup.string().max(160, "Meta description too long").optional(),
+    keywords: Yup.string()
+        .test(
+            "keywords-comma-separated",
+            "Keywords must be a comma-separated list (example: keyword1, keyword2, keyword3)",
+            value => {
+                if (!value) return true; // allow empty
+                return value
+                    .split(",")
+                    .map(v => v.trim())
+                    .every(v => v.length > 0);
+            }
+        )
+        .optional(),
+    canonicalUrl: Yup.string()
+        .test(
+            "is-valid-canonical-url",
+            "Invalid URL",
+            value => {
+                if (!value) return true; // allow empty
+                // Accepts:
+                // - starts with http:// or https://
+                // - starts with /
+                // - looks like a domain (e.g. toolinger.com, www.example.com)
+                return (
+                    /^https?:\/\/[^\s]+$/.test(value) ||
+                    /^\/[a-zA-Z0-9\-\/]*$/.test(value) ||
+                    /^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/[^\s]*)?$/.test(value)
+                );
+            }
+        )
+        .nullable()
+        .optional(),
+    noindex: Yup.boolean().nullable().optional(),
+    //=============================================Social Media
+    ogTitle: Yup.string().max(70, "OG title too long").optional(),
+    ogType: Yup.string()
+        .oneOf(
+            [
+                "website",
+                "article",
+                "book",
+                "profile",
+                "music.song",
+                "music.album",
+                "music.playlist",
+                "music.radio_station",
+                "video.movie",
+                "video.episode",
+                "video.tv_show",
+                "video.other",
+                "product",
+                "other"
+            ],
+            "Invalid OG type"
+        )
+        .optional(),
+    ogSiteName: Yup.string().optional(),
+    ogLocale: Yup.string()
+        .oneOf(
+            [
+                "en_US",    // English (US)
+                "en_GB",    // English (UK)
+                "es",       // Spanish
+                "fr",       // French
+                "de"        // German
+            ],
+            "Invalid locale. Choose from the list."
+        )
+        .optional(),
+    ogImage: Yup.string().url("Invalid URL").nullable().optional(),
+    ogDescription: Yup.string().max(155, "OG description too long").optional(),
+    //======================================Twitter Card
+    twitterCard: Yup.string()
+        .oneOf(
+            [
+                "summary",
+                "summary_large_image",
+                "app",
+                "player"
+            ],
+            "Invalid Twitter Card type"
+        )
+        .optional(),
+    twitterSite: Yup.string().optional(),
+    twitterCreator: Yup.string().optional(),
+    twitterImageUrl: Yup.string().optional(),
+    //=============================================Technical
+    changefreq: Yup.string().oneOf(["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"], "Invalid change frequency").optional(),
     priority: Yup.number()
         .min(0, "Min 0.0")
         .max(1, "Max 1.0")
         .nullable()
         .notRequired(),
-    // Add more validations as needed
+    //=============================================Schema
+    // schema: Yup.string().nullable().notRequired(),
+
 });
-
-
 
 export default function EditPageClient({ slug }: EditPageClientProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [isNewPage, setIsNewPage] = useState(false);
     const [previewUrl, setPreviewUrl] = useState("");
-    const [createContentOnly, setCreateContentOnly] = useState(true);
+    //====================================== OGImage IMAGE
+    const [ogImage, setOgImage] = useState<File | null>(null)
+    const [ogImagePreview, setOgImagePreview] = useState<string | null>(null)
+    const [dragActive, setDragActive] = useState(false)
+    const ogFileInputRef = useRef<HTMLInputElement | null>(null)
+    const [ogImageError, setOgImageError] = useState<string | null>(null)
+
+    // ============================== Twitter Image
+    // const [twitterImage, setTwitterImage] = useState<File | null>(null)
+    // const [twitterImagePreview, setTwitterImagePreview] = useState<string | null>(null)
+    // const [twitterDragActive, setTwitterDragActive] = useState(false)
+    // const twitterFileInputRef = useRef<HTMLInputElement | null>(null)
+    // const [twitterImageError, setTwitterImageError] = useState<string | null>(null)
+
+
+    // Handle file input change, store File object and preview URL
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files && e.target.files[0]
+        if (file) {
+            setOgImage(file)
+            setOgImagePreview(URL.createObjectURL(file))
+            setOgImageError(null)
+        }
+    }
+
+    // Handle drag and drop, store File object and preview URL
+    const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setDragActive(true)
+    }
+
+    const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setDragActive(false)
+    }
+
+    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setDragActive(false)
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            const file = e.dataTransfer.files[0]
+            setOgImage(file)
+            setOgImagePreview(URL.createObjectURL(file))
+            setOgImageError(null)
+        }
+    }
+
+    const handleChooseImageClick = () => {
+        ogFileInputRef.current?.click()
+    }
+
+    const handleRemoveImage = () => {
+        setOgImage(null)
+        setOgImagePreview(null)
+        setOgImageError("")
+        if (ogFileInputRef.current) {
+            ogFileInputRef.current.value = ""
+        }
+    }
 
     // State to hold loaded data for the form (for showing existing content)
-    const [loadedData, setLoadedData] = useState<PageContentData | null>(null);
+    const [loadedData, setLoadedData] = useState<any | null>(null);
+
+    // Use a ref to prevent formik.setValues from running on every render
+    const didSetFormikValues = useRef(false);
+
 
     const formik = useFormik<PageContentData>({
         initialValues: {
+            slug: "",
+            type: "",
             title: "",
+            //=======================article
             content: "",
+            //==============================basic seo
             metaTitle: "",
             metaDescription: "",
             keywords: "",
             canonicalUrl: "",
             noindex: false,
+            //===========================================Social Media
             ogTitle: "",
+            ogType: "",
+            ogSiteName: "",
+            ogLocale: "",
             ogDescription: "",
-            ogImage: "",
-            twitterTitle: "",
-            twitterDescription: "",
-            twitterImage: "",
+            ogImageUrl: "",
+            // ===========twitter card
+            twitterCard: "",
+            twitterSite: "",
+            twitterCreator: "",
+            twitterImageUrl: "",
+            //===========================================Technical
             changefreq: "",
             priority: "",
-            schema: "",
+            //==============================schema
+            // schema: "",
+            // alternates: "",
         },
         validationSchema: contentValidationSchema,
         enableReinitialize: true,
         onSubmit: async (values) => {
             setSaving(true);
             try {
-                const ArticleData = {
-                    slug: slug,
-                    PageArticle: {
-                        "content": values.content
-                    }
-                }
-                console.log('ArticleData', ArticleData)
-                let data: any = {
-                    slug,
-                    PageArticle: {
-                        title: values.title,
-                        content: values.content,
-                    },
-                };
-                if (!createContentOnly) {
-                    data.Seo = {
-                        metaTitle: values.metaTitle,
-                        metaDescription: values.metaDescription,
-                        keywords: values.keywords,
-                        canonicalUrl: values.canonicalUrl,
-                        noindex: values.noindex,
-                        ogTitle: values.ogTitle,
-                        ogDescription: values.ogDescription,
-                        ogImage: values.ogImage,
-                        twitterTitle: values.twitterTitle,
-                        twitterDescription: values.twitterDescription,
-                        twitterImage: values.twitterImage,
-                        changefreq: values.changefreq,
-                        priority: values.priority === "" ? null : Number(values.priority),
-                        schema: values.schema,
-                    };
-                }
-                let result;
-                if (isNewPage) {
-                    result = await createDynamicPagesArticleAndSeo(
-                        ArticleData
-                    );
-                    console.log('create result', result)
-                    if (result?.statusCode === 200) {
-                        toast.success("Page created successfully");
-                    } else {
-                        toast.error("Something went wrong")
-                    }
+              
+                // console.log("values", values);
+                // console.log("ogImage", ogImage);
 
+
+                const formData = new FormData();
+                formData.append("slug", `/${slug}`)
+                formData.append("type", values.type)
+                formData.append("title", values.title)
+                // ========================article
+                formData.append("pageContent", values.content)
+                // ========================basic seo
+                if (values.metaTitle !== undefined && values.metaTitle !== null) {
+                    formData.append("metaTitle", values.metaTitle);
+                }
+                if (values.metaDescription !== undefined && values.metaDescription !== null) {
+                    formData.append("metaDescription", values.metaDescription);
+                }
+                if (values.keywords !== undefined && values.keywords !== null) {
+                    formData.append("keywords", values.keywords);
+                }
+                if (values.canonicalUrl !== undefined && values.canonicalUrl !== null) {
+                    formData.append("canonicalUrl", values.canonicalUrl);
+                }
+                formData.append("noindex", String(values.noindex))
+
+
+                // =================================Open graph
+
+                if (values.ogTitle !== undefined && values.ogTitle !== null) {
+                    formData.append("ogTitle", values.ogTitle);
+                }
+                if (values.ogType !== undefined && values.ogType !== null) {
+                    formData.append("ogType", values.ogType);
+                }
+                if (values.ogSiteName !== undefined && values.ogSiteName !== null) {
+                    formData.append("ogSiteName", values.ogSiteName);
+                }
+                if (values.ogLocale !== undefined && values.ogLocale !== null) {
+                    formData.append("ogLocale", values.ogLocale);
+                }
+                if (values.ogDescription !== undefined && values.ogDescription !== null) {
+                    formData.append("ogDescription", values.ogDescription);
+                }
+                    formData.append("ogImageUrl", ogImage as any);
+
+                // ========================twitter card
+                if (values.twitterCard !== undefined && values.twitterCard !== null) {
+                    formData.append("twitterCard", values.twitterCard);
+                }
+                if (values.twitterSite !== undefined && values.twitterSite !== null) {
+                    formData.append("twitterSite", values.twitterSite);
+                }
+                if (values.twitterCreator !== undefined && values.twitterCreator !== null) {
+                    formData.append("twitterCreator", values.twitterCreator);
+                }
+                if (values.twitterImageUrl !== undefined && values.twitterImageUrl !== null) {
+                    formData.append("twitterImageUrl", values.twitterImageUrl);
+                }
+
+                // ========================Technical
+                if (values.changefreq !== undefined && values.changefreq !== null) {
+                    formData.append("changefreq", values.changefreq);
+                }
+                if (values.priority !== undefined && values.priority !== null) {
+                    formData.append("priority", values.priority === "" ? "" : String(values.priority));
+                }
+               
+
+                const result = await createDynamicPagesArticleAndSeo(formData)
+
+                console.log('create the data result', result.statusCode)
+                if (result?.statusCode === 200) {
+                    toast.success("Data created successfully")
                 } else {
-                    result = await updateDynamicPagesArticleAndSeo(slug, data);
-                    if (result?.statusCode === 200) {
-                        toast.success("Page updated successfully");
-                    } else {
-                        toast.error("Something went wrong")
-                    }
-                    console.log('update result', result)
+                    toast.error("Failed to create")
+                }
 
-                }
-                setIsNewPage(false);
-                if (result && result.article && result.article.id) {
-                    formik.setFieldValue("id", result.article.id);
-                }
             } catch (error: any) {
-                toast.error(error?.message || "Failed to save page");
+                toast.error("Failed to save page");
                 console.error("Error saving page:", error);
             } finally {
                 setSaving(false);
@@ -197,80 +361,70 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
         },
     });
 
+    // When loadedData changes, set formik values accordingly
+    useEffect(() => {
+        if (loadedData && !loading) {
+            // Prevent running setValues more than once for the same loadedData
+            if (didSetFormikValues.current && loadedData._slug === formik.values.slug) {
+                return;
+            }
+            didSetFormikValues.current = true;
+            formik.setValues({
+                slug: loadedData._slug || "",
+                type: loadedData.type || "",
+                title: loadedData.title || "",
+                //==============================Article
+                content: loadedData.pageContent || loadedData.content || "",
+                //===========================================Basic SEO
+                metaTitle: loadedData.metaTitle || "",
+                metaDescription: loadedData.metaDescription || "",
+                keywords: Array.isArray(loadedData.keywords) ? loadedData.keywords.join(", ") : (loadedData.keywords || ""),
+                canonicalUrl: loadedData.canonicalUrl || "",
+                noindex: loadedData.noindex || false,
+                //===========================================Social Media
+                ogTitle: loadedData.ogTitle || "",
+                ogType: loadedData.ogType || "",
+                ogSiteName: loadedData.ogSiteName || "",
+                ogLocale: loadedData.ogLocale || "",
+                ogImageUrl: loadedData.ogImageUrl || "",
+                ogDescription: loadedData.ogDescription || "",
+                // twitter card
+                twitterCard: loadedData.twitterCard || "",
+                twitterSite: loadedData.twitterSite || "",
+                twitterCreator: loadedData.twitterCreator || "",
+                twitterImageUrl: loadedData.twitterImageUrl || "",
+
+                //=========================================Technical
+                changefreq: loadedData.changefreq || "",
+                priority: loadedData.priority ?? "",
+                //===========================Schema
+
+                // schema: loadedData.schemas && Array.isArray(loadedData.schemas) && loadedData.schemas.length > 0 ? JSON.stringify(loadedData.schemas, null, 2) : "",
+                // alternates: loadedData.alternates || "",
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [loadedData, loading]);
+
     useEffect(() => {
         const loadPageData = async () => {
             setLoading(true);
+            didSetFormikValues.current = false; // Reset for new load
             try {
                 const data = await getDynamicPagesArticleAndSeoBySlug(slug);
-                if (data && data.article) {
-                    setIsNewPage(false);
-                    formik.setValues({
-                        id: data.article.id,
-                        title: data.article.title || "",
-                        content: data.article.content || "",
-                        metaTitle: data.seo?.metaTitle || "",
-                        metaDescription: data.seo?.metaDescription || "",
-                        keywords: data.seo?.keywords || "",
-                        canonicalUrl: data.article.canonicalUrl || data.seo?.canonicalUrl || "",
-                        noindex: data.seo?.noindex || false,
-                        ogTitle: data.seo?.ogTitle || "",
-                        ogDescription: data.seo?.ogDescription || "",
-                        ogImage: data.seo?.ogImage || "",
-                        twitterTitle: data.seo?.twitterTitle || "",
-                        twitterDescription: data.seo?.twitterDescription || "",
-                        twitterImage: data.seo?.twitterImage || "",
-                        changefreq: data.seo?.changefreq || "",
-                        priority: data.seo?.priority ?? "",
-                        schema: data.seo?.schema || "",
-                    });
-                    setPreviewUrl(data.article.canonicalUrl || `/${slug}`);
+                if (data.statusCode === 200 && data.data) {
+                    setLoadedData(data.data);
+                    setPreviewUrl(
+                        data.data.canonicalUrl
+                            ? (data.data.canonicalUrl.startsWith("http")
+                                ? data.data.canonicalUrl
+                                : `https://${data.data.canonicalUrl}`)
+                            : `/${slug}`
+                    );
                 } else {
-                    setIsNewPage(true);
-                    formik.setValues({
-                        title:
-                            slug.charAt(0).toUpperCase() +
-                            slug.slice(1).replace(/-/g, " "),
-                        content: "",
-                        metaTitle: "",
-                        metaDescription: "",
-                        keywords: "",
-                        canonicalUrl: "",
-                        noindex: false,
-                        ogTitle: "",
-                        ogDescription: "",
-                        ogImage: "",
-                        twitterTitle: "",
-                        twitterDescription: "",
-                        twitterImage: "",
-                        changefreq: "",
-                        priority: "",
-                        schema: "",
-                    });
+                    setLoadedData(null);
                     setPreviewUrl(`/${slug}`);
                 }
-            } catch (error) {
-                setIsNewPage(true);
-                formik.setValues({
-                    title:
-                        slug.charAt(0).toUpperCase() +
-                        slug.slice(1).replace(/-/g, " "),
-                    content: "",
-                    metaTitle: "",
-                    metaDescription: "",
-                    keywords: "",
-                    canonicalUrl: "",
-                    noindex: false,
-                    ogTitle: "",
-                    ogDescription: "",
-                    ogImage: "",
-                    twitterTitle: "",
-                    twitterDescription: "",
-                    twitterImage: "",
-                    changefreq: "",
-                    priority: "",
-                    schema: "",
-                });
-                setPreviewUrl(`/${slug}`);
             } finally {
                 setLoading(false);
             }
@@ -281,18 +435,18 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
     }, [slug]);
 
     const handlePreview = () => {
-        window.open(previewUrl, "_blank");
+        window.open(previewUrl + `/${slug}}`, "_blank");
     };
 
-    const formatJsonSchema = () => {
-        try {
-            const parsed = JSON.parse(formik.values.schema || "{}");
-            formik.setFieldValue("schema", JSON.stringify(parsed, null, 2));
-            toast.success("JSON formatted");
-        } catch (e) {
-            toast.error("Invalid JSON");
-        }
-    };
+    // const formatJsonSchema = () => {
+    //     try {
+    //         const parsed = JSON.parse(formik.values.schema || "{}");
+    //         formik.setFieldValue("schema", JSON.stringify(parsed, null, 2));
+    //         toast.success("JSON formatted");
+    //     } catch (e) {
+    //         toast.error("Invalid JSON");
+    //     }
+    // };
 
     if (loading) {
         return (
@@ -305,6 +459,7 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
         );
     }
 
+    // Use a real <form> to ensure Formik's onSubmit is always called with latest values
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -320,12 +475,14 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
                     </Button>
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                            {isNewPage ? "Create Page" : "Edit Page"}: {slug}
+                            {loadedData
+                                ? `Edit Page: ${slug}`
+                                : `Create Page: ${slug}`}
                         </h1>
                         <p className="text-gray-600 dark:text-gray-400">
-                            {isNewPage
-                                ? "Create new page with content and SEO"
-                                : "Edit page content and SEO settings"}
+                            {loadedData
+                                ? "Edit page content and SEO settings"
+                                : "Create new page with content and SEO"}
                         </p>
                     </div>
                 </div>
@@ -339,38 +496,57 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
                         <span>Preview</span>
                         <ExternalLink className="h-3 w-3" />
                     </Button>
+                    {/* Use type="submit" and wrap in a <form> for Formik */}
+                    {/* <form onSubmit={formik.handleSubmit}>
                     <Button
-                        onClick={() => formik.handleSubmit()}
-                        disabled={saving || !formik.isValid}
+                        onClick={() => {
+                            // Use formik.submitForm() to ensure latest values
+                            formik.submitForm();
+                        }}
+                        // disabled={saving || !formik.isValid}
                         className="flex items-center space-x-2"
-                        type="button"
+                        type="submit"
                     >
                         <Save className="h-4 w-4" />
                         <span>
                             {saving
                                 ? "Saving..."
-                                : isNewPage
-                                    ? "Create"
-                                    : "Save"}
-                        </span>
-                    </Button>
+                                : "Save"}
+                            </span>
+                        </Button>
+                    </form> */}
                 </div>
             </div>
 
             {/* Option to create only content */}
-            <div className="flex items-center space-x-2 mb-2">
-                <Switch
-                    id="createContentOnly"
-                    checked={createContentOnly}
-                    onCheckedChange={setCreateContentOnly}
-                />
-                <Label htmlFor="createContentOnly">
-                    Create only Page Content (no SEO)
-                </Label>
-            </div>
+
 
             {/* Form */}
-            <SeoAndArticleForm formik={formik} />
+            {/* Wrap the form in a <form> element to ensure onSubmit is always called with latest values */}
+            <form
+                onSubmit={formik.handleSubmit}
+                autoComplete="off"
+            >
+                <SeoAndArticleForm formik={formik} ogImage={ogImage} setOgImage={setOgImage} ogImagePreview={ogImagePreview} setOgImagePreview={setOgImagePreview} setOgImageError={setOgImageError} dragActive={dragActive} fileInputRef={ogFileInputRef} handleChooseImageClick={handleChooseImageClick} handleRemoveImage={handleRemoveImage} handleFileChange={handleFileChange} handleDragOver={handleDragOver} handleDragLeave={handleDragLeave} handleDrop={handleDrop} />
+                {/* Hidden submit button for Enter key support */}
+                <button
+                    type="submit"
+                    disabled={saving}
+                    className={`
+                        w-full mt-6 py-3 px-6 rounded-lg font-semibold text-white transition-all duration-200
+                        bg-gradient-to-r
+                        from-blue-500 via-cyan-500 to-teal-500
+                        hover:from-blue-600 hover:via-cyan-600 hover:to-teal-600
+                        dark:from-[#0f2027] dark:via-[#2c5364] dark:to-[#203a43]
+                        dark:hover:from-[#232526] dark:hover:via-[#414345] dark:hover:to-[#232526]
+                        shadow-lg
+                        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-400
+                        disabled:opacity-60 disabled:cursor-not-allowed
+                    `}
+                >
+                    {saving ? "Creating..." : "Create"}
+                </button>
+            </form>
         </div>
     );
 }

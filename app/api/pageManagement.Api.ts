@@ -8,6 +8,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 
 // Get all dynamic pages articles and SEO with pagination, sorting, search, and filters
+// Get all dynamic pages articles and SEO with pagination, sorting, search, and filters
 export async function getAllDynamicPagesArticleAndSeo({
     page = 1,
     limit = 10,
@@ -15,20 +16,26 @@ export async function getAllDynamicPagesArticleAndSeo({
     sortBy = "createdAt",
     sortDir = "desc",
     noindex = "",
+    type = "",
+    slug = "",
+    title = "",
 } = {}) {
     try {
         const toolingerToken = getFromLocalStorage("toolinger");
 
         if (!toolingerToken) {
-            console.log("No toolinger found in localStorage");
+            console.warn("⚠️ No toolinger token found in localStorage");
         }
 
-        // Build query params
+        // Build query params dynamically
         const params = new URLSearchParams();
         params.append("page", String(page));
         params.append("limit", String(limit));
         if (search) params.append("searchTerm", search);
-        if (noindex !== "") params.append("noindex", noindex);
+        if (noindex !== undefined) params.append("noindex", String(noindex));
+        if (type) params.append("type", type);
+        if (slug) params.append("slug", slug);
+        if (title) params.append("title", title);
         if (sortBy) params.append("sortBy", sortBy);
         if (sortDir) params.append("sortOrder", sortDir);
 
@@ -40,12 +47,14 @@ export async function getAllDynamicPagesArticleAndSeo({
                 },
             }
         );
+
         return res.data;
     } catch (error) {
-        console.log("Error fetching all dynamic pages articles and SEO", error);
+        console.error("❌ Error fetching dynamic pages articles and SEO:", error);
         throw error;
     }
 }
+
 
 // Get dynamic pages article and SEO by slug (requires auth)
 // export async function getDynamicPagesArticleAndSeoBySlug(slug: string, token?: string) {

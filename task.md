@@ -1,234 +1,338 @@
-Cursor Operating Mode (read first)
-
-Read this file fully. Ask for clarification only if a required file or function is missing.
-
-Execute tasks in order. After each numbered step, return:
-
-command(s) run
-
-stdout/stderr (trimmed)
-
-changed files
-
-Hard rules:
-
-Do not remove comments, layout wrappers, or any existing pages.
-
-Do not rename or move existing files.
-
-If lint/tests/build fail → STOP and report failure with logs.
-
-Keep all new code in new components/modules or additive utilities.
-
-Reuse existing API helpers from pagemanagemetnApi.ts (used by current SEO/Article features). If a helper is missing, create a thin wrapper next to it without breaking existing exports.
-
-Global Assumptions
-
-Styling must match current dashboard (dark + light theme).
-
-Use QuillFiled component (already in forms) for content editing.
-
-Use Formik + Yup for form handling and validation.
-
-DataTable must support client-side search, sort, filter, and pagination.
-
-APIs: Always reuse existing helpers from pagemanagemetnApi.ts. Never break server contracts.
-
-Sidebar & Route Architecture (target)
-Dashboard
-├─ Overview (existing)
-├─ Blog Management (existing)
-├─ Blog Category (existing)
-├─ SEO Management (existing)
-├─ Article Management (existing)
-└─ Page Management (NEW)
-   ├─ Static Pages
-   │   ├─ Home
-   │   ├─ Contact
-   │   ├─ About
-   │   ├─ Terms
-   │   └─ Privacy (etc... auto-read from project pages)
-   ├─ Text Tools
-   ├─ Image Tools
-   ├─ Developer Tools
-   ├─ Converters
-   ├─ Generators
-   ├─ Calculators
-   ├─ Website Management Tools
-   └─ Editor (hidden route): /page-management/edit/:slug
-
-
-Editor page tabs:
-
-Content → QuillFiled
-
-SEO → Tabs: Basic / Social Media / Technical / Schema
-
-Edit uses same form as Create. Pre-fill existing values when available.
-
-Shared Types
-
-Create or extend src/types/page.ts.
-
-Interfaces can be reused from SEO Management > Create SEO page (same structure, fields, validation).
-
-Do not break or rename existing SEO types—just reuse.
-
-Reusable DataTable
-
-Create src/components/Table/DataTable.tsx with props: rows, columns, onEdit, onDelete, filters, initialPageSize=10.
-
-Must use real API fetch data, not mock data.
-
-Acceptance Criteria (global)
-
-New Page Management menu and submenus appear without breaking existing menus.
-
-Each listing supports client-side search/sort/filter/pagination.
-
-Editor can create/update both Article content + SEO.
-
-All forms validate with Formik+Yup. Show success/error toasts.
-
-Edit routes prefill existing data.
-
-Delete confirms first, then updates instantly.
-
-TASKS (execute in order)
-TASK-1: Sidebar & Routes
-
-Add Page Management main menu with submenus.
-
-Routes to create:
-
-/page-management/static
-
-/page-management/static/:page (home, contact, about, terms, privacy, etc)
-
-/page-management/edit/:slug
-
-AC: Menu visible, routes render placeholder components.
-
-TASK-2: API adapters
-
-Reuse existing helpers in pagemanagemetnApi.ts.
-
-If needed, create src/api/pageManagementClient.ts with thin wrappers.
-
-Never break contracts.
-
-AC: All CRUD calls reuse existing functions.
-
-TASK-3: DataTable component
-
-Implement reusable table with search, sort, filter, pagination.
-
-Must connect to real API fetch data (SEO + Article list).
-
-Props: rows, columns, onEdit, onDelete, filters.
-
-AC: Works with real API; no console errors.
-
-TASK-4: Static Pages listing
-
-/page-management/static → list static pages (home, contact, about, terms, privacy...).
-
-Columns: Title, Slug, Canonical URL, Noindex, Updated At, Actions.
-
-Actions: Edit → /page-management/edit/:slug.
-
-Delete only if API supports (confirm first).
-
-TASK-5: Manage Pages (all)
-
-/page-management/manage → unified grid for all pages (static + tools).
-
-Columns: Meta Title, Keywords, Canonical URL, Noindex, Changefreq, Priority, Updated At, Actions.
-
-Actions: Edit + Delete.
-
-TASK-6: Category pages
-
-Route /page-management/category/:category.
-
-Categories: Text Tools, Image Tools, Developer Tools, Converters, Generators, Calculators, Website Management Tools.
-
-Show in DataTable with same columns & actions.
-
-TASK-7: Combined Editor
-
-/page-management/edit/:slug.
-
-Tabs:
-
-Content (QuillFiled, bound to Article).
-
-SEO → Basic: Meta Title, Keywords, Meta Desc, Canonical, Noindex.
-
-SEO → Social Media: OG + Twitter fields.
-
-SEO → Technical: Changefreq + Priority.
-
-SEO → Schema: JSON-LD editor.
-
-AC: Prefill existing data, validate inputs, save both Article + SEO.
-
-TASK-8: Create flows
-
-If no Article/SEO exists → open editor in create mode.
-
-Saving → calls create helpers → then switches to edit mode.
-
-TASK-9: Table UX polish
-
-Persist search/sort/filter in query params.
-
-Add bulk actions (if supported by API).
-
-Add empty states + skeleton loaders.
-
-TASK-10: Validation & Error handling
-
-Meta Title (10–60 chars).
-
-Meta Description (30–160).
-
-Canonical URL format.
-
-JSON-LD must be valid (use JSON.parse, pretty-print).
-
-Wrap API calls in try/catch with toast error.
-
-TASK-11: Delete wiring
-
-Enable Delete only if API supports.
-
-Confirm modal before delete.
-
-TASK-12: QA & Smoke Tests
-
-Manual tests:
-
-Static Pages → Edit home, add content + SEO, save, refresh.
-
-Manage Pages → search/sort/filter, check results update.
-
-Category → Text Tools → edit SEO, save, verify in Manage list.
-
-Schema → invalid JSON shows error, valid saves.
-
-npm run build passes with no errors.
-
-DO NOT (global)
-
-Do not remove comments/layouts.
-
-Do not modify SEO/Article screens (except API reuse).
-
-Do not change API contracts.
-
-Rollback Plan
-
-All work in feature branch.
-
-If regression → revert commit/branch.
+## Dynamic Page Management Table Implementation Tasks
+
+Please follow these tasks step by step. After completing each task, **run the build** to ensure there are no issues or errors. Do **not** change any code, design, or logic that is not directly related to the tasks. Do **not** remove any code, including commented code.
+
+---
+
+### Task 1: Table Data Fetching & API Integration
+
+- Use the provided API endpoint:  
+  `http://localhost:5000/api/v1/pages-article-and-seo`
+- Use the function:
+  ```js
+  export async function getAllDynamicPagesArticleAndSeo({
+      page = 1,
+      limit = 10,
+      search = "",
+      sortBy = "createdAt",
+      sortDir = "desc",
+      noindex = "",
+      type = "",
+      slug = "",
+      title = "",
+  } = {}) {
+      try {
+          const toolingerToken = getFromLocalStorage("toolinger");
+          if (!toolingerToken) {
+              console.warn("⚠️ No toolinger token found in localStorage");
+          }
+          const params = new URLSearchParams();
+          params.append("page", String(page));
+          params.append("limit", String(limit));
+          if (search) params.append("searchTerm", search);
+          if (noindex !== undefined) params.append("noindex", String(noindex));
+          if (type) params.append("type", type);
+          if (slug) params.append("slug", slug);
+          if (title) params.append("title", title);
+          if (sortBy) params.append("sortBy", sortBy);
+          if (sortDir) params.append("sortOrder", sortDir);
+
+          const res = await axios.get(
+              `${API_BASE_URL}/pages-article-and-seo?${params.toString()}`,
+              {
+                  headers: {
+                      Authorization: `${toolingerToken}`,
+                  },
+              }
+          );
+          return res.data;
+      } catch (error) {
+          console.error("❌ Error fetching dynamic pages articles and SEO:", error);
+          throw error;
+      }
+  }
+  ```
+
+  My Api example response is
+
+  {
+    "statusCode": 200,
+    "success": true,
+    "data": {
+        "meta": {
+            "page": 1,
+            "limit": 5,
+            "total": 11
+        },
+        "data": [
+            {
+                "schemas": [],
+                "_id": "68d51a095add1f3aefc54073",
+                "slug": "/tarmim",
+                "title": "tarmim",
+                "type": "static",
+                "pageContent": "sitemap",
+                "metaTitle": "sitemap",
+                "metaDescription": "quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, ad",
+                "keywords": [
+                    "online tools, free tools, productivity"
+                ],
+                "canonicalUrl": "toolinger.com",
+                "noindex": false,
+                "ogTitle": "this is og title",
+                "ogImageUrl": "20250925269-signature_Tabibur_Rahman_Topu.webp",
+                "ogType": "website",
+                "ogSiteName": "og toolinger",
+                "ogLocale": "en_Us",
+                "twitterCard": "summary",
+                "twitterSite": "This is twitter site",
+                "twitterCreator": "Admin",
+                "twitterImageUrl": "20250925269-Screenshot_1.webp",
+                "changefreq": "daily",
+                "priority": 0.5,
+                "createdAt": "2025-09-25T10:31:37.417Z",
+                "updatedAt": "2025-09-25T10:35:39.464Z",
+                "__v": 0,
+                "alternates": "online tools, free tools, productivity"
+            },
+            {
+                "_id": "68d4e4ec831520c43daf1e48",
+                "slug": "/sitemap",
+                "title": "sitemap",
+                "type": "static",
+                "pageContent": "sitemap",
+                "metaTitle": "sitemap",
+                "metaDescription": "quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, ad",
+                "keywords": [
+                    "online tools, free tools, productivity"
+                ],
+                "canonicalUrl": "toolinger.com",
+                "noindex": false,
+                "ogTitle": "this is og title",
+                "ogType": "website",
+                "ogSiteName": "og toolinger",
+                "ogLocale": "en_Us",
+                "twitterCard": "summary",
+                "twitterSite": "",
+                "twitterCreator": "",
+                "twitterImageUrl": "",
+                "schemas": [],
+                "changefreq": "daily",
+                "priority": 0.5,
+                "createdAt": "2025-09-25T06:45:00.474Z",
+                "updatedAt": "2025-09-25T06:45:00.474Z",
+                "__v": 0
+            },
+            {
+                "_id": "68d4e4d5831520c43daf1e45",
+                "slug": "/auth/register",
+                "title": "register",
+                "type": "static",
+                "pageContent": "auth/register",
+                "metaTitle": "auth/register",
+                "metaDescription": "quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, ad",
+                "keywords": [
+                    "online tools, free tools, productivity"
+                ],
+                "canonicalUrl": "toolinger.com",
+                "noindex": false,
+                "ogTitle": "this is og title",
+                "ogType": "website",
+                "ogSiteName": "og toolinger",
+                "ogLocale": "en_Us",
+                "twitterCard": "summary",
+                "twitterSite": "",
+                "twitterCreator": "",
+                "twitterImageUrl": "",
+                "schemas": [],
+                "changefreq": "daily",
+                "priority": 0.5,
+                "createdAt": "2025-09-25T06:44:37.993Z",
+                "updatedAt": "2025-09-25T06:44:37.993Z",
+                "__v": 0
+            },
+            {
+                "_id": "68d4e4c2831520c43daf1e3f",
+                "slug": "/auth/login",
+                "title": "login",
+                "type": "static",
+                "pageContent": "auth/login",
+                "metaTitle": "auth/login",
+                "metaDescription": "quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, ad",
+                "keywords": [
+                    "online tools, free tools, productivity"
+                ],
+                "canonicalUrl": "toolinger.com",
+                "noindex": false,
+                "ogTitle": "this is og title",
+                "ogType": "website",
+                "ogSiteName": "og toolinger",
+                "ogLocale": "en_Us",
+                "twitterCard": "summary",
+                "twitterSite": "",
+                "twitterCreator": "",
+                "twitterImageUrl": "",
+                "schemas": [],
+                "changefreq": "daily",
+                "priority": 0.5,
+                "createdAt": "2025-09-25T06:44:18.752Z",
+                "updatedAt": "2025-09-25T06:44:18.752Z",
+                "__v": 0
+            },
+            {
+                "_id": "68d4e4ad831520c43daf1e3c",
+                "slug": "/coming-soon",
+                "title": "coming-soon",
+                "type": "static",
+                "pageContent": "coming-soon",
+                "metaTitle": "coming-soon",
+                "metaDescription": "quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, ad",
+                "keywords": [
+                    "online tools, free tools, productivity"
+                ],
+                "canonicalUrl": "toolinger.com",
+                "noindex": false,
+                "ogTitle": "this is og title",
+                "ogType": "website",
+                "ogSiteName": "og toolinger",
+                "ogLocale": "en_Us",
+                "twitterCard": "summary",
+                "twitterSite": "",
+                "twitterCreator": "",
+                "twitterImageUrl": "",
+                "schemas": [],
+                "changefreq": "daily",
+                "priority": 0.5,
+                "createdAt": "2025-09-25T06:43:57.366Z",
+                "updatedAt": "2025-09-25T06:43:57.366Z",
+                "__v": 0
+            }
+        ]
+    },
+    "message": "Dynamic pages articles with SEO fetched successfully"
+}
+
+
+- The API returns paginated data with meta info and an array of page objects (see the example response above).
+- **Implement fetching and displaying this data in your table.**
+
+---
+
+### Task 2: Table Columns
+
+- The table should have the following columns (all dynamic from API data):
+  - `title`
+  - `slug`
+  - `type`
+  - `article` (use `pageContent`)
+  - `metaTitle`
+  - `metaDescription`
+  - `keywords`
+  - `canonicalUrl`
+  - `noindex`
+  - `ogTitle`
+  - `ogDescription`
+  - `ogImageUrl`
+  - `ogType`
+  - `ogSiteName`
+  - `ogLocale`
+  - `twitterCard`
+  - `twitterSite`
+  - `twitterCreator`
+  - `twitterImageUrl`
+  - `alternates`
+  - `changefreq`
+  - `priority`
+  - `actions` (see next task)
+
+---
+
+### Task 3: Table Actions (Edit Button)
+
+- Each row should have an **Edit** button in the `actions` column.
+- When the Edit button is clicked, navigate to:  
+  `http://localhost:3000/dashboard/page-management/edit/[slug]`  
+  (replace `[slug]` with the actual slug, e.g. `/terms`)
+- The edit form is located at `/dashboard/page-management/edit`.
+- When navigating to the edit page, fetch the data for the selected slug using:
+  ```js
+  export async function getDynamicPagesArticleAndSeoBySlug(slug: string) {
+      try {
+          const res = await fetch(`${API_BASE_URL}/pages-article-and-seo/slug/${slug}`, {
+              cache: "no-store"
+          });
+          return res.json();
+      } catch (error) {
+          console.error("Error fetching dynamic page article and SEO by slug", error);
+          return null;
+      }
+  }
+  ```
+- Populate the form with the fetched data.
+
+---
+
+### Task 4: Table Features
+
+- **Pagination:**  
+  Use the API's `page` and `limit` parameters to paginate data.
+- **Filtering:**  
+  Use the API's `type`, `slug`, `title`, and `noindex` parameters for filtering.
+- **Sorting:**  
+  Use the API's `sortBy` and `sortOrder` parameters for sorting columns.
+- **Searching:**  
+  Use the API's `searchTerm` parameter for searching.
+
+All these features should work dynamically with the API.
+
+---
+
+### Task 5: Data Creation
+
+- To create a new page/article, use:
+  ```js
+  export async function createDynamicPagesArticleAndSeo(data: any) {
+      try {
+          console.log("data", data)
+          const toolingerToken = getFromLocalStorage("toolinger");
+          const res = await axios.post(
+              `${API_BASE_URL}/pages-article-and-seo`,
+              data,
+              {
+                  headers: {
+                      Authorization: `${toolingerToken}`,
+                      "Content-Type": "multipart/form-data"
+                  }
+              }
+          );
+          return res.data;
+      } catch (error: any) {
+          console.log("Error creating dynamic page article and SEO", error);
+          if (error.response && error.response.data) {
+              if (error.response.data.errorMessages && Array.isArray(error.response.data.errorMessages) && error.response.data.errorMessages.length > 0) {
+                  throw new Error(error.response.data.errorMessages[0]);
+              }
+              if (error.response.data.message) {
+                  throw new Error(error.response.data.message);
+              }
+              if (error.response.data.error) {
+                  throw new Error(error.response.data.error);
+              }
+          }
+          throw new Error(error.message || "Something went wrong");
+      }
+  }
+  ```
+- The creation form is at `/dashboard/page-management/edit`.
+
+---
+
+### Task 6: Build Check
+
+- After each task, **run the build** to ensure there are no errors or issues.
+
+---
+
+**Do not change any code, design, or logic outside of these tasks. Do not remove any code, including commented code.**
+
+---

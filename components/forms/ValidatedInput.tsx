@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { CheckCircle, AlertCircle, XCircle } from "lucide-react";
 
-interface ValidatedInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface ValidatedInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "onBlur"> {
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -31,11 +31,15 @@ export function ValidatedInput({
   ...props
 }: ValidatedInputProps) {
   const [touched, setTouched] = useState(false);
-  const [validation, setValidation] = useState({ isValid: true, message: "" });
+  const [validation, setValidation] = useState<{ isValid: boolean; message: string }>({ isValid: true, message: "" });
 
   useEffect(() => {
     if (touched || value) {
-      setValidation(validator(value));
+      const result = validator(value);
+      setValidation({
+        isValid: result?.isValid,
+        message: result?.message ?? "",
+      });
     }
   }, [value, touched, validator]);
 
@@ -46,7 +50,7 @@ export function ValidatedInput({
 
   const getStatusIcon = () => {
     if (!touched && !value) return null;
-    
+
     if (validation.isValid) {
       return <CheckCircle className="h-4 w-4 text-green-500" />;
     } else {
@@ -66,7 +70,7 @@ export function ValidatedInput({
         <Input
           {...props}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
           onBlur={handleBlur}
           className={cn(
             "pr-8",
@@ -78,8 +82,8 @@ export function ValidatedInput({
           {getStatusIcon()}
         </div>
       </div>
-      
-      {showCharacterCount && maxLength && (
+
+      {showCharacterCount && typeof maxLength === "number" && (
         <div className="flex justify-between text-xs text-gray-500">
           <span>{value.length}/{maxLength} characters</span>
           <span className={cn(
