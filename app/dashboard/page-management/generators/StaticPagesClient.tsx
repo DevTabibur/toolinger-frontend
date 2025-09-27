@@ -279,7 +279,7 @@ export default function StaticPagesClient() {
                     sortDir: sortOrder,
                     // noindex: noindexFilter === "all" ? "" : noindexFilter,
                     // type: typeFilter === "all" ? "" : typeFilter,
-                    type: "static",
+                    type: "generators",
 
                     slug: slugFilter,
                     title: titleFilter,
@@ -477,10 +477,10 @@ export default function StaticPagesClient() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        Dynamic Pages Management
+                        Generators Tools
                     </h1>
                     <p className="text-gray-600 dark:text-gray-400">
-                        Manage your dynamic pages with SEO and article content
+                        Manage your generator tools pages and settings
                     </p>
                 </div>
                 <Button

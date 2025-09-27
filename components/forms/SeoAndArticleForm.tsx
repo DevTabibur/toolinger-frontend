@@ -204,13 +204,13 @@ const SeoAndArticleForm = ({ formik, ogImage, setOgImage, ogImagePreview, setOgI
                                 <div className="flex items-center space-x-2">
                                     <Switch
                                         id="noindex"
-                                        checked={formik.values.noindex}
+                                        checked={!formik.values.noindex}
                                         onCheckedChange={(checked) =>
-                                            formik.setFieldValue("noindex", checked)
+                                            formik.setFieldValue("noindex", !checked)
                                         }
                                     />
-                                    <Label htmlFor="noindex">
-                                        Noindex (Hide from search engines)
+                                    <Label htmlFor="noindex" className="font-semibold">
+                                        Index (Hide / Unindex from search engines)
                                     </Label>
                                 </div>
                             </div>
@@ -308,7 +308,7 @@ const SeoAndArticleForm = ({ formik, ogImage, setOgImage, ogImagePreview, setOgI
                                                     <SelectValue placeholder="Select Locale" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="en_US">English (US)</SelectItem>
+                                                    <SelectItem defaultChecked value="en_US">English (US)</SelectItem>
                                                     <SelectItem value="en_GB">English (UK)</SelectItem>
                                                     <SelectItem value="es">Spanish</SelectItem>
                                                     <SelectItem value="fr">French</SelectItem>

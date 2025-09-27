@@ -7,6 +7,8 @@ import {
     Eye,
     ArrowLeft,
     ExternalLink,
+    Plus,
+    X
 } from "lucide-react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -17,6 +19,8 @@ import {
 
 import SeoAndArticleForm from "@/components/forms/SeoAndArticleForm";
 import toast from "react-hot-toast";
+
+
 
 interface EditPageClientProps {
     slug: string;
@@ -60,7 +64,7 @@ const contentValidationSchema = Yup.object({
     // type: Yup.string().required("Type is required"),
 
     //======================================Article
-    content: Yup.string().required("Content is required"),
+    content: Yup.string().optional(),
     // //=============================================Basic SEO
     metaTitle: Yup.string().max(60, "Meta title too long").optional(),
     metaDescription: Yup.string().max(160, "Meta description too long").optional(),
@@ -181,6 +185,7 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
     // const twitterFileInputRef = useRef<HTMLInputElement | null>(null)
     // const [twitterImageError, setTwitterImageError] = useState<string | null>(null)
 
+  
 
     // Handle file input change, store File object and preview URL
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -236,7 +241,6 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
     // Use a ref to prevent formik.setValues from running on every render
     const didSetFormikValues = useRef(false);
 
-
     const formik = useFormik<PageContentData>({
         initialValues: {
             slug: "",
@@ -274,11 +278,6 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
         onSubmit: async (values) => {
             setSaving(true);
             try {
-              
-                // console.log("values", values);
-                // console.log("ogImage", ogImage);
-
-
                 const formData = new FormData();
                 formData.append("slug", `/${slug}`)
                 formData.append("type", values.type)
@@ -300,7 +299,6 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
                 }
                 formData.append("noindex", String(values.noindex))
 
-
                 // =================================Open graph
 
                 if (values.ogTitle !== undefined && values.ogTitle !== null) {
@@ -318,7 +316,7 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
                 if (values.ogDescription !== undefined && values.ogDescription !== null) {
                     formData.append("ogDescription", values.ogDescription);
                 }
-                    formData.append("ogImageUrl", ogImage as any);
+                formData.append("ogImageUrl", ogImage as any);
 
                 // ========================twitter card
                 if (values.twitterCard !== undefined && values.twitterCard !== null) {
@@ -341,7 +339,6 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
                 if (values.priority !== undefined && values.priority !== null) {
                     formData.append("priority", values.priority === "" ? "" : String(values.priority));
                 }
-               
 
                 const result = await createDynamicPagesArticleAndSeo(formData)
 
@@ -438,15 +435,6 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
         window.open(previewUrl + `/${slug}}`, "_blank");
     };
 
-    // const formatJsonSchema = () => {
-    //     try {
-    //         const parsed = JSON.parse(formik.values.schema || "{}");
-    //         formik.setFieldValue("schema", JSON.stringify(parsed, null, 2));
-    //         toast.success("JSON formatted");
-    //     } catch (e) {
-    //         toast.error("Invalid JSON");
-    //     }
-    // };
 
     if (loading) {
         return (
@@ -462,6 +450,8 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
     // Use a real <form> to ensure Formik's onSubmit is always called with latest values
     return (
         <div className="space-y-6">
+          
+
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -496,30 +486,20 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
                         <span>Preview</span>
                         <ExternalLink className="h-3 w-3" />
                     </Button>
-                    {/* Use type="submit" and wrap in a <form> for Formik */}
-                    {/* <form onSubmit={formik.handleSubmit}>
+                    {/* Add "Create New Page" button */}
                     <Button
-                        onClick={() => {
-                            // Use formik.submitForm() to ensure latest values
-                            formik.submitForm();
-                        }}
-                        // disabled={saving || !formik.isValid}
+                        variant="default"
+                        // onClick={() => }
                         className="flex items-center space-x-2"
-                        type="submit"
+                        type="button"
                     >
-                        <Save className="h-4 w-4" />
-                        <span>
-                            {saving
-                                ? "Saving..."
-                                : "Save"}
-                            </span>
-                        </Button>
-                    </form> */}
+                        <Plus className="h-4 w-4" />
+                        <span>Create New Page</span>
+                    </Button>
                 </div>
             </div>
 
             {/* Option to create only content */}
-
 
             {/* Form */}
             {/* Wrap the form in a <form> element to ensure onSubmit is always called with latest values */}

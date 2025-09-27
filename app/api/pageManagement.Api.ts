@@ -32,7 +32,7 @@ export async function getAllDynamicPagesArticleAndSeo({
         params.append("page", String(page));
         params.append("limit", String(limit));
         if (search) params.append("searchTerm", search);
-        if (noindex !== undefined) params.append("noindex", String(noindex));
+        // if (noindex !== undefined) params.append("noindex", String(noindex));
         if (type) params.append("type", type);
         if (slug) params.append("slug", slug);
         if (title) params.append("title", title);
@@ -150,14 +150,14 @@ export async function updateDynamicPagesArticleAndSeo(id: string, data: any) {
 }
 
 // Delete dynamic pages article and SEO by ID and type (requires auth)
-export async function deleteDynamicPagesArticleAndSeo(id: string, type: "seo" | "article") {
+export async function deletePagesDataFully(id: string,) {
     try {
         const toolingerToken = getFromLocalStorage("toolinger");
 
         if (!toolingerToken) {
             console.log("No toolinger found in localStorage");
         }
-        const res = await axios.delete(`${API_BASE_URL}/pages-article-and-seo/${id}/${type}`, {
+        const res = await axios.delete(`${API_BASE_URL}/pages-article-and-seo/${id}`, {
             headers: { Authorization: `${toolingerToken}` }
         });
         return res.data;

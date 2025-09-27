@@ -105,15 +105,15 @@ const menuItems: MenuItem[] = [
         href: "/dashboard/page-management/website-management-tools",
       },
       // Editor (hidden route)
-      {
-        id: "page-editor",
-        label: "Editor",
-        icon: <Edit3 className="w-4 h-4" />,
-        href: "/dashboard/page-management/edit/:slug",
-        permission: "page_management_edit",
-        // Optionally, you can add a property to hide this from the menu UI if needed
-        // hidden: true,
-      },
+      // {
+      //   id: "page-editor",
+      //   label: "Editor",
+      //   icon: <Edit3 className="w-4 h-4" />,
+      //   href: "/dashboard/page-management/edit/:slug",
+      //   permission: "page_management_edit",
+      //   // Optionally, you can add a property to hide this from the menu UI if needed
+      //   // hidden: true,
+      // },
     ],
   },
   // {
