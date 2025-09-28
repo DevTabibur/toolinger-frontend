@@ -1,4 +1,9 @@
 
+
+// Force this page to always render on server (SSR) → always fresh SEO data
+export const dynamic = "force-dynamic";
+
+
 import { getBlogBySlug } from "@/app/api/Blog.Api";
 import { getDynamicPagesArticleAndSeoBySlug } from "@/app/api/pageManagement.Api";
 import BlogDetails from "@/components/BlogDetailsPage";

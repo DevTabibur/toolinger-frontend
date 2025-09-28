@@ -70,16 +70,15 @@ export async function getAllDynamicPagesArticleAndSeo({
 
 export async function getDynamicPagesArticleAndSeoBySlug(slug: string) {
     try {
-        const res = await fetch(`${API_BASE_URL}/pages-article-and-seo/slug/${slug}`, {
-            cache: "no-store" //  Always fresh data (no cache)
-        });
-        return res.json();
+      const res = await fetch(`${API_BASE_URL}/pages-article-and-seo/slug/${slug}`, {
+        cache: "no-store", // ❗ Always fetch fresh data (no cache)
+      });
+      return res.json();
     } catch (error) {
-        console.error("Error fetching dynamic page article and SEO by slug", error);
-        return null;
+      console.error("Error fetching dynamic page article and SEO by slug", error);
+      return null;
     }
-}
-
+  }
 // Create dynamic pages article and SEO (requires auth)
 export async function createDynamicPagesArticleAndSeo(data: any) {
     try {
