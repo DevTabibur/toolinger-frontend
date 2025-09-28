@@ -1,4 +1,5 @@
-import { toast } from "sonner";
+import toast from "react-hot-toast";
+
 
 export interface ApiError {
   message: string;
@@ -10,7 +11,7 @@ export interface ApiError {
 export class ErrorHandler {
   static handle(error: any, context?: string): ApiError {
     console.error(`Error in ${context || "unknown context"}:`, error);
-    
+
     let apiError: ApiError = {
       message: "An unexpected error occurred",
       code: "UNKNOWN_ERROR"
@@ -43,22 +44,17 @@ export class ErrorHandler {
 
   static showError(error: ApiError, context?: string): void {
     const message = context ? `${context}: ${error.message}` : error.message;
-    
+
     switch (error.code) {
       case "NETWORK_ERROR":
-        toast.error(message, {
-          description: "Please check your internet connection and try again"
-        });
+        toast.error("Please check your internet connection and try again");
         break;
       case "VALIDATION_ERROR":
-        toast.error(message, {
-          description: "Please check your input and try again"
-        });
+        toast.error("Please check your input and try again"
+        );
         break;
       case "AUTH_ERROR":
-        toast.error(message, {
-          description: "Please log in again"
-        });
+        toast.error("Please log in again");
         break;
       default:
         toast.error(message);

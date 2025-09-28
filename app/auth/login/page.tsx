@@ -8,8 +8,8 @@ export async function generateMetadata(): Promise<Metadata> {
     // Use the direct data object as per your API response
     const seo = page?.data || {};
 
-    console.log("seo", seo)
-    console.log("page", page)
+    // console.log("seo", seo)
+    // console.log("page", page)
     // Fallbacks for metaTitle and metaDescription
     const fallbackMetaTitle = 'Login - Toolinger | Access Your Tools Dashboard';
     const fallbackMetaDescription = 'Login to your Toolinger account to access premium tools, manage saved favorites, and enjoy a personalized experience.';

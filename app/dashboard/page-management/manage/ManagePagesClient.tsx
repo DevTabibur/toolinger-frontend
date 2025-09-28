@@ -25,13 +25,13 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getAllDynamicPagesArticleAndSeo } from "@/app/api/pageManagement.Api";
-import { toast } from "sonner";
+import { deletePagesDataFully, getAllDynamicPagesArticleAndSeo } from "@/app/api/pageManagement.Api";
 import { ConfirmationModal } from "@/components/ui/confirmation-modal";
 import { useDeleteConfirmation } from "@/hooks/useDeleteConfirmation";
 import { useBulkDeleteConfirmation } from "@/hooks/useBulkDeleteConfirmation";
 import { getApiSupport } from "@/lib/apiSupport";
-import { deleteDynamicPagesArticleAndSeo } from "@/app/api/pageManagement.Api";
+import toast from "react-hot-toast";
+
 
 interface Page {
   id: string;
@@ -359,7 +359,7 @@ export default function ManagePagesClient() {
     onDelete: async (item: Page) => {
       if (apiSupport.delete) {
         // Call API delete
-        await deleteDynamicPagesArticleAndSeo(item.id, "article");
+        await deletePagesDataFully(item.id);
       }
       // Remove from local state
       setPages(pages.filter(p => p.id !== item.id));
@@ -372,7 +372,7 @@ export default function ManagePagesClient() {
       if (apiSupport.bulkDelete) {
         // Call bulk delete API for each item
         await Promise.all(
-          items.map(item => deleteDynamicPagesArticleAndSeo(item.id, "article"))
+          items.map(item => deletePagesDataFully(item.id,))
         );
       }
       // Remove from local state
@@ -685,7 +685,7 @@ export default function ManagePagesClient() {
       </div>
 
       {/* Delete Confirmation Modals */}
-      <ConfirmationModal
+      {/* <ConfirmationModal
         isOpen={deleteConfirmation.isOpen}
         onClose={deleteConfirmation.handleClose}
         onConfirm={deleteConfirmation.handleDelete}
@@ -705,7 +705,7 @@ export default function ManagePagesClient() {
         confirmText="Delete All"
         variant="destructive"
         loading={bulkDeleteConfirmation.loading}
-      />
+      /> */}
     </div>
   );
 }

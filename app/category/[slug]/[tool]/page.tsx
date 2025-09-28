@@ -1,6 +1,5 @@
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
-import { getPageArticleSeoBySlug } from "@/lib/pageMgmt.server";
 import ToolClient from "@/components/pages/ToolClient";
 import { Metadata } from "next";
 import { getDynamicPagesArticleAndSeoBySlug } from "@/app/api/pageManagement.Api";
@@ -110,7 +109,7 @@ export default async function ToolDetailsPage({
 }) {
 
 
-  const data = await getPageArticleSeoBySlug(params.tool);
+  const data = await getDynamicPagesArticleAndSeoBySlug(params.tool);
   const articleHtml: string | undefined = data?.data?.PageArticle?.content;
   const seo = data?.data?.PageSEO
   // const schemas: any[] = data?.PageSEO?.schemas || [];

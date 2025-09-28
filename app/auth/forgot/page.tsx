@@ -8,11 +8,14 @@ import { Metadata } from "next";
 export async function generateMetadata(): Promise<Metadata> {
     const slug = "forgot";
     const page: any = await getDynamicPagesArticleAndSeoBySlug(slug);
-    const seo = page?.data?.PageSEO || {};
+    // Use the direct data object as per your API response
+    const seo = page?.data || {};
 
-    // Fallbacks only for metaTitle and metaDescription
+    // console.log("seo", seo)
+    // console.log("page", page)
+    // Fallbacks for metaTitle and metaDescription
     const fallbackMetaTitle = 'Forgot Password - Toolinger | Reset Your Account Access';
-    const fallbackMetaDescription = 'Forgot your Toolinger password? Enter your email to receive a password reset link and regain access to your account.';
+    const fallbackMetaDescription = 'Reset your Toolinger account password to regain access to premium tools, manage your favorites, and continue your personalized experience.';
 
     // Keywords: array or string, optional
     let keywords: string | undefined;
@@ -25,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     // Canonical URL
     const canonicalUrl = typeof seo.canonicalUrl === "string" && seo.canonicalUrl ? seo.canonicalUrl : undefined;
 
-    // Robots
+    // Robots: noindex false means index for Google
     let robots: Metadata["robots"] | undefined;
     if (typeof seo.noindex === "boolean") {
         robots = seo.noindex
@@ -51,14 +54,14 @@ export async function generateMetadata(): Promise<Metadata> {
 
     // Twitter Image
     let twitterImages: string[] | undefined;
-    if (seo.twitterImageUrl && typeof seo.twitterImageUrl === "string") {
+    if (seo.twitterImageUrl && typeof seo.twitterImageUrl === "string" && seo.twitterImageUrl.length > 0) {
         const url = seo.twitterImageUrl.startsWith("http")
             ? seo.twitterImageUrl
             : `${process.env.NEXT_PUBLIC_IMAGE_API || "https://toolinger.com"}/${seo.twitterImageUrl}`;
         twitterImages = [url];
     }
 
-    // Build metadata object, only including fields if present
+    // Build metadata object, using all available SEO data, with fallbacks for metaTitle and metaDescription
     const metadata: Metadata = {
         title: typeof seo.metaTitle === "string" && seo.metaTitle ? seo.metaTitle : fallbackMetaTitle,
         description: typeof seo.metaDescription === "string" && seo.metaDescription ? seo.metaDescription : fallbackMetaDescription,
@@ -83,11 +86,12 @@ export async function generateMetadata(): Promise<Metadata> {
     };
 
     // Remove empty openGraph/twitter objects if all fields are missing
-    if (Object.keys(metadata.openGraph || {}).length === 0) delete metadata.openGraph;
-    if (Object.keys(metadata.twitter || {}).length === 0) delete metadata.twitter;
+    if (metadata.openGraph && Object.keys(metadata.openGraph).length === 0) delete metadata.openGraph;
+    if (metadata.twitter && Object.keys(metadata.twitter).length === 0) delete metadata.twitter;
 
     return metadata;
 }
+
 
 
 export default function ForgotPasswordPage() {

@@ -17,7 +17,8 @@ import {
   MoreHorizontal,
   Check
 } from "lucide-react";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
+
 
 interface BulkActionsProps<T = any> {
   selectedItems: T[];
