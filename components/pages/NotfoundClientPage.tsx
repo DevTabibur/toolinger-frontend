@@ -40,7 +40,7 @@ const NotfoundClientPage = () => {
                     <div className="mt-10 text-center text-muted-foreground text-sm">
                         <span>
                             Lost? Try searching for a tool above or&nbsp;
-                            <Link href="/" className="text-primary hover:underline">
+                            <Link href="/category" className="text-primary hover:underline">
                                 browse all categories
                             </Link>
                             .

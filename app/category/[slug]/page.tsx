@@ -21,10 +21,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page: any = await getDynamicPagesArticleAndSeoBySlug(slug);
   // Use the direct data object as per your API response
   const seo = page?.data || {};
-  console.log("slug", slug)
+  // console.log("slug", slug)
 
-  console.log("seo", seo)
-  console.log("page", page)
+  // console.log("seo", seo)
+  // console.log("page", page)
   // Fallbacks for metaTitle and metaDescription
   const fallbackMetaTitle = 'Category - Toolinger | Discover Top Tools by Category';
   const fallbackMetaDescription = 'Browse Toolinger categories to find the best productivity tools, software, and resources tailored to your needs. Explore, compare, and choose the right tools for every category.';
@@ -124,7 +124,7 @@ export default function CategoryPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-background">
-      
+
       <Header />
 
       {/* Category Header */}
