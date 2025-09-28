@@ -1,3 +1,7 @@
+
+// Force this page to always render on server (SSR) → always fresh SEO data
+export const dynamic = "force-dynamic";
+
 import ForgotClientPage from "@/components/pages/ForgotClientPage";
 
 

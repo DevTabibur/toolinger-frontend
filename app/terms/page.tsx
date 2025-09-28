@@ -1,4 +1,7 @@
 
+// Force this page to always render on server (SSR) → always fresh SEO data
+export const dynamic = "force-dynamic";
+
 import { getDynamicPagesArticleAndSeoBySlug } from "@/app/api/pageManagement.Api";
 import { Metadata } from "next";
 import TermsClient from "./TermsClient";

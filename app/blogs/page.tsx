@@ -1,3 +1,7 @@
+
+// Force this page to always render on server (SSR) → always fresh SEO data
+export const dynamic = "force-dynamic";
+
 import BlogsClientPage from "@/components/pages/BlogsClientPage";
 import { Metadata } from "next";
 import { getDynamicPagesArticleAndSeoBySlug } from "../api/pageManagement.Api";
