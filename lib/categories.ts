@@ -48,7 +48,7 @@ export const categoriesAndTools: any = {
         slug: "reverse-ip-domains",
         level: "pro", // Added level
       },
-      
+
       {
         name: "Backlink Maker",
         description: "Generate high-quality backlinks for your website",
@@ -128,6 +128,13 @@ export const categoriesAndTools: any = {
       //   slug: "link-analyzer",
       //   level: "pro", // Badge label: pro
       // },
+      {
+        name: "Google Indexer",
+        description: "Check if your pages are indexed by Google",
+        icon: "📄🔎",
+        slug: "google-indexer",
+        level: "free"
+      },
       {
         name: "Google Malware Checker",
         description:
@@ -1512,9 +1519,9 @@ export const categories = [
   {
     name: "Website Management",
     icon: Settings,
-    count: 3,
+    count: 4,
     description: "Website analysis and management utilities",
-    tools: ["Server Status Checker", "Website Speed Test", "SSL Checker"],
+    tools: ["Server Status Checker", "Website Speed Test", "SSL Checker", "Google Index Checker"],
   },
   // {
   //   name: "More Tools",
@@ -1627,6 +1634,15 @@ export const SearchedAllTools: ITool[] = [
     slug: "google-malware-checker",
     categorySlug: "domain-tools",
     icon: "🛡️",
+  },
+
+  {
+    name: "Google Indexer",
+    description: "Check if your pages are indexed by Google",
+    category: "Website Management",
+    slug: "google-indexer",
+    categorySlug: "google-indexer",
+    icon: "📄🔎",
   },
   // {
   //   name: "Backlink Maker",

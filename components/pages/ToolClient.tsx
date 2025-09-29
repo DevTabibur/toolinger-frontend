@@ -88,6 +88,7 @@ import {
     RomanNumeralsDate,
     TextToHex
 } from "@/components/tools/Converters";
+import GoogleIndexChecker from "../tools/WebsiteManagement/GoogleIndexChecker";
 
 const ToolClient = ({
     tool,
@@ -218,6 +219,8 @@ const ToolClient = ({
                 return <DetectCMS />;
             case "links-count-checker":
                 return <WebsiteLinkCountChecker />;
+            case "google-indexer":
+                return <GoogleIndexChecker />;
             // =================converters tools===================
             case "rgb-to-hex":
                 return <RGBTOHEX />;
