@@ -92,6 +92,8 @@ export async function generateMetadata(): Promise<Metadata> {
     return metadata;
 }
 
-export default function SitemapPage() {
-    return <SitemapClient />
+export default async function SitemapPage() {
+    const slugs = "sitemap";
+    const page: any = await getDynamicPagesArticleAndSeoBySlug(slugs as any);
+    return <SitemapClient page={page}/>
 }

@@ -96,11 +96,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 
 
-export default function BlogsPage() {
-
+export default async function BlogsPage() {
+    const slugs = "blogs";
+    const page: any = await getDynamicPagesArticleAndSeoBySlug(slugs as any);
     return (
         <>
-            <BlogsClientPage />
+            <BlogsClientPage page1={page}/>
         </>
     );
 }

@@ -29,7 +29,7 @@ const itemVariants: any = {
     },
 }
 
-export default function ContactClient() {
+export default function ContactClient({ page }: any) {
     const contactMethods = [
         {
             icon: Mail,
@@ -269,6 +269,11 @@ export default function ContactClient() {
             <div className="container mx-auto px-4 py-8">
                 <AdBanner size="banner" />
             </div>
+
+            <div className="container mx-auto px-4 py-24">
+                <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent }}></div>
+            </div>
+
 
             <Footer />
         </div>

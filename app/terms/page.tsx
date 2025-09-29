@@ -92,6 +92,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 
-export default function TermsPage() {
-  return <TermsClient />;
+export default async function TermsPage() {
+    const slugs = "terms";
+    const page: any = await getDynamicPagesArticleAndSeoBySlug(slugs as any);
+  return <TermsClient page={page} />;
 }

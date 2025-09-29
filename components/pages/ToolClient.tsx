@@ -91,13 +91,8 @@ import {
 
 const ToolClient = ({
     tool,
-    article,
-    seo,
-}: {
-    tool: string;
-    article?: string;
-    seo?: any;
-}) => {
+    page
+}: any) => {
 
 
     const renderToolComponent = () => {
@@ -108,109 +103,109 @@ const ToolClient = ({
             // case "binary-translator":
             //   return <BinaryCalculator />;
             case "adsense-calculator":
-                return <AdsenseCalculator article={article} seo={seo} />;
+                return <AdsenseCalculator />;
             case "paypal-fee-calculator":
-                return <PaypalFeeCalculator article={article} seo={seo}/>;
+                return <PaypalFeeCalculator />;
             case "ltv-calculator":
-                return <LTVCalculator article={article} seo={seo}/>;
+                return <LTVCalculator />;
             case "cpm-calculator":
-                return <CPMCalculator article={article} seo={seo}/>;
+                return <CPMCalculator />;
             case "discount-calculator":
-                return <DiscountCalculator article={article} seo={seo}/>;
+                return <DiscountCalculator />;
             case "binary-calculator":
-                return <BinaryCalculator article={article} seo={seo}/>;
+                return <BinaryCalculator />;
             case "hex-calculator":
-                return <HexCalculator article={article} seo={seo}/>;
+                return <HexCalculator />;
             case "octal-calculator":
-                return <OctalCalculator article={article} seo={seo}/>;
+                return <OctalCalculator />;
             // case "percentage-calculator":
             //   return <OctalCalculator />;
             case "earnings-per-share":
-                return <EarningPerShareCalculator article={article} seo={seo}/>;
+                return <EarningPerShareCalculator />;
             case "probability-calculator":
-                return <ProbabilityCalculator article={article} seo={seo}/>;
+                return <ProbabilityCalculator />;
             case "margin-calculator":
-                return <MarginCalculator article={article} seo={seo}/>;
+                return <MarginCalculator />;
             case "sales-tax-calculator":
-                return <SalesTaxCalculator article={article} seo={seo}/>;
+                return <SalesTaxCalculator />;
             case "gst-calculator":
-                return <GSTCalculator article={article} seo={seo}/>;
+                return <GSTCalculator />;
             case "bound-calculator":
-                return <LowerAndUpperBoundCalculator article={article} seo={seo}/>;
+                return <LowerAndUpperBoundCalculator />;
             case "average-calculator":
-                return <AverageCalculator article={article} seo={seo}/>;
+                return <AverageCalculator />;
             case "age-calculator":
-                return <AgeCalculator article={article} seo={seo}/>;
+                return <AgeCalculator />;
             case "pre-and-post-money-valuation-calculator":
-                return <PreAndPostMoney article={article} seo={seo}/>;
+                return <PreAndPostMoney />;
             // ==================================text tools========================
             case "word-counter":
-                return <WordCounter article={article} seo={seo}/>;
+                return <WordCounter />;
             // case "code-to-text-ratio":
             //   return <CodeToTextRatio />;
             // case "invisible-character":
             //   return <InvisibleCharacter />;
             case "text-to-word":
-                return <TextToWord article={article} seo={seo}/>;
+                return <TextToWord />;
             case "text-to-pdf":
-                return <TextToPDF article={article} seo={seo}/>;
+                return <TextToPDF />;
             case "text-repeater":
-                return <TextRepeater article={article} seo={seo}/>;
+                return <TextRepeater />;
             // case "keyword-total-words":
             //     return <KeywordsByTotalWordRatio article={article} seo={seo}/>;
             case "word-combiner":
-                return <WordCombiner article={article} seo={seo}/>;
+                return <WordCombiner />;
             // case "ascii-to-text":
             //   return <ASCIIToTextConverter />;
             case "text-to-ascii":
-                return <ASCIIToTextConverter article={article} seo={seo}/>;
+                return <ASCIIToTextConverter />;
             // case "online-text-editor":
             //   return <TextEditor />;
             // case "word-pages":
             //   return <WordsToPages />;
             // =========================developer tools==========================
             case "minify-html":
-                return <MinifyTools article={article} seo={seo}/>;
+                return <MinifyTools />;
             case "minify-css":
-                return <MinifyTools article={article} seo={seo}/>;
+                return <MinifyTools />;
             case "minify-js":
-                return <MinifyTools article={article} seo={seo}/>;
+                return <MinifyTools />;
             case "minify-json":
-                return <MinifyTools article={article} seo={seo}/>;
+                return <MinifyTools />;
             case "js-beautifier":
-                return <MinifyTools article={article} seo={seo}/>;
+                return <MinifyTools />;
             case "css-beautifier":
-                return <MinifyTools article={article} seo={seo}/>;
+                return <MinifyTools />;
             case "html-beautifier":
-                return <MinifyTools article={article} seo={seo}/>;
+                return <MinifyTools />;
             case "xml-beautifier":
-                return <MinifyTools article={article} seo={seo}/>;
+                return <MinifyTools />;
             case "json-beautifier":
-                return <MinifyTools article={article} seo={seo}/>;
+                return <MinifyTools />;
             case "php-beautifier":
-                return <MinifyTools article={article} seo={seo}/>;
+                return <MinifyTools />;
             case "url-encoder-decoder":
-                return <URLEncodeDecode article={article} seo={seo}/>;
+                return <URLEncodeDecode />;
             case "html-encoder-decoder":
-                return <HtmlEncodeDecode article={article} seo={seo}/>;
+                return <HtmlEncodeDecode />;
             case "source-code-retriever":
-                return <SourceCodeOfWebpage article={article} seo={seo}/>;
+                return <SourceCodeOfWebpage />;
             case "server-status":
-                return <ServerStatus article={article} seo={seo}/>;
+                return <ServerStatus />;
             // case "dns-records":
             //   return <DNSRecordsChecker />;
             // ====================generators tools======================
             case "reverse-text-generator":
-                return <ReverseTextGenerator article={article} seo={seo}/>;
+                return <ReverseTextGenerator />;
             case "upside-down-text-generator":
-                return <UpsideDownTextGenerator article={article} seo={seo}/>;
+                return <UpsideDownTextGenerator />;
             case "password-generator":
-                return <PasswordGenerator article={article} seo={seo}/>;
+                return <PasswordGenerator />;
             // ===============    ===========================                    image tools===================
             case "text-to-handwriting":
-                return <TextToHandWriting article={article} seo={seo}/>;
+                return <TextToHandWriting />;
             case "text-to-image":
-                return <TextToImage article={article} seo={seo}/>;
+                return <TextToImage />;
             // case "crop-image-online":
             //   return <CropImageOnline />;
 
@@ -218,58 +213,58 @@ const ToolClient = ({
             //   return <PdfToWord />;
             // =====================website management=================
             case "google-malware-checker":
-                return <GoogleMalwareChecker article={article} seo={seo} />;
+                return <GoogleMalwareChecker />;
             case "cms-checker":
-                return <DetectCMS  article={article} seo={seo}/>;
+                return <DetectCMS />;
             case "links-count-checker":
-                return <WebsiteLinkCountChecker  article={article} seo={seo}/>;
+                return <WebsiteLinkCountChecker />;
             // =================converters tools===================
             case "rgb-to-hex":
-                return <RGBTOHEX article={article} seo={seo}/>;
+                return <RGBTOHEX />;
             case "hex-to-rgb":
-                return <HEXTORGB article={article} seo={seo}/>;
+                return <HEXTORGB />;
             case "decimal-to-octal":
-                return <DecimalToOctal article={article} seo={seo}/>;
+                return <DecimalToOctal />;
             case "octal-to-decimal":
-                return <OctalToDecimal article={article} seo={seo}/>;
+                return <OctalToDecimal />;
             case "roman-numerals-date":
-                return <RomanNumeralsDate article={article} seo={seo}/>;
+                return <RomanNumeralsDate />;
             case "text-to-binary":
-                return <BinaryCalculator article={article} seo={seo}/>;
+                return <BinaryCalculator />;
             case "decimal-to-binary":
-                return <BinaryCalculator article={article} seo={seo}/>;
+                return <BinaryCalculator />;
             case "binary-to-decimal":
-                return <BinaryCalculator article={article} seo={seo}/>;
+                return <BinaryCalculator />;
             case "decimal-to-hex":
-                return <BinaryCalculator article={article} seo={seo} />;
+                return <BinaryCalculator />;
             case "hex-to-decimal":
-                return <BinaryCalculator article={article} seo={seo}/>;
+                return <BinaryCalculator />;
             case "binary-to-hex":
-                return <BinaryCalculator article={article} seo={seo}/>;
+                return <BinaryCalculator />;
             case "hex-to-binary":
-                return <BinaryCalculator article={article} seo={seo}/>;
+                return <BinaryCalculator />;
             case "binary-to-octal":
-                return <BinaryCalculator article={article} seo={seo}/>;
+                return <BinaryCalculator />;
             case "hex-to-octal":
-                return <BinaryCalculator article={article} seo={seo}/>;
+                return <BinaryCalculator />;
             case "octal-to-binary":
-                return <BinaryCalculator article={article} seo={seo}/>;
+                return <BinaryCalculator />;
             case "octal-to-hex":
-                return <BinaryCalculator article={article} seo={seo}/>;
+                return <BinaryCalculator />;
             case "case-converter":
-                return <CaseConverter article={article} seo={seo}/>;
+                return <CaseConverter />;
             case "ascii-to-hex":
-                return <AsciiToHEX article={article} seo={seo}/>;
+                return <AsciiToHEX />;
             case "ascii-to-decimal":
-                return <AsciiToDecimal article={article} seo={seo}/>;
+                return <AsciiToDecimal />;
             case "decimal-to-ascii":
-                return <DecimalToAscii article={article} seo={seo}/>;
+                return <DecimalToAscii />;
             case "hex-to-ascii":
-                return <HexToAscii article={article} seo={seo}/>;
+                return <HexToAscii />;
             case "hex-to-text":
-                return <HexToText article={article} seo={seo}/>;
+                return <HexToText />;
             case "text-to-hex":
-                return <TextToHex article={article} seo={seo}/>;
+                return <TextToHex />;
             // case "multi-date-converter":
             //   return <MultiDateConverter />;
             default:
@@ -280,6 +275,10 @@ const ToolClient = ({
     return (<>
         <div>
             {renderToolComponent()}
+
+            <div className="container mx-auto px-4 py-24">
+                <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent }}></div>
+            </div>
         </div>
     </>)
 }

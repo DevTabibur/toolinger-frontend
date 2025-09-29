@@ -28,7 +28,7 @@ import { categories, featuredTools } from "@/lib/categories";
 
 
 
-const HomeClientPage = () => {
+const HomeClientPage = ({ page }: any) => {
     return <>
         <div className="min-h-screen bg-background">
             <Header />
@@ -216,6 +216,10 @@ const HomeClientPage = () => {
             {/* Bottom Ad */}
             <div className="container mx-auto px-4 py-8">
                 <AdBanner size="banner" />
+            </div>
+
+            <div className="container mx-auto px-4 py-24">
+                <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent }}></div>
             </div>
 
             <Footer />

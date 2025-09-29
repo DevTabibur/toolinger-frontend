@@ -90,6 +90,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
     return metadata;
 }
-export default function PrivacyPage() {
-    return <PrivacyClient />
+export default async function PrivacyPage() {
+    const slugs = "privacy";
+    const page: any = await getDynamicPagesArticleAndSeoBySlug(slugs as any);
+    return <PrivacyClient page={page} />
 }

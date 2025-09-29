@@ -110,7 +110,7 @@ function useTheme() {
 
 const BLOGS_PER_PAGE = 6;
 
-const BlogsClientPage =() =>{
+const BlogsClientPage = ({ page1  }: any) => {
     const { theme, setTheme } = useTheme();
     const [categories, setCategories] = useState<{ name: string; slug: string }[]>([]);
     const [blogs, setBlogs] = useState<any[]>([]);
@@ -250,10 +250,10 @@ const BlogsClientPage =() =>{
 
 
     console.log("blogs", blogs)
-  
+
     return (
         <>
-        <Header />
+            <Header />
             <section className="relative w-full bg-gradient-to-br from-[#00dbed] via-[#005c82] to-[#101827] py-12 md:py-20 overflow-hidden">
                 {/* Animated Particles (Bubbles/Stars) */}
                 <div className="absolute inset-0 pointer-events-none z-0">
@@ -596,8 +596,14 @@ const BlogsClientPage =() =>{
                     </aside>
                 </div>
             </div>
+
+
+            <div className="container mx-auto px-4 py-24">
+                <div dangerouslySetInnerHTML={{ __html: page1?.data?.pageContent }}></div>
+            </div>
+
             <Footer />
-            </>
+        </>
     )
 }
 

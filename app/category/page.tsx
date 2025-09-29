@@ -94,11 +94,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
 
-
+    const slugs = "category";
+    const page: any = await getDynamicPagesArticleAndSeoBySlug(slugs as any);
     return (
         <>
-            <CategoryClientPage /></>
+            <CategoryClientPage page={page}/></>
     );
 }

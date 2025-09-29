@@ -92,6 +92,8 @@ export async function generateMetadata(): Promise<Metadata> {
     return metadata;
 }
 
-export default function ContactPage() {
-    return <ContactClient />
+export default async function ContactPage() {
+    const slugs = "contact";
+    const page: any = await getDynamicPagesArticleAndSeoBySlug(slugs as any);
+    return <ContactClient page={page} />
 }

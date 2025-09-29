@@ -13,8 +13,8 @@ function formatCurrency(num: number) {
     });
 }
 
-const AdsenseCalculator = (props: { article?: any, seo?: any }) => {
-    const { article, seo } = props;
+const AdsenseCalculator = ({ page }: any) => {
+    
     const [inputs, setInputs] = useState({
         pageImpressions: "",
         clickThroughRate: "",
@@ -125,82 +125,12 @@ const AdsenseCalculator = (props: { article?: any, seo?: any }) => {
     };
 
 
-    // Prepare SEO meta tags if seo prop is provided
-    const renderSeoHead = () => {
-        if (!seo) return null;
-        return (
-            <Head>
-                {seo.metaTitle && <title>{seo.metaTitle}</title>}
-                {seo.metaDescription && (
-                    <meta name="description" content={seo.metaDescription} />
-                )}
-                {seo.keywords && Array.isArray(seo.keywords) && (
-                    <meta name="keywords" content={seo.keywords.join(", ")} />
-                )}
-                {seo.canonicalUrl && (
-                    <link rel="canonical" href={seo.canonicalUrl} />
-                )}
-                {/* Robots */}
-                {typeof seo.noindex === "boolean" && (
-                    <meta
-                        name="robots"
-                        content={seo.noindex ? "noindex, nofollow" : "index, follow"}
-                    />
-                )}
-                {/* Open Graph */}
-                {seo.ogTitle && <meta property="og:title" content={seo.ogTitle} />}
-                {seo.ogDescription && (
-                    <meta property="og:description" content={seo.ogDescription} />
-                )}
-                {seo.ogImageUrl && (
-                    <meta property="og:image" content={seo.ogImageUrl} />
-                )}
-                {seo.ogType && <meta property="og:type" content={seo.ogType} />}
-                {seo.ogSiteName && (
-                    <meta property="og:site_name" content={seo.ogSiteName} />
-                )}
-                {seo.ogLocale && (
-                    <meta property="og:locale" content={seo.ogLocale} />
-                )}
-                {seo.canonicalUrl && (
-                    <meta property="og:url" content={seo.canonicalUrl} />
-                )}
-                {/* Twitter */}
-                {seo.twitterCard && (
-                    <meta name="twitter:card" content={seo.twitterCard} />
-                )}
-                {seo.twitterSite && (
-                    <meta name="twitter:site" content={seo.twitterSite} />
-                )}
-                {seo.twitterCreator && (
-                    <meta name="twitter:creator" content={seo.twitterCreator} />
-                )}
-                {seo.twitterImageUrl && (
-                    <meta name="twitter:image" content={seo.twitterImageUrl} />
-                )}
-                {/* Structured Data */}
-                {seo.schemas &&
-                    Array.isArray(seo.schemas) &&
-                    seo.schemas.map((schema: any, idx: number) => (
-                        <script
-                            key={idx}
-                            type="application/ld+json"
-                            dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-                        />
-                    ))}
-            </Head>
-        );
-    };
-
-    // Use metaTitle if available, else fallback to default
-    const pageTitle = seo?.metaTitle || "Google Malware Checker";
-    const pageDescription =
-        seo?.metaDescription ||
-        "To use Toolinger Google Malware Checker, Paste Url in the input box given below and click on check malware Button.";
+    
+   
 
     return (
         <>
-            {renderSeoHead()}
+           
             {/* Breadcrumb */}
             <div className="container mx-auto px-4 py-4">
                 <nav className="flex items-center space-x-2 text-sm">

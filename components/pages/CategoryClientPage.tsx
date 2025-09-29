@@ -60,7 +60,7 @@ const categories = [
     },
 ];
 
-const CategoryClientPage = () => {
+const CategoryClientPage = ({ page }: any) => {
     const [search, setSearch] = useState("");
 
     // Filter categories by search
@@ -192,6 +192,15 @@ const CategoryClientPage = () => {
                     </div>
                 </div>
             </section>
+
+            {/* Ad Banner */}
+            <div className="container mx-auto px-4 py-6">
+                <AdBanner size="leaderboard" />
+            </div>
+
+            <div className="container mx-auto px-4 py-24">
+                <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent }}></div>
+            </div>
 
             <Footer />
         </div>

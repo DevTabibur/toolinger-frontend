@@ -108,23 +108,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 
-export default function CategoryPage({ params }: Props) {
+export default async function CategoryPage({ params }: Props) {
   const category =
     categoriesAndTools[params?.slug as keyof typeof categoriesAndTools];
+
+  // if (category?.slug) {
+  //   console.log("Category slug:", category.slug);
+  // } else if (params?.slug) {
+  //   console.log("Category slug (from params):", params.slug);
+  // }
 
   if (!category) {
     notFound();
   }
 
-  // Convert the dynamic color string to Tailwind classes safely
-  // category.color is e.g. "from-red-500 to-blue-500"
-  // We need to ensure these classes are always present in the final build (for Tailwind JIT)
-  // So, we can map all possible color classes in a hidden element, or use a whitelist comment.
-  // But for now, we can just use the string as className, as long as Tailwind is configured to scan this file.
-
-  // Remove the console.log, as it's not needed for color rendering
-  // console.log("category.color", category.color);
-
+  const slugs = params.slug;
+  const page: any = await getDynamicPagesArticleAndSeoBySlug(slugs as any);
+// console.log("page", page)
   return (
     <div className="min-h-screen bg-background">
 
@@ -183,7 +183,9 @@ export default function CategoryPage({ params }: Props) {
       <div className="container mx-auto px-4 py-6">
         <AdBanner size="banner" />
       </div>
-
+      <div className="container mx-auto px-4 py-24">
+        <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent }}></div>
+      </div>
       <Footer />
     </div>
   );
