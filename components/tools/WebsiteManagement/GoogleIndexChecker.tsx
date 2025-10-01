@@ -6,15 +6,33 @@ import { ChevronRight, Home, ExternalLink, Loader2 } from "lucide-react";
 interface WebsiteResult {
   id: number;
   domain: string;
+  fullDomain: string;
+  original: string;
 }
 
 const MAX_URLS = 2000;
+
+const getFullDomain = (url: string) => {
+  // Remove protocol and www, then take only the domain part (before first slash)
+  let clean = url.replace(/^https?:\/\//, "").replace(/^www\./, "");
+  return clean.split("/")[0];
+};
+
+const getCurrentPageUrl = (url: string) => {
+  // Always add https:// if not present for the link
+  if (!/^https?:\/\//.test(url)) {
+    return `https://${url}`;
+  }
+  return url;
+};
 
 const GoogleIndexChecker = (props: { article?: any; seo?: any }) => {
   const [urls, setUrls] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<WebsiteResult[]>([]);
   const [error, setError] = useState<string | null>(null);
+  // Track last clicked: {type: "current"|"full", id: number}
+  const [active, setActive] = useState<{ type: "current" | "full"; id: number } | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,43 +40,59 @@ const GoogleIndexChecker = (props: { article?: any; seo?: any }) => {
     setError(null);
     setResults([]);
 
-    try {
-      // Parse URLs from textarea
-      const urlList = urls
-        .split("\n")
-        .map((url) => url.trim())
-        .filter((url) => url.length > 0)
-        .slice(0, MAX_URLS);
+    // Simulate a 0.5 second delay before showing results
+    setTimeout(() => {
+      try {
+        // Parse URLs from textarea
+        const urlList = urls
+          .split("\n")
+          .map((url) => url.trim())
+          .filter((url) => url.length > 0)
+          .slice(0, MAX_URLS);
 
-      if (urlList.length === 0) {
-        setError("Please enter at least one URL.");
+        if (urlList.length === 0) {
+          setError("Please enter at least one URL.");
+          setLoading(false);
+          return;
+        }
+
+        // Create results array - keep original, domain, and fullDomain
+        const websiteResults: WebsiteResult[] = urlList.map((url, index) => ({
+          id: index + 1,
+          original: url,
+          domain: url.replace(/^https?:\/\//, "").replace(/^www\./, ""),
+          fullDomain: getFullDomain(url),
+        }));
+
+        setResults(websiteResults);
+      } catch (err: any) {
+        setError("Failed to process URLs.");
+      } finally {
         setLoading(false);
-        return;
       }
-
-      // Create results array - remove https:// and www.
-      const websiteResults: WebsiteResult[] = urlList.map((url, index) => ({
-        id: index + 1,
-        domain: url.replace(/^https?:\/\//, "").replace(/^www\./, ""),
-      }));
-
-      setResults(websiteResults);
-    } catch (err: any) {
-      setError("Failed to process URLs.");
-    } finally {
-      setLoading(false);
-    }
+    }, 500);
   };
 
-  const handleCurrentPageCheck = (domain: string) => {
-    const googleSearchUrl = `https://www.google.com/search?q=site:${domain}`;
+  const handleCurrentPageCheck = (result: WebsiteResult) => {
+    setActive({ type: "current", id: result.id });
+    // Always use https:// for current page
+    const url = getCurrentPageUrl(result.original);
+    const googleSearchUrl = `https://www.google.com/search?q=site:${encodeURIComponent(url)}`;
     window.open(googleSearchUrl, "_blank", "noopener,noreferrer");
   };
 
-  const handleFullWebsiteCheck = (domain: string) => {
-    const googleSearchUrl = `https://www.google.com/search?q=site:${domain}`;
+  const handleFullWebsiteCheck = (result: WebsiteResult) => {
+    setActive({ type: "full", id: result.id });
+    // Only use the domain part for full website
+    const googleSearchUrl = `https://www.google.com/search?q=site:${encodeURIComponent(result.fullDomain)}`;
     window.open(googleSearchUrl, "_blank", "noopener,noreferrer");
   };
+
+  // Theme-aware active/inactive button classes for underline effect
+  const activeBtn =
+    "font-semibold underline underline-offset-4 decoration-2 text-blue-700 dark:text-blue-300";
+  const inactiveBtn =
+    "text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline text-sm";
 
   return (
     <div className="min-h-screen bg-[#f8fbfc] dark:bg-gray-900">
@@ -142,44 +176,48 @@ ghi.com`}
                     Results ({results.length} website{results.length > 1 ? "s" : ""})
                   </h2>
                   <div className="overflow-x-auto">
-                    <table className="w-full border-collapse bg-white dark:bg-gray-800 shadow-sm rounded overflow-hidden">
-                      <thead className="bg-yellow-100 dark:bg-yellow-900/30">
+                    <table className="w-full border-collapse bg-white dark:bg-gray-800 shadow-sm rounded overflow-hidden border border-dashed border-gray-300 dark:border-gray-600">
+                      <thead className="bg-green-100 dark:bg-green-900/30">
                         <tr>
-                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700">
+                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-dashed border-gray-300 dark:border-gray-600">
                             SR No.
                           </th>
-                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700">
+                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-dashed border-gray-300 dark:border-gray-600">
                             Web Page
                           </th>
-                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700">
+                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-dashed border-gray-300 dark:border-gray-600">
                             Current Page
                           </th>
-                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700">
-                            Full Website
+                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-dashed border-gray-300 dark:border-gray-600">
+                            Full URL
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         {results.map((result) => (
-                          <tr key={result.id} className="border-b border-gray-200 dark:border-gray-700">
+                          <tr key={result.id} className="border-b border-dashed border-gray-300 dark:border-gray-600">
                             <td className="px-3 py-3 text-sm text-gray-900 dark:text-gray-100">
                               {result.id}
                             </td>
                             <td className="px-3 py-3 text-sm">
                               <a
-                                href={`https://${result.domain}`}
+                                href={getCurrentPageUrl(result.original)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1"
                               >
-                                {result.domain}
+                                {getCurrentPageUrl(result.original).replace(/^https?:\/\//, "")}
                                 <ExternalLink size={12} />
                               </a>
                             </td>
                             <td className="px-3 py-3 text-sm">
                               <button
-                                onClick={() => handleCurrentPageCheck(result.domain)}
-                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline text-sm"
+                                onClick={() => handleCurrentPageCheck(result)}
+                                className={
+                                  active?.type === "current" && active?.id === result.id
+                                    ? `${activeBtn} text-base`
+                                    : inactiveBtn
+                                }
                                 type="button"
                               >
                                 View Current Page Status
@@ -187,11 +225,15 @@ ghi.com`}
                             </td>
                             <td className="px-3 py-3 text-sm">
                               <button
-                                onClick={() => handleFullWebsiteCheck(result.domain)}
-                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline text-sm"
+                                onClick={() => handleFullWebsiteCheck(result)}
+                                className={
+                                  active?.type === "full" && active?.id === result.id
+                                    ? `${activeBtn} text-base`
+                                    : inactiveBtn
+                                }
                                 type="button"
                               >
-                                View Full Website Status
+                                View Full URL Status
                               </button>
                             </td>
                           </tr>
