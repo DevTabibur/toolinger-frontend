@@ -88,7 +88,7 @@ const CreatePageModal: React.FC<CreatePageModalProps> = ({ open, onClose, onCrea
             const payload = {
                 title: title.trim(),
                 type: type.trim(),
-                slug: slug.trim(),
+                slug: `/${slug.trim()}`,
             };
             const res = await createDynamicPagesArticleAndSeo(payload);
             if (res.statusCode === 200) {

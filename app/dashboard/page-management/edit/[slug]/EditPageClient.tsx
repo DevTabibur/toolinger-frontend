@@ -146,7 +146,7 @@ const contentValidationSchema = Yup.object({
                 "summary",
                 "summary_large_image",
                 "app",
-                "player"
+                "player" 
             ],
             "Invalid Twitter Card type"
         )

@@ -279,12 +279,11 @@ const ToolClient = ({
         <div>
             {renderToolComponent()}
 
-            <div className="container mx-auto">
-                <div className="prose w-full max-w-[700px] text-start">
-                    <div
-                        dangerouslySetInnerHTML={{ __html: page?.data?.pageContent || "" }}
-                    />
+            <div className="container mx-auto py-6">
+                <div className="prose max-w-[700px] text-start">
+                    <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent || "" }} />
                 </div>
+
             </div>
         </div>
     </>)
