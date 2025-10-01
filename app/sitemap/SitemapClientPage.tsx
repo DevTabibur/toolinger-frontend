@@ -233,7 +233,7 @@ export default function SitemapClientPage() {
         "Google Malware Checker",
         "Backlink Maker",
         "Broken Links Checker",
-        "Google Indexer",
+        "Google Index checker",
         "Reverse Whois Checker",
         "Alexa Rank Checker",
       ],

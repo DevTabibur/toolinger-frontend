@@ -62,10 +62,10 @@ export const categoriesAndTools: any = {
         slug: "broken-links-checker",
       },
       {
-        name: "Google Indexer",
+        name: "Google Index Checker",
         description: "Check if your pages are indexed by Google",
         icon: "🔍",
-        slug: "google-indexer",
+        slug: "google-index-checker",
       },
       {
         name: "Reverse Whois Checker",
@@ -129,10 +129,10 @@ export const categoriesAndTools: any = {
       //   level: "pro", // Badge label: pro
       // },
       {
-        name: "Google Indexer",
+        name: "Google Index Checker",
         description: "Check if your pages are indexed by Google",
         icon: "📄🔎",
-        slug: "google-indexer",
+        slug: "google-index-checker",
         level: "free"
       },
       {
@@ -1305,13 +1305,13 @@ export const categoriesAndTools: any = {
         slug: "google-pr-checker",
         level: "pro",
       },
-      {
-        name: "Google Indexer",
-        description: "Index your pages with Google",
-        icon: "🔍",
-        slug: "google-indexer",
-        level: "pro",
-      },
+      // {
+      //   name: "Google Indexer",
+      //   description: "Index your pages with Google",
+      //   icon: "🔍",
+      //   slug: "google-indexer",
+      //   level: "pro",
+      // },
       {
         name: "Website SEO Score Checker",
         description: "Check the SEO score of your website",
@@ -1641,7 +1641,7 @@ export const SearchedAllTools: ITool[] = [
     description: "Check if your pages are indexed by Google",
     category: "Website Management",
     slug: "google-index-checker",
-    categorySlug: "google-index-checker",
+    categorySlug: "website-management",
     icon: "📄🔎",
   },
   // {
