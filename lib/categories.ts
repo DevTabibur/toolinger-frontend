@@ -1637,11 +1637,11 @@ export const SearchedAllTools: ITool[] = [
   },
 
   {
-    name: "Google Indexer",
+    name: "Google Index Checker",
     description: "Check if your pages are indexed by Google",
     category: "Website Management",
-    slug: "google-indexer",
-    categorySlug: "google-indexer",
+    slug: "google-index-checker",
+    categorySlug: "google-index-checker",
     icon: "📄🔎",
   },
   // {

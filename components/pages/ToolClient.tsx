@@ -219,7 +219,7 @@ const ToolClient = ({
                 return <DetectCMS />;
             case "links-count-checker":
                 return <WebsiteLinkCountChecker />;
-            case "google-indexer":
+            case "google-index-checker":
                 return <GoogleIndexChecker />;
             // =================converters tools===================
             case "rgb-to-hex":
