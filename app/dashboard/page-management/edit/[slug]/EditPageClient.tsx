@@ -59,9 +59,9 @@ interface PageContentData {
 }
 
 const contentValidationSchema = Yup.object({
-    title: Yup.string().required("Title is required"),
-    slug: Yup.string().required("Slug is required"),
-    type: Yup.string().required("Type is required"),
+    // title: Yup.string().required("Title is required"),
+    // slug: Yup.string().required("Slug is required"),
+    // type: Yup.string().required("Type is required"),
 
     //======================================Article
     content: Yup.string().optional(),
@@ -176,9 +176,9 @@ export default function EditPageClient({ slug, }: EditPageClientProps) {
     const type = searchParams.get("type") || "";
     const title = searchParams.get("title") || "";
 
-    console.log("type  ==>", type); // Should be just "static", "dynamic", etc.
-    console.log("title ==>", title); // Should be "login page", "register page", etc.
-    console.log("slug  ==>", slug);
+    // console.log("type  ==>", type); // Should be just "static", "dynamic", etc.
+    // console.log("title ==>", title); // Should be "login page", "register page", etc.
+    // console.log("slug  ==>", slug);
 
     // Now you have: type, title, slug (e.g. "login")
     // You can use these variables in your component as needed

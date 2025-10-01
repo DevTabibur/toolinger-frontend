@@ -88,7 +88,7 @@ const CreatePageModal: React.FC<CreatePageModalProps> = ({ open, onClose, onCrea
             const payload = {
                 title: title.trim(),
                 type: type.trim(),
-                slug: slug.trim(),
+                slug: `/${slug.trim()}`,
             };
             const res = await createDynamicPagesArticleAndSeo(payload);
             if (res.statusCode === 200) {
@@ -133,7 +133,7 @@ const CreatePageModal: React.FC<CreatePageModalProps> = ({ open, onClose, onCrea
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
                                 <label className="block text-sm font-medium mb-1" htmlFor="modal-title">
-                                    Title
+                                    Page Name
                                 </label>
                                 <input
                                     id="modal-title"
@@ -264,7 +264,7 @@ export default function StaticPagesClient() {
     const [titleFilter, setTitleFilter] = useState("");
     const [meta, setMeta] = useState<any>()
 
-    console.log("noindexFilter", noindexFilter)
+    // console.log("noindexFilter", noindexFilter)
 
     // Table Data Fetching & API Integration
     useEffect(() => {
@@ -307,7 +307,7 @@ export default function StaticPagesClient() {
     const columns = [
         {
             key: "title",
-            label: "Title",
+            label: "Page Name",
             sortable: true,
             render: (page: DynamicPage) => (
                 <div className="font-medium text-gray-900 dark:text-white max-w-[200px] truncate">

@@ -264,7 +264,7 @@ export default function StaticPagesClient() {
     const [titleFilter, setTitleFilter] = useState("");
     const [meta, setMeta] = useState<any>()
 
-    console.log("noindexFilter", noindexFilter)
+    // console.log("noindexFilter", noindexFilter)
 
     // Table Data Fetching & API Integration
     useEffect(() => {

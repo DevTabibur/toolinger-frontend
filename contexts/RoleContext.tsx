@@ -24,7 +24,7 @@ const RoleContext = createContext<RoleContextType | undefined>(undefined)
 export const useRole = () => {
     const context = useContext(RoleContext)
     if (context === undefined) {
-        console.log("error")
+        // console.log("error")
         // throw new Error("useRole must be used within a RoleProvider")
     }
     return context

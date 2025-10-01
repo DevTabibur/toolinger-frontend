@@ -15,23 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { ImageIcon, Upload, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { ErrorMessage } from "formik";
-function validateMetaTitle(value: string) {
-    if (!value) return "Meta title is required";
-    if (value.length < 10) return "Meta title too short";
-    if (value.length > 60) return "Meta title too long";
-    return undefined;
-}
 
-function validateCanonicalUrl(value: string) {
-    if (!value) return undefined;
-    if (
-        !/^\/[a-zA-Z0-9\-\/]*$/.test(value) &&
-        !/^https?:\/\/[^\s]+$/.test(value)
-    ) {
-        return "Must be a valid URL or start with /";
-    }
-    return undefined;
-}
 
 const SeoAndArticleForm = ({ formik, ogImage, setOgImage, ogImagePreview, setOgImagePreview, setOgImageError, dragActive, fileInputRef, handleChooseImageClick, handleRemoveImage, handleFileChange, handleDragOver, handleDragLeave, handleDrop }: any) => {
     return (
@@ -72,7 +56,7 @@ const SeoAndArticleForm = ({ formik, ogImage, setOgImage, ogImagePreview, setOgI
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div>
-                                <Label htmlFor="title">Page Title</Label>
+                                <Label htmlFor="title">Page Name</Label>
                                 <Input
                                     id="title"
                                     name="title"
@@ -84,6 +68,7 @@ const SeoAndArticleForm = ({ formik, ogImage, setOgImage, ogImagePreview, setOgI
                                         formik.errors.title &&
                                         "border-red-500"
                                     )}
+                                    disabled
                                 />
                                 {formik.touched.title && formik.errors.title && (
                                     <p className="text-sm text-red-500 mt-1">
@@ -487,7 +472,7 @@ const SeoAndArticleForm = ({ formik, ogImage, setOgImage, ogImagePreview, setOgI
                                                 )}
                                         </div>
 
-                                       
+
                                     </div>
                                     {/* <div>
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
