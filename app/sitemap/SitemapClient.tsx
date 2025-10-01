@@ -444,7 +444,7 @@ export default function SitemapClient({ page }: any) {
       </div>
 
       <div className="container mx-auto px-4 py-24">
-        <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent }}></div>
+        <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent || ""}}></div>
       </div>
 
       <Footer />

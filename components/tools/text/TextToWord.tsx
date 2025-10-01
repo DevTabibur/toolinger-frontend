@@ -262,7 +262,7 @@ export default function TextToWord(props: { article?: any, seo?: any }) {
                             {props?.article && (
                                 <div
                                     className="prose max-w-none mt-8 "
-                                    dangerouslySetInnerHTML={{ __html: props.article }}
+                                    dangerouslySetInnerHTML={{ __html: props?.article || ""}}
                                 />
                             )}
                         </div>

@@ -169,7 +169,7 @@ export default function KeywordsByTotalWordRatio(props: { article?: any, seo?: a
                             {props?.article && (
                                 <div
                                     className="prose max-w-none mt-8 "
-                                    dangerouslySetInnerHTML={{ __html: props.article }}
+                                    dangerouslySetInnerHTML={{ __html: props?.article || ""}}
                                 />
                             )}
                         </div>

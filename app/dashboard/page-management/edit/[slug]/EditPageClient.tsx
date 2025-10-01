@@ -60,8 +60,8 @@ interface PageContentData {
 
 const contentValidationSchema = Yup.object({
     title: Yup.string().required("Title is required"),
-    // slug: Yup.string().required("Slug is required"),
-    // type: Yup.string().required("Type is required"),
+    slug: Yup.string().required("Slug is required"),
+    type: Yup.string().required("Type is required"),
 
     //======================================Article
     content: Yup.string().optional(),
@@ -166,7 +166,22 @@ const contentValidationSchema = Yup.object({
 
 });
 
-export default function EditPageClient({ slug }: EditPageClientProps) {
+import { useSearchParams } from "next/navigation";
+
+export default function EditPageClient({ slug, }: EditPageClientProps) {
+    const searchParams = useSearchParams();
+    // Properly extract "type" and "title" from the query string
+    // Example: /dashboard/page-management/edit/login?type=static&title=login page
+    // type should be "static", title should be "login page"
+    const type = searchParams.get("type") || "";
+    const title = searchParams.get("title") || "";
+
+    console.log("type  ==>", type); // Should be just "static", "dynamic", etc.
+    console.log("title ==>", title); // Should be "login page", "register page", etc.
+    console.log("slug  ==>", slug);
+
+    // Now you have: type, title, slug (e.g. "login")
+    // You can use these variables in your component as needed
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -243,9 +258,9 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
 
     const formik = useFormik<PageContentData>({
         initialValues: {
-            slug: "",
-            type: "",
-            title: "",
+            slug: slug,
+            type: type,
+            title: title,
             //=======================article
             content: "",
             //==============================basic seo
@@ -278,10 +293,12 @@ export default function EditPageClient({ slug }: EditPageClientProps) {
         onSubmit: async (values) => {
             setSaving(true);
             try {
+                console.log("slug", slug)
+                console.log("values", values)
                 const formData = new FormData();
                 formData.append("slug", `/${slug}`)
-                formData.append("type", values.type)
-                formData.append("title", values.title)
+                formData.append("type", type)
+                formData.append("title", title)
                 // ========================article
                 formData.append("pageContent", values.content)
                 // ========================basic seo

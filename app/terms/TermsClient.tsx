@@ -315,9 +315,13 @@ export default function TermsClient({ page }: any) {
         <AdBanner size="banner" />
       </div>
 
-      <div className="container mx-auto px-4 py-24">
-        <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent }}></div>
-      </div>
+     <div className="container mx-auto px-4 py-24">
+  <div 
+    className="max-w-3xl mx-auto" 
+    dangerouslySetInnerHTML={{ __html: page?.data?.pageContent || "" }}
+  ></div>
+</div>
+
 
       <Footer />
     </div>

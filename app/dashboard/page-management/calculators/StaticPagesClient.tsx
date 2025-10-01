@@ -433,7 +433,7 @@ export default function StaticPagesClient() {
     // Handle edit - Navigate to edit page with slug
     const handleEdit = (page: DynamicPage) => {
         const slugParam = page.slug.startsWith('/') ? page.slug.slice(1) : page.slug;
-        router.push(`/dashboard/page-management/edit/${slugParam || "home"}`);
+        router.push(`/dashboard/page-management/edit/${slugParam || "home"}?type=${page.type}&title=${page.title}`);
     };
 
     const handleDelete = async (page: DynamicPage) => {

@@ -16,11 +16,8 @@ type Props = {
   params: { slug: string };
 };
 
-
-
-
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = params
+  const { slug } = params;
   const page: any = await getDynamicPagesArticleAndSeoBySlug(slug);
   // Use the direct data object as per your API response
   const seo = page?.data || {};
@@ -29,8 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // console.log("seo", seo)
   // console.log("page", page)
   // Fallbacks for metaTitle and metaDescription
-  const fallbackMetaTitle = 'Category - Toolinger | Discover Top Tools by Category';
-  const fallbackMetaDescription = 'Browse Toolinger categories to find the best productivity tools, software, and resources tailored to your needs. Explore, compare, and choose the right tools for every category.';
+  const fallbackMetaTitle =
+    "Category - Toolinger | Discover Top Tools by Category";
+  const fallbackMetaDescription =
+    "Browse Toolinger categories to find the best productivity tools, software, and resources tailored to your needs. Explore, compare, and choose the right tools for every category.";
 
   // Keywords: array or string, optional
   let keywords: string | undefined;
@@ -41,7 +40,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   // Canonical URL
-  const canonicalUrl = typeof seo.canonicalUrl === "string" && seo.canonicalUrl ? seo.canonicalUrl : undefined;
+  const canonicalUrl =
+    typeof seo.canonicalUrl === "string" && seo.canonicalUrl
+      ? seo.canonicalUrl
+      : undefined;
 
   // Robots: noindex false means index for Google
   let robots: Metadata["robots"] | undefined;
@@ -56,7 +58,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (seo.ogImageUrl && typeof seo.ogImageUrl === "string") {
     const url = seo.ogImageUrl.startsWith("http")
       ? seo.ogImageUrl
-      : `${process.env.NEXT_PUBLIC_IMAGE_API || "https://toolinger.com"}/${seo.ogImageUrl}`;
+      : `${process.env.NEXT_PUBLIC_IMAGE_API || "https://toolinger.com"}/${
+          seo.ogImageUrl
+        }`;
     ogImage = [
       {
         url,
@@ -69,44 +73,73 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // Twitter Image
   let twitterImages: string[] | undefined;
-  if (seo.twitterImageUrl && typeof seo.twitterImageUrl === "string" && seo.twitterImageUrl.length > 0) {
+  if (
+    seo.twitterImageUrl &&
+    typeof seo.twitterImageUrl === "string" &&
+    seo.twitterImageUrl.length > 0
+  ) {
     const url = seo.twitterImageUrl.startsWith("http")
       ? seo.twitterImageUrl
-      : `${process.env.NEXT_PUBLIC_IMAGE_API || "https://toolinger.com"}/${seo.twitterImageUrl}`;
+      : `${process.env.NEXT_PUBLIC_IMAGE_API || "https://toolinger.com"}/${
+          seo.twitterImageUrl
+        }`;
     twitterImages = [url];
   }
 
   // Build metadata object, using all available SEO data, with fallbacks for metaTitle and metaDescription
   const metadata: Metadata = {
-    title: typeof seo.metaTitle === "string" && seo.metaTitle ? seo.metaTitle : fallbackMetaTitle,
-    description: typeof seo.metaDescription === "string" && seo.metaDescription ? seo.metaDescription : fallbackMetaDescription,
+    title:
+      typeof seo.metaTitle === "string" && seo.metaTitle
+        ? seo.metaTitle
+        : fallbackMetaTitle,
+    description:
+      typeof seo.metaDescription === "string" && seo.metaDescription
+        ? seo.metaDescription
+        : fallbackMetaDescription,
     ...(keywords ? { keywords } : {}),
     ...(canonicalUrl ? { alternates: { canonical: canonicalUrl } } : {}),
     ...(robots ? { robots } : {}),
     openGraph: {
-      ...(typeof seo.ogTitle === "string" && seo.ogTitle ? { title: seo.ogTitle } : {}),
-      ...(typeof seo.ogDescription === "string" && seo.ogDescription ? { description: seo.ogDescription } : {}),
+      ...(typeof seo.ogTitle === "string" && seo.ogTitle
+        ? { title: seo.ogTitle }
+        : {}),
+      ...(typeof seo.ogDescription === "string" && seo.ogDescription
+        ? { description: seo.ogDescription }
+        : {}),
       ...(canonicalUrl ? { url: canonicalUrl } : {}),
-      ...(typeof seo.ogType === "string" && seo.ogType ? { type: seo.ogType } : {}),
-      ...(typeof seo.ogSiteName === "string" && seo.ogSiteName ? { siteName: seo.ogSiteName } : {}),
+      ...(typeof seo.ogType === "string" && seo.ogType
+        ? { type: seo.ogType }
+        : {}),
+      ...(typeof seo.ogSiteName === "string" && seo.ogSiteName
+        ? { siteName: seo.ogSiteName }
+        : {}),
       ...(ogImage ? { images: ogImage } : {}),
-      ...(typeof seo.ogLocale === "string" && seo.ogLocale ? { locale: seo.ogLocale } : {}),
+      ...(typeof seo.ogLocale === "string" && seo.ogLocale
+        ? { locale: seo.ogLocale }
+        : {}),
     },
     twitter: {
-      ...(typeof seo.twitterCard === "string" && seo.twitterCard ? { card: seo.twitterCard } : {}),
-      ...(typeof seo.twitterSite === "string" && seo.twitterSite ? { site: seo.twitterSite } : {}),
-      ...(typeof seo.twitterCreator === "string" && seo.twitterCreator ? { creator: seo.twitterCreator } : {}),
+      ...(typeof seo.twitterCard === "string" && seo.twitterCard
+        ? { card: seo.twitterCard }
+        : {}),
+      ...(typeof seo.twitterSite === "string" && seo.twitterSite
+        ? { site: seo.twitterSite }
+        : {}),
+      ...(typeof seo.twitterCreator === "string" && seo.twitterCreator
+        ? { creator: seo.twitterCreator }
+        : {}),
       ...(twitterImages ? { images: twitterImages } : {}),
     },
   };
 
   // Remove empty openGraph/twitter objects if all fields are missing
-  if (metadata.openGraph && Object.keys(metadata.openGraph).length === 0) delete metadata.openGraph;
-  if (metadata.twitter && Object.keys(metadata.twitter).length === 0) delete metadata.twitter;
+  if (metadata.openGraph && Object.keys(metadata.openGraph).length === 0)
+    delete metadata.openGraph;
+  if (metadata.twitter && Object.keys(metadata.twitter).length === 0)
+    delete metadata.twitter;
 
   return metadata;
 }
-
 
 export default async function CategoryPage({ params }: Props) {
   const category =
@@ -124,10 +157,9 @@ export default async function CategoryPage({ params }: Props) {
 
   const slugs = params.slug;
   const page: any = await getDynamicPagesArticleAndSeoBySlug(slugs as any);
-// console.log("page", page)
+  // console.log("page", page)
   return (
     <div className="min-h-screen bg-background">
-
       <Header />
 
       {/* Category Header */}
@@ -146,7 +178,9 @@ export default async function CategoryPage({ params }: Props) {
             className="mt-6 block w-full max-w-full sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl"
             style={{ minWidth: 0 }}
           >
-            <GlobalSearch placeholder={`Search ${category.name.toLowerCase()}...`} />
+            <GlobalSearch
+              placeholder={`Search ${category.name.toLowerCase()}...`}
+            />
           </div>
         </div>
       </section>
@@ -184,8 +218,12 @@ export default async function CategoryPage({ params }: Props) {
         <AdBanner size="banner" />
       </div>
       <div className="container mx-auto px-4 py-24">
-        <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent }}></div>
+        <div
+          className="max-w-3xl mx-auto"
+          dangerouslySetInnerHTML={{ __html: page?.data?.pageContent || "" }}
+        ></div>
       </div>
+
       <Footer />
     </div>
   );

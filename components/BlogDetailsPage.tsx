@@ -181,7 +181,7 @@ const BlogDetails = ({ slug }: any) => {
                                 <div
                                     className="prose prose-lg max-w-none text-gray-800 dark:text-gray-200 prose-headings:text-gray-900 dark:prose-headings:text-white prose-a:text-[#005c82] dark:prose-a:text-[#00dbed]"
                                     dangerouslySetInnerHTML={{
-                                        __html: blog.content || "",
+                                        __html: blog?.content || "",
                                     }}
                                 />
 

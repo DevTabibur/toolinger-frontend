@@ -456,10 +456,14 @@ export default function CategoryPagesClient({ category }: CategoryPagesClientPro
   };
 
   // Handle edit
-  const handleEdit = (page: CategoryPage) => {
-    router.push(`/dashboard/page-management/edit/${page.slug.replace("/", "")}`);
-  };
-
+  // const handleEdit = (page: CategoryPage) => {
+  //   const slugParam = page.slug.startsWith('/') ? page.slug.slice(1) : page.slug;
+  //   router.push(`/dashboard/page-management/edit/${slugParam || "home"}?type=${page.type}&title=${page.title}`);
+  // };
+  const handleEdit = (page: any) => {
+    const slugParam = page.slug.startsWith('/') ? page.slug.slice(1) : page.slug;
+    router.push(`/dashboard/page-management/edit/${slugParam || "home"}?type=${page.type}&title=${page.title}`);
+};
   // Handle delete
   const handleDelete = async (page: CategoryPage) => {
     if (

@@ -350,9 +350,15 @@ export default function ManagePagesClient() {
   };
 
   // Handle edit
-  const handleEdit = (page: Page) => {
-    router.push(`/dashboard/page-management/edit/${page.slug.replace("/", "") || "home"}`);
-  };
+  // const handleEdit = (page: Page) => {
+  //   const slugParam = page.slug.startsWith('/') ? page.slug.slice(1) : page.slug;
+  //   router.push(`/dashboard/page-management/edit/${slugParam || "home"}?type=${page.type}&title=${page?.title}`);
+  // };
+
+  const handleEdit = (page: any) => {
+    const slugParam = page.slug.startsWith('/') ? page.slug.slice(1) : page.slug;
+    router.push(`/dashboard/page-management/edit/${slugParam || "home"}?type=${page.type}&title=${page.title}`);
+};
 
   // Delete confirmation hooks
   const deleteConfirmation = useDeleteConfirmation({
