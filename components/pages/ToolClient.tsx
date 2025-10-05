@@ -283,7 +283,6 @@ const ToolClient = ({
                 <div className="prose max-w-[700px] text-start">
                     <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent || "" }} />
                 </div>
-
             </div>
         </div>
     </>)

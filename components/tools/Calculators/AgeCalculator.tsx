@@ -4,6 +4,121 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
+
+
+const otherTools = [
+    {
+        id: "adsense-calculator",
+        name: "AdSense Calculator",
+        description: "Calculate potential AdSense earnings",
+        category: "Calculators",
+        slug: "adsense-calculator",
+        categorySlug: "calculators",
+        icon: "💵",
+
+    },
+    {
+        id: "ltv-calculator",
+        name: "LTV Calculator",
+        description: "Calculate customer lifetime value",
+        category: "Calculators",
+        slug: "ltv-calculator",
+        categorySlug: "calculators",
+        icon: "📈",
+    },
+    {
+        id: "discount-calculator",
+        name: "Discount Calculator",
+        description: "Calculate discounts and final prices",
+        category: "Calculators",
+        slug: "discount-calculator",
+        categorySlug: "calculators",
+        icon: "🏷️",
+    },
+    {
+        id: "binary-calculator",
+        name: "Binary Calculator",
+        description: "Perform calculations in binary number system",
+        category: "Calculators",
+        slug: "binary-calculator",
+        categorySlug: "calculators",
+        icon: "🔢",
+    },
+    {
+        id: "hex-calculator",
+        name: "HEX Calculator",
+        description: "Perform calculations in hexadecimal number system",
+        category: "Calculators",
+        slug: "hex-calculator",
+        categorySlug: "calculators",
+        icon: "🔷",
+    },
+    {
+        id: "octal-calculator",
+        name: "Octal Calculator",
+        description: "Perform calculations in octal number system",
+        category: "Calculators",
+        slug: "octal-calculator",
+        categorySlug: "calculators",
+        icon: "🧮",
+    },
+    {
+        id: "earnings-per-share-calculator",
+        name: "Earnings Per Share Calculator",
+        description: "Calculate earnings per share",
+        category: "Calculators",
+        slug: "earnings-per-share-calculator",
+        categorySlug: "calculators",
+        icon: "💹",
+    },
+    {
+        id: "probability-calculator",
+        name: "Probability Calculator",
+        description: "Calculate probabilities for various events",
+        category: "Calculators",
+        slug: "probability-calculator",
+        categorySlug: "calculators",
+        icon: "🎲",
+    },
+    {
+        id: "gst-calculator",
+        name: "GST Calculator",
+        description: "Calculate GST (Goods and Services Tax)",
+        category: "Calculators",
+        slug: "gst-calculator",
+        categorySlug: "calculators",
+        icon: "🧾",
+    },
+    {
+        id: "average-calculator",
+        name: "Average Calculator",
+        description: "Calculate mean, median, and mode",
+        category: "Calculators",
+        slug: "average-calculator",
+        categorySlug: "calculators",
+        icon: "📊",
+    },
+    {
+        id: "sales-tax-calculator",
+        name: "Sales Tax Calculator",
+        description: "Calculate sales tax and gross price",
+        category: "Calculators",
+        slug: "sales-tax-calculator",
+        categorySlug: "calculators",
+        icon: "💰",
+    },
+    {
+        id: "pre-and-post-money-valuation",
+        name: "Pre and Post Money Valuation",
+        description: "Calculate pre and post money valuation for startups",
+        category: "Calculators",
+        slug: "pre-and-post-money-valuation",
+        categorySlug: "calculators",
+        icon: "🏦",
+    },
+];
 
 // Helper function to calculate age with 100% accuracy
 function calculateAge(dob: string, birthTime?: string) {
@@ -131,7 +246,7 @@ const initialValues = {
     birthTime: "",
 };
 
-const AgeCalculator= (props: { article?: any, seo?: any }) => {
+const AgeCalculator = (props: { article?: any, seo?: any }) => {
     const [result, setResult] = useState<any>(null);
 
     return (
@@ -161,159 +276,167 @@ const AgeCalculator= (props: { article?: any, seo?: any }) => {
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}
-                    <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        <h2 className="text-2xl font-semibold text-center mb-8 text-gray-800 dark:text-gray-100">
-                            Age Calculator
-                        </h2>
-                        <Formik
-                            initialValues={initialValues}
-                            validationSchema={validationSchema}
-                            onSubmit={(values, { setSubmitting }) => {
-                                const age = calculateAge(
-                                    values.dob,
-                                    values.birthTime && values.birthTime.length > 0 ? values.birthTime : "00:00"
-                                );
-                                setResult(age);
-                                setSubmitting(false);
-                            }}
-                        >
-                            {({ isSubmitting, setFieldValue, values }) => (
-                                <Form>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
-                                        {/* Date of Birth */}
-                                        <div>
-                                            <label
-                                                htmlFor="dob"
-                                                className="block mb-1 text-gray-700 dark:text-gray-200 font-medium"
-                                            >
-                                                Date Of Birth
-                                            </label>
-                                            <Field
-                                                type="date"
-                                                id="dob"
-                                                name="dob"
-                                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-700 dark:text-gray-100"
-                                            />
-                                            <ErrorMessage
-                                                name="dob"
-                                                component="div"
-                                                className="text-red-500 text-xs mt-1"
-                                            />
-                                        </div>
-                                        {/* Birth Time (optional) */}
-                                        <div>
-                                            <label
-                                                htmlFor="birthTime"
-                                                className="block mb-1 text-gray-700 dark:text-gray-200 font-medium"
-                                            >
-                                                Birth Time <span className="text-xs text-gray-500">(optional)</span>
-                                            </label>
-                                            <Field
-                                                type="time"
-                                                id="birthTime"
-                                                name="birthTime"
-                                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-700 dark:text-gray-100"
-                                            />
-                                            <div className="text-xs text-gray-500 mt-1 dark:text-gray-400">
-                                                By Default: 12:00 AM
+                    <div className="md:col-span-7 col-span-1">
+                        <div className=" border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
+                            <h1 className="text-2xl font-semibold text-center mb-2 text-gray-800 dark:text-gray-100">
+                                Age Calculator
+                            </h1>
+                            <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
+                                Enter your <b>Date of Birth</b> (and optionally your <b>Birth Time</b>) below, then click <b>Calculate</b> to find out your exact age.
+                            </p>
+
+
+                            <Formik
+                                initialValues={initialValues}
+                                validationSchema={validationSchema}
+                                onSubmit={(values, { setSubmitting }) => {
+                                    const age = calculateAge(
+                                        values.dob,
+                                        values.birthTime && values.birthTime.length > 0 ? values.birthTime : "00:00"
+                                    );
+                                    setResult(age);
+                                    setSubmitting(false);
+                                }}
+                            >
+                                {({ isSubmitting, setFieldValue, values }) => (
+                                    <Form>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
+                                            {/* Date of Birth */}
+                                            <div>
+                                                <label
+                                                    htmlFor="dob"
+                                                    className="block mb-1 text-gray-700 dark:text-gray-200 font-medium"
+                                                >
+                                                    Date Of Birth
+                                                </label>
+                                                <Field
+                                                    type="date"
+                                                    id="dob"
+                                                    name="dob"
+                                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-700 dark:text-gray-100"
+                                                />
+                                                <ErrorMessage
+                                                    name="dob"
+                                                    component="div"
+                                                    className="text-red-500 text-xs mt-1"
+                                                />
                                             </div>
-                                            <ErrorMessage
-                                                name="birthTime"
-                                                component="div"
-                                                className="text-red-500 text-xs mt-1"
-                                            />
+                                            {/* Birth Time (optional) */}
+                                            <div>
+                                                <label
+                                                    htmlFor="birthTime"
+                                                    className="block mb-1 text-gray-700 dark:text-gray-200 font-medium"
+                                                >
+                                                    Birth Time <span className="text-xs text-gray-500">(optional)</span>
+                                                </label>
+                                                <Field
+                                                    type="time"
+                                                    id="birthTime"
+                                                    name="birthTime"
+                                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded focus:outline-none focus:ring-2 focus:ring-green-400 dark:bg-gray-700 dark:text-gray-100"
+                                                />
+                                                <div className="text-xs text-gray-500 mt-1 dark:text-gray-400">
+                                                    By Default: 12:00 AM
+                                                </div>
+                                                <ErrorMessage
+                                                    name="birthTime"
+                                                    component="div"
+                                                    className="text-red-500 text-xs mt-1"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-center mt-6">
+                                            <button
+                                                type="submit"
+                                                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-8 rounded focus:outline-none focus:ring-2 focus:ring-green-400 transition"
+                                                disabled={isSubmitting}
+                                            >
+                                                Calculate
+                                            </button>
+                                        </div>
+
+                                    </Form>
+                                )}
+                            </Formik>
+                        </div>
+                        {/* Result Section */}
+                        {result && (
+                            <div className="mt-8 bg-emerald-50 dark:bg-gray-900 border border-emerald-200 dark:border-gray-700 rounded p-6">
+                                <h3 className="text-lg font-semibold mb-4 text-emerald-700 dark:text-emerald-300">
+                                    Your Age Result
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Years:</span> {result.years}
+                                        </div>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Months:</span> {result.months}
+                                        </div>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Days:</span> {result.days}
+                                        </div>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Hours:</span> {result.hours}
+                                        </div>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Minutes:</span> {result.minutes}
+                                        </div>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Seconds:</span> {result.seconds}
                                         </div>
                                     </div>
-                                    <div className="flex justify-center mt-6">
-                                        <button
-                                            type="submit"
-                                            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-8 rounded focus:outline-none focus:ring-2 focus:ring-green-400 transition"
-                                            disabled={isSubmitting}
-                                        >
-                                            Calculate
-                                        </button>
-                                    </div>
-                                    {/* Result Section */}
-                                    {result && (
-                                        <div className="mt-8 bg-emerald-50 dark:bg-gray-900 border border-emerald-200 dark:border-gray-700 rounded p-6">
-                                            <h3 className="text-lg font-semibold mb-4 text-emerald-700 dark:text-emerald-300">
-                                                Your Age Result
-                                            </h3>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Years:</span> {result.years}
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Months:</span> {result.months}
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Days:</span> {result.days}
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Hours:</span> {result.hours}
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Minutes:</span> {result.minutes}
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Seconds:</span> {result.seconds}
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Total Months:</span> {result.totalMonths}
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Total Weeks:</span> {result.totalWeeks}
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Total Days:</span> {result.totalDays}
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Total Hours:</span> {result.totalHours}
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Total Minutes:</span> {result.totalMinutes}
-                                                    </div>
-                                                    <div className="mb-2">
-                                                        <span className="font-medium">Total Seconds:</span> {result.totalSeconds}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-                                                <div>
-                                                    <span className="font-medium">Date of Birth:</span>{" "}
-                                                    {result.birthDate.toLocaleString()}
-                                                </div>
-                                                <div>
-                                                    <span className="font-medium">Current Date:</span>{" "}
-                                                    {result.now.toLocaleString()}
-                                                </div>
-                                            </div>
+                                    <div>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Total Months:</span> {result.totalMonths}
                                         </div>
-                                    )}
-                                </Form>
-                            )}
-                        </Formik>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Total Weeks:</span> {result.totalWeeks}
+                                        </div>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Total Days:</span> {result.totalDays}
+                                        </div>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Total Hours:</span> {result.totalHours}
+                                        </div>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Total Minutes:</span> {result.totalMinutes}
+                                        </div>
+                                        <div className="mb-2">
+                                            <span className="font-medium">Total Seconds:</span> {result.totalSeconds}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                                    <div>
+                                        <span className="font-medium">Date of Birth:</span>{" "}
+                                        {result.birthDate.toLocaleString()}
+                                    </div>
+                                    <div>
+                                        <span className="font-medium">Current Date:</span>{" "}
+                                        {result.now.toLocaleString()}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     {/* Second column: col-span-5 on md+ */}
-                    <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        Advertiesment
+                    <div className="md:col-span-5 col-span-1">
+                        {/* Advertiesment */}
+                        <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+                        <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-                    {/* First column: col-span-6 on md+ */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                    {/* Second column: col-span-6 on md+ */}
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                </div>
+                </div> */}
             </div>
-           
+
         </>
     );
 };

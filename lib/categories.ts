@@ -2585,3 +2585,18 @@ export const SearchedAllTools: ITool[] = [
 
   // },
 ]
+
+
+
+export const popularTools = [
+  {
+      id: "adsense-calculator",
+      name: "AdSense Calculator",
+      description: "Calculate potential AdSense earnings",
+      category: "Calculators",
+      slug: "adsense-calculator",
+      categorySlug: "calculators",
+      icon: "💵",
+
+  }
+]

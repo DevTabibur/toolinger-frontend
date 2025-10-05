@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
 import Head from "next/head";
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
 
 function formatCurrency(num: number) {
     return num.toLocaleString("en-US", {
@@ -13,8 +15,122 @@ function formatCurrency(num: number) {
     });
 }
 
+
+
+
+const otherTools = [
+    {
+        id: "ltv-calculator",
+        name: "LTV Calculator",
+        description: "Calculate customer lifetime value",
+        category: "Calculators",
+        slug: "ltv-calculator",
+        categorySlug: "calculators",
+        icon: "📈",
+    },
+    {
+        id: "discount-calculator",
+        name: "Discount Calculator",
+        description: "Calculate discounts and final prices",
+        category: "Calculators",
+        slug: "discount-calculator",
+        categorySlug: "calculators",
+        icon: "🏷️",
+    },
+    {
+        id: "binary-calculator",
+        name: "Binary Calculator",
+        description: "Perform calculations in binary number system",
+        category: "Calculators",
+        slug: "binary-calculator",
+        categorySlug: "calculators",
+        icon: "🔢",
+    },
+    {
+        id: "hex-calculator",
+        name: "HEX Calculator",
+        description: "Perform calculations in hexadecimal number system",
+        category: "Calculators",
+        slug: "hex-calculator",
+        categorySlug: "calculators",
+        icon: "🔷",
+    },
+    {
+        id: "octal-calculator",
+        name: "Octal Calculator",
+        description: "Perform calculations in octal number system",
+        category: "Calculators",
+        slug: "octal-calculator",
+        categorySlug: "calculators",
+        icon: "🧮",
+    },
+    {
+        id: "earnings-per-share-calculator",
+        name: "Earnings Per Share Calculator",
+        description: "Calculate earnings per share",
+        category: "Calculators",
+        slug: "earnings-per-share-calculator",
+        categorySlug: "calculators",
+        icon: "💹",
+    },
+    {
+        id: "probability-calculator",
+        name: "Probability Calculator",
+        description: "Calculate probabilities for various events",
+        category: "Calculators",
+        slug: "probability-calculator",
+        categorySlug: "calculators",
+        icon: "🎲",
+    },
+    {
+        id: "gst-calculator",
+        name: "GST Calculator",
+        description: "Calculate GST (Goods and Services Tax)",
+        category: "Calculators",
+        slug: "gst-calculator",
+        categorySlug: "calculators",
+        icon: "🧾",
+    },
+    {
+        id: "average-calculator",
+        name: "Average Calculator",
+        description: "Calculate mean, median, and mode",
+        category: "Calculators",
+        slug: "average-calculator",
+        categorySlug: "calculators",
+        icon: "📊",
+    },
+    {
+        id: "sales-tax-calculator",
+        name: "Sales Tax Calculator",
+        description: "Calculate sales tax and gross price",
+        category: "Calculators",
+        slug: "sales-tax-calculator",
+        categorySlug: "calculators",
+        icon: "💰",
+    },
+    {
+        id: "age-calculator",
+        name: "Age Calculator",
+        description: "Calculate age in years, months, and days",
+        category: "Calculators",
+        slug: "age-calculator",
+        categorySlug: "calculators",
+        icon: "🧓",
+    },
+    {
+        id: "pre-and-post-money-valuation",
+        name: "Pre and Post Money Valuation",
+        description: "Calculate pre and post money valuation for startups",
+        category: "Calculators",
+        slug: "pre-and-post-money-valuation",
+        categorySlug: "calculators",
+        icon: "🏦",
+    },
+];
+
 const AdsenseCalculator = ({ page }: any) => {
-    
+
     const [inputs, setInputs] = useState({
         pageImpressions: "",
         clickThroughRate: "",
@@ -125,12 +241,13 @@ const AdsenseCalculator = ({ page }: any) => {
     };
 
 
-    
-   
+
+
 
     return (
+
         <>
-           
+
             {/* Breadcrumb */}
             <div className="container mx-auto px-4 py-4">
                 <nav className="flex items-center space-x-2 text-sm">
@@ -150,98 +267,102 @@ const AdsenseCalculator = ({ page }: any) => {
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}
-                    <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        <h1 className="text-2xl font-bold mb-4 text-center">Adsense Calculator</h1>
-                        <p className="text-center mb-6">
-                            To use toolinger <b>Adsense Calculator</b>, Enter Total Page Impressions, Click Through Rate (CTR) and CPC. After that press <b>Calculate</b> button.
-                        </p>
-                        <div className="flex items-center justify-center">
-                            <form
-                                onSubmit={handleSubmit}
-                                className="bg-white dark:bg-gray-800  rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl"
-                            >
-                                <div className="flex flex-col md:flex-row items-center md:space-x-4 mb-6 space-y-4 md:space-y-0">
-                                    <div className="flex flex-col w-full">
-                                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1" htmlFor="pageImpressions">
-                                            Page Impressions
-                                        </label>
-                                        <input
-                                            id="pageImpressions"
-                                            name="pageImpressions"
-                                            type="number"
-                                            min="0"
-                                            step="1"
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                            value={inputs.pageImpressions}
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
-                                        />
-                                        {errors.pageImpressions ? (
-                                            <div className="text-red-500 text-xs italic">{errors.pageImpressions}</div>
-                                        ) : null}
+                    <div className="md:col-span-7 col-span-1">
+                        <div className=" border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
+                            <h1 className="text-2xl font-bold mb-4 text-center">Adsense Calculator</h1>
+                            <p className="text-center mb-6">
+                                To use toolinger <b>Adsense Calculator</b>, Enter Total Page Impressions, Click Through Rate (CTR) and CPC. After that press <b>Calculate</b> button.
+                            </p>
+                            <div className="flex items-center justify-center">
+                                <form
+                                    onSubmit={handleSubmit}
+                                    className="bg-white dark:bg-gray-800  rounded px-8 pt-6 pb-8 mb-4 w-full max-w-3xl"
+                                >
+                                    <div className="flex flex-col md:flex-row items-center md:space-x-4 mb-6 space-y-4 md:space-y-0">
+                                        <div className="flex flex-col w-full">
+                                            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1" htmlFor="pageImpressions">
+                                                Page Impressions
+                                            </label>
+                                            <input
+                                                id="pageImpressions"
+                                                name="pageImpressions"
+                                                type="number"
+                                                min="0"
+                                                step="1"
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                value={inputs.pageImpressions}
+                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
+                                            />
+                                            {errors.pageImpressions ? (
+                                                <div className="text-red-500 text-xs italic">{errors.pageImpressions}</div>
+                                            ) : null}
+                                        </div>
+
+                                        <div className="flex flex-col w-full">
+                                            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1" htmlFor="clickThroughRate">
+                                                Click Through Rate (CTR) in %
+                                            </label>
+                                            <input
+                                                id="clickThroughRate"
+                                                name="clickThroughRate"
+                                                type="number"
+                                                min="0"
+                                                step="any"
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                value={inputs.clickThroughRate}
+                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
+                                            />
+                                            {errors.clickThroughRate ? (
+                                                <div className="text-red-500 text-xs italic">{errors.clickThroughRate}</div>
+                                            ) : null}
+                                        </div>
+
+                                        <div className="flex flex-col w-full">
+                                            <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1" htmlFor="costPerClick">
+                                                Cost Per Click
+                                            </label>
+                                            <input
+                                                id="costPerClick"
+                                                name="costPerClick"
+                                                type="number"
+                                                min="0"
+                                                step="any"
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                value={inputs.costPerClick}
+                                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
+                                            />
+                                            {errors.costPerClick ? (
+                                                <div className="text-red-500 text-xs italic">{errors.costPerClick}</div>
+                                            ) : null}
+                                        </div>
                                     </div>
 
-                                    <div className="flex flex-col w-full">
-                                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1" htmlFor="clickThroughRate">
-                                            Click Through Rate (CTR) in %
-                                        </label>
-                                        <input
-                                            id="clickThroughRate"
-                                            name="clickThroughRate"
-                                            type="number"
-                                            min="0"
-                                            step="any"
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                            value={inputs.clickThroughRate}
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
-                                        />
-                                        {errors.clickThroughRate ? (
-                                            <div className="text-red-500 text-xs italic">{errors.clickThroughRate}</div>
-                                        ) : null}
+                                    <div className="flex items-center justify-center">
+                                        <button
+                                            type="submit"
+                                            className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                        >
+                                            Calculate Earning
+                                        </button>
                                     </div>
+                                </form>
 
-                                    <div className="flex flex-col w-full">
-                                        <label className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-1" htmlFor="costPerClick">
-                                            Cost Per Click
-                                        </label>
-                                        <input
-                                            id="costPerClick"
-                                            name="costPerClick"
-                                            type="number"
-                                            min="0"
-                                            step="any"
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                            value={inputs.costPerClick}
-                                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline"
-                                        />
-                                        {errors.costPerClick ? (
-                                            <div className="text-red-500 text-xs italic">{errors.costPerClick}</div>
-                                        ) : null}
-                                    </div>
-                                </div>
 
-                                <div className="flex items-center justify-center">
-                                    <button
-                                        type="submit"
-                                        className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                    >
-                                        Calculate Earning
-                                    </button>
-                                </div>
-                            </form>
-
+                            </div>
 
                         </div>
+
                         {result && (
                             <div className="overflow-x-auto mt-8">
-                                <table className="min-w-full bg-white dark:bg-gray-800 border">
+                                <table className="min-w-full bg-white dark:bg-gray-800 border rounded-lg">
                                     <thead>
                                         <tr>
-                                            <th className="py-2 px-4 bg-yellow-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border">Period</th>
-                                            <th className="py-2 px-4 bg-yellow-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border">Earnings</th>
-                                            <th className="py-2 px-4 bg-yellow-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border">Clicks</th>
+                                            <th className="py-2 px-4 bg-cyan-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border">Period</th>
+                                            <th className="py-2 px-4 bg-cyan-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border">Earnings</th>
+                                            <th className="py-2 px-4 bg-cyan-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border">Clicks</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -264,25 +385,32 @@ const AdsenseCalculator = ({ page }: any) => {
                                 </table>
                             </div>
                         )}
+
                     </div>
+
                     {/* Second column: col-span-5 on md+ */}
-                    <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
+                    <div className="md:col-span-5 col-span-1  p-4">
                         {/* You can place content for the second column here */}
-                        Advertiesment
-                    </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-                    {/* First column: col-span-6 on md+ */}
-                    <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        Advertiesment
-                    </div>
-                    {/* Second column: col-span-6 on md+ */}
-                    <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        Advertiesment
+                        {/* Advertiesment */}
+                        <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+                        <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
                     </div>
                 </div>
 
+
+                {/* <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+                    <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
+                        Advertiesment
+                    </div>
+                    <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
+                        Advertiesment
+                    </div>
+                </div> */}
+
             </div>
+
+
+            
 
 
         </>

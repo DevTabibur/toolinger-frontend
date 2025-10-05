@@ -4,6 +4,124 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
 import { ChevronRight, HomeIcon } from "lucide-react";
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
+
+
+const otherTools = [
+    {
+        id: "adsense-calculator",
+        name: "AdSense Calculator",
+        description: "Calculate potential AdSense earnings",
+        category: "Calculators",
+        slug: "adsense-calculator",
+        categorySlug: "calculators",
+        icon: "💵",
+
+    },
+    {
+        id: "ltv-calculator",
+        name: "LTV Calculator",
+        description: "Calculate customer lifetime value",
+        category: "Calculators",
+        slug: "ltv-calculator",
+        categorySlug: "calculators",
+        icon: "📈",
+    },
+    {
+        id: "discount-calculator",
+        name: "Discount Calculator",
+        description: "Calculate discounts and final prices",
+        category: "Calculators",
+        slug: "discount-calculator",
+        categorySlug: "calculators",
+        icon: "🏷️",
+    },
+    {
+        id: "binary-calculator",
+        name: "Binary Calculator",
+        description: "Perform calculations in binary number system",
+        category: "Calculators",
+        slug: "binary-calculator",
+        categorySlug: "calculators",
+        icon: "🔢",
+    },
+    {
+        id: "hex-calculator",
+        name: "HEX Calculator",
+        description: "Perform calculations in hexadecimal number system",
+        category: "Calculators",
+        slug: "hex-calculator",
+        categorySlug: "calculators",
+        icon: "🔷",
+    },
+    {
+        id: "octal-calculator",
+        name: "Octal Calculator",
+        description: "Perform calculations in octal number system",
+        category: "Calculators",
+        slug: "octal-calculator",
+        categorySlug: "calculators",
+        icon: "🧮",
+    },
+    {
+        id: "earnings-per-share-calculator",
+        name: "Earnings Per Share Calculator",
+        description: "Calculate earnings per share",
+        category: "Calculators",
+        slug: "earnings-per-share-calculator",
+        categorySlug: "calculators",
+        icon: "💹",
+    },
+
+    {
+        id: "gst-calculator",
+        name: "GST Calculator",
+        description: "Calculate GST (Goods and Services Tax)",
+        category: "Calculators",
+        slug: "gst-calculator",
+        categorySlug: "calculators",
+        icon: "🧾",
+    },
+    {
+        id: "average-calculator",
+        name: "Average Calculator",
+        description: "Calculate mean, median, and mode",
+        category: "Calculators",
+        slug: "average-calculator",
+        categorySlug: "calculators",
+        icon: "📊",
+    },
+    {
+        id: "sales-tax-calculator",
+        name: "Sales Tax Calculator",
+        description: "Calculate sales tax and gross price",
+        category: "Calculators",
+        slug: "sales-tax-calculator",
+        categorySlug: "calculators",
+        icon: "💰",
+    },
+    {
+        id: "age-calculator",
+        name: "Age Calculator",
+        description: "Calculate age in years, months, and days",
+        category: "Calculators",
+        slug: "age-calculator",
+        categorySlug: "calculators",
+        icon: "🧓",
+    },
+    {
+        id: "pre-and-post-money-valuation",
+        name: "Pre and Post Money Valuation",
+        description: "Calculate pre and post money valuation for startups",
+        category: "Calculators",
+        slug: "pre-and-post-money-valuation",
+        categorySlug: "calculators",
+        icon: "🏦",
+    },
+];
+
+
 
 const validationSchema = Yup.object().shape({
     possibleOutcomes: Yup.number()
@@ -76,172 +194,179 @@ const ProbabilityCalculator = (props: { article?: any, seo?: any }) => {
             </div>
 
             <div className="container mx-auto p-4">
-                <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">
-                    Probability Calculator
-                </h2>
+
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}
-                    <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        <Formik
-                            initialValues={{
-                                possibleOutcomes: "",
-                                eventA: "",
-                                eventB: "",
-                            }}
-                            validationSchema={validationSchema}
-                            onSubmit={(values, { setSubmitting }) => {
-                                const possibleOutcomes = Number(values.possibleOutcomes);
-                                const eventA = Number(values.eventA);
-                                const eventB = Number(values.eventB);
-                                setResult(calculateProbabilities(possibleOutcomes, eventA, eventB));
-                                setSubmitting(false);
-                            }}
-                        >
-                            {({ isSubmitting }) => (
-                                <Form className="flex flex-col gap-6">
-                                    <div className="flex flex-col md:flex-row gap-4">
-                                        <div className="flex-1 flex flex-col">
-                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                Number of possible outcomes
-                                            </label>
-                                            <Field
-                                                name="possibleOutcomes"
-                                                type="number"
-                                                min="1"
-                                                className="border border-gray-300 dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-                                            />
-                                            <ErrorMessage
-                                                name="possibleOutcomes"
-                                                component="div"
-                                                className="text-xs text-red-500 mt-1"
-                                            />
+                    <div className="md:col-span-7 col-span-1">
+                        <div className=" border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
+                            <h1 className="text-2xl font-semibold text-center mb-2 text-gray-800 dark:text-gray-100">
+                                Probability Calculator
+                            </h1>
+                            <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
+                                To use this <b>Probability Calculator</b>, enter the values in the input boxes below and click on the <b>Calculate</b> button.
+                            </p>
+                            <Formik
+                                initialValues={{
+                                    possibleOutcomes: "",
+                                    eventA: "",
+                                    eventB: "",
+                                }}
+                                validationSchema={validationSchema}
+                                onSubmit={(values, { setSubmitting }) => {
+                                    const possibleOutcomes = Number(values.possibleOutcomes);
+                                    const eventA = Number(values.eventA);
+                                    const eventB = Number(values.eventB);
+                                    setResult(calculateProbabilities(possibleOutcomes, eventA, eventB));
+                                    setSubmitting(false);
+                                }}
+                            >
+                                {({ isSubmitting }) => (
+                                    <Form className="flex flex-col gap-6">
+                                        <div className="flex flex-col md:flex-row gap-4">
+                                            <div className="flex-1 flex flex-col">
+                                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                    Number of possible outcomes
+                                                </label>
+                                                <Field
+                                                    name="possibleOutcomes"
+                                                    type="number"
+                                                    min="1"
+                                                    className="border border-gray-300 dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                                                />
+                                                <ErrorMessage
+                                                    name="possibleOutcomes"
+                                                    component="div"
+                                                    className="text-xs text-red-500 mt-1"
+                                                />
+                                            </div>
+                                            <div className="flex-1 flex flex-col">
+                                                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                    Number of event occurs in A
+                                                </label>
+                                                <Field
+                                                    name="eventA"
+                                                    type="number"
+                                                    min="0"
+                                                    className="border border-gray-300 dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                                                />
+                                                <ErrorMessage
+                                                    name="eventA"
+                                                    component="div"
+                                                    className="text-xs text-red-500 mt-1"
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="flex-1 flex flex-col">
+                                        <div className="flex flex-col">
                                             <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                Number of event occurs in A
+                                                Number of event occurs in B
                                             </label>
                                             <Field
-                                                name="eventA"
+                                                name="eventB"
                                                 type="number"
                                                 min="0"
                                                 className="border border-gray-300 dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
                                             />
                                             <ErrorMessage
-                                                name="eventA"
+                                                name="eventB"
                                                 component="div"
                                                 className="text-xs text-red-500 mt-1"
                                             />
                                         </div>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                            Number of event occurs in B
-                                        </label>
-                                        <Field
-                                            name="eventB"
-                                            type="number"
-                                            min="0"
-                                            className="border border-gray-300 dark:border-gray-700 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-                                        />
-                                        <ErrorMessage
-                                            name="eventB"
-                                            component="div"
-                                            className="text-xs text-red-500 mt-1"
-                                        />
-                                    </div>
-                                    <div className="flex justify-center">
-                                        <button
-                                            type="submit"
-                                            disabled={isSubmitting}
-                                            className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-8 py-2 rounded shadow transition"
-                                        >
-                                            Calculate
-                                        </button>
-                                    </div>
-                                </Form>
-                            )}
-                        </Formik>
+                                        <div className="flex justify-center">
+                                            <button
+                                                type="submit"
+                                                disabled={isSubmitting}
+                                                className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-8 py-2 rounded shadow transition"
+                                            >
+                                                Calculate
+                                            </button>
+                                        </div>
+                                    </Form>
+                                )}
+                            </Formik>
+                        </div>
+                        {/* Result Table */}
+                        {result && (
+                            <div className="max-w-2xl mx-auto mt-8">
+                                <h3 className="text-xl font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">
+                                    Result
+                                </h3>
+                                <div className="overflow-x-auto">
+                                    <table className="min-w-full border border-gray-300 dark:border-gray-700 rounded">
+                                        <thead>
+                                            <tr className="bg-gray-100 dark:bg-gray-700">
+                                                <th className="px-4 py-2 border-b border-gray-300 dark:border-gray-700 text-left">Event</th>
+                                                <th className="px-4 py-2 border-b border-gray-300 dark:border-gray-700 text-left">Count</th>
+                                                <th className="px-4 py-2 border-b border-gray-300 dark:border-gray-700 text-left">Probability</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">A</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nA} / {result.total}</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pA.toFixed(4)}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">A&apos; (not A)</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nNotA} / {result.total}</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pNotA.toFixed(4)}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">B</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nB} / {result.total}</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pB.toFixed(4)}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">B&apos; (not B)</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nNotB} / {result.total}</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pNotB.toFixed(4)}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">A ∩ B (A and B)</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nAandB} / {result.total}</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pAandB.toFixed(4)}</td>
+                                            </tr>
+                                            <tr>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">A ∪ B (A or B)</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nAorB} / {result.total}</td>
+                                                <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pAorB.toFixed(4)}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                    <p>
+                                        <b>Note:</b> Intersection (A ∩ B) assumes independence between A and B. Union (A ∪ B) is calculated as P(A) + P(B) - P(A ∩ B).
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                     </div>
                     {/* Second column: col-span-5 on md+ */}
-                    <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4 flex items-center justify-center">
-                        <span className="uppercase text-xs font-semibold text-gray-500 dark:text-gray-400 tracking-widest">
+                    <div className="md:col-span-5 col-span-1r">
+                        {/* 
                             Advertisement
-                        </span>
+                         */}
+                        <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+                        <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-                    {/* First column: col-span-6 on md+ */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4 flex items-center justify-center">
                         <span className="uppercase text-xs font-semibold text-gray-500 dark:text-gray-400 tracking-widest">
                             Advertisement
                         </span>
                     </div>
-                    {/* Second column: col-span-6 on md+ */}
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4 flex items-center justify-center">
                         <span className="uppercase text-xs font-semibold text-gray-500 dark:text-gray-400 tracking-widest">
                             Advertisement
                         </span>
                     </div>
-                </div>
+                </div> */}
 
-                {/* Result Table */}
-                {result && (
-                    <div className="max-w-2xl mx-auto mt-8">
-                        <h3 className="text-xl font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">
-                            Result
-                        </h3>
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full border border-gray-300 dark:border-gray-700 rounded">
-                                <thead>
-                                    <tr className="bg-gray-100 dark:bg-gray-700">
-                                        <th className="px-4 py-2 border-b border-gray-300 dark:border-gray-700 text-left">Event</th>
-                                        <th className="px-4 py-2 border-b border-gray-300 dark:border-gray-700 text-left">Count</th>
-                                        <th className="px-4 py-2 border-b border-gray-300 dark:border-gray-700 text-left">Probability</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">A</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nA} / {result.total}</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pA.toFixed(4)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">A&apos; (not A)</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nNotA} / {result.total}</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pNotA.toFixed(4)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">B</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nB} / {result.total}</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pB.toFixed(4)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">B&apos; (not B)</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nNotB} / {result.total}</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pNotB.toFixed(4)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">A ∩ B (A and B)</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nAandB} / {result.total}</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pAandB.toFixed(4)}</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">A ∪ B (A or B)</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.nAorB} / {result.total}</td>
-                                        <td className="px-4 py-2 border-b border-gray-300 dark:border-gray-700">{result.pAorB.toFixed(4)}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                            <p>
-                                <b>Note:</b> Intersection (A ∩ B) assumes independence between A and B. Union (A ∪ B) is calculated as P(A) + P(B) - P(A ∩ B).
-                            </p>
-                        </div>
-                    </div>
-                )}
+
             </div>
-           
+
         </>
     );
 };
