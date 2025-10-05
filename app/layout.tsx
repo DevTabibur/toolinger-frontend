@@ -8,23 +8,15 @@ import Script from "next/script"
 
 const inter = Inter({ subsets: ["latin"] })
 
-
-
-
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="canonical" href="https://toolinger.com" />
+        <link rel="canonical" href={process.env.NEXT_PUBLIC_CANONICAL_URL} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
           name="google-site-verification"
-          content="_WT4YU6JcRCFzSwJUrwEW691MxFHBY0Wxao04cGvFUw"
+          content={process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION}
         />
       </head>
       <body className={inter.className}>
@@ -34,19 +26,24 @@ export default function RootLayout({
             <Toaster />
           </ThemeProvider>
         </UserProvider>
+
         {/* Google Analytics Scripts */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-80SVNZ5VJ3"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-80SVNZ5VJ3');
-          `}
-        </Script>
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}');
+              `}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   )
