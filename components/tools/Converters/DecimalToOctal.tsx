@@ -3,6 +3,76 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
+const otherTools = [
+  {
+    id: "rgb-to-hex",
+    name: "RGB to Hex Converter",
+    description: "Convert RGB colors to hexadecimal format",
+    category: "Converters",
+    slug: "rgb-to-hex",
+    categorySlug: "converters",
+    icon: "🎨",
+  },
+  {
+    id: "hex-to-rgb",
+    name: "Hex to RGB Converter",
+    description: "Convert hexadecimal colors to RGB format",
+    category: "Converters",
+    slug: "hex-to-rgb",
+    categorySlug: "converters",
+    icon: "🌈",
+  },
+  {
+    id: "currency-converter",
+    name: "Currency Converter",
+    description: "Convert between different currencies",
+    category: "Converters",
+    slug: "currency-converter",
+    categorySlug: "converters",
+    icon: "💱",
+  },
+  {
+    id: "unit-converter",
+    name: "Unit Converter",
+    description: "Convert between various units of measurement",
+    category: "Converters",
+    slug: "unit-converter",
+    categorySlug: "converters",
+    icon: "📏",
+  },
+  {
+    id: "decimal-to-octal",
+    name: "Decimal to Octal",
+    description: "Convert decimal numbers to octal format",
+    category: "Converters",
+    slug: "decimal-to-octal",
+    categorySlug: "converters",
+    icon: "🔢",
+  },
+
+
+  {
+    id: "case-converter",
+    name: "Case Converter",
+    description: "Convert text between different cases",
+    category: "Converters",
+    slug: "case-converter",
+    categorySlug: "converters",
+    icon: "🔠",
+  },
+  {
+    id: "ascii-to-hex",
+    name: "ASCII to Hex Converter",
+    description: "Convert ASCII characters to hexadecimal format",
+    category: "Converters",
+    slug: "ascii-to-hex",
+    categorySlug: "converters",
+    icon: "🔡",
+  },
+
+];
 
 // Validation helpers
 function isValidDecimal(str: string) {
@@ -76,7 +146,7 @@ function convertDecimal(decimalStr: string) {
   };
 }
 
-const DecimalToOctal= (props: { article?: any, seo?: any }) => {
+const DecimalToOctal = (props: { article?: any, seo?: any }) => {
   const [decimalInput, setDecimalInput] = useState("");
   const [octalResult, setOctalResult] = useState("");
   const [hexResult, setHexResult] = useState("");
@@ -132,87 +202,102 @@ const DecimalToOctal= (props: { article?: any, seo?: any }) => {
       </div>
 
       <div className="container mx-auto p-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-center mb-6 dark:text-white">
-            Decimal to Octal Converter
-          </h1>
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Input area */}
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <button
-                  type="button"
-                  className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  onClick={handleSample}
-                >
-                  Load sample data
-                </button>
-                <button
-                  type="button"
-                  className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  onClick={handleReset}
-                >
-                  Reset
-                </button>
-              </div>
-              <textarea
-                rows={4}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Enter decimal number (e.g. 10)"
-                value={decimalInput}
-                onChange={(e) => setDecimalInput(e.target.value)}
-                spellCheck={false}
-                autoComplete="off"
-              />
-              <div className="flex gap-2 mt-2">
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition"
-                  onClick={handleConvert}
-                >
-                  Convert
-                </button>
-              </div>
-              {error && (
-                <div className="mt-2 text-red-600 dark:text-red-400 text-sm">
-                  {error}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+          {/* First column: col-span-7 on md+ */}
+          <div className="md:col-span-7 col-span-1">
+            <div className=" border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
+              <h1 className="text-2xl font-bold text-center mb-2 text-gray-900 dark:text-gray-100">
+                Decimal to Octal Converter
+              </h1>
+              <p className="text-center mb-6 text-gray-600 dark:text-gray-300">
+                Enter a decimal number below and click <b>Convert</b> to see its octal (base-8) representation. This tool also shows the conversion steps and the hexadecimal equivalent.
+              </p>
+              <div className="flex flex-col md:flex-row gap-6">
+                {/* Input area */}
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <button
+                      type="button"
+                      className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600"
+                      onClick={handleSample}
+                    >
+                      Load sample data
+                    </button>
+                    <button
+                      type="button"
+                      className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600"
+                      onClick={handleReset}
+                    >
+                      Reset
+                    </button>
+                  </div>
+                  <textarea
+                    rows={4}
+                    className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="Enter decimal number (e.g. 10)"
+                    value={decimalInput}
+                    onChange={(e) => setDecimalInput(e.target.value)}
+                    spellCheck={false}
+                    autoComplete="off"
+                  />
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      type="button"
+                      className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition"
+                      onClick={handleConvert}
+                    >
+                      Convert
+                    </button>
+                  </div>
+                  {error && (
+                    <div className="mt-2 text-red-600 dark:text-red-400 text-sm">
+                      {error}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            {/* Output area */}
-            <div className="flex-1">
-              <div className="bg-gray-50 dark:bg-gray-900 rounded p-4 min-h-[120px]">
-                <h2 className="text-lg font-semibold mb-2 dark:text-white">Result</h2>
-                <div className="mb-2">
-                  <span className="font-medium">Octal:</span>{" "}
-                  <span className="text-primary">{octalResult || "--"}</span>
-                </div>
-                <div className="mb-2">
-                  <span className="font-medium">Hexadecimal:</span>{" "}
-                  <span className="text-primary">{hexResult || "--"}</span>
-                </div>
-                <div>
-                  <span className="font-medium">Calculation:</span>
-                  <div className="mt-1 text-sm text-gray-700 dark:text-gray-300 break-words whitespace-pre-line">
-                    {calculation ? calculation : "--"}
+                {/* Output area */}
+                <div className="flex-1">
+                  <div className="bg-gray-50 dark:bg-gray-900 rounded p-4 min-h-[120px]">
+                    <h2 className="text-lg font-semibold mb-2 dark:text-white">Result</h2>
+                    <div className="mb-2">
+                      <span className="font-medium">Octal:</span>{" "}
+                      <span className="text-primary">{octalResult || "--"}</span>
+                    </div>
+                    <div className="mb-2">
+                      <span className="font-medium">Hexadecimal:</span>{" "}
+                      <span className="text-primary">{hexResult || "--"}</span>
+                    </div>
+                    <div>
+                      <span className="font-medium">Calculation:</span>
+                      <div className="mt-1 text-sm text-gray-700 dark:text-gray-300 break-words whitespace-pre-line">
+                        {calculation ? calculation : "--"}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          {/* Second column: col-span-5 on md+ */}
+          <div className="md:col-span-5 col-span-1 ">
+            {/* You can place content for the second column here */}
+            {/* Advertiesment */}
+            <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+            <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
+          </div>
         </div>
         {/* Advertisements or additional content */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8 mt-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8 mt-8">
           <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
             Advertisement
           </div>
           <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
             Advertisement
           </div>
-        </div>
+        </div> */}
       </div>
 
-     
+
     </>
   );
 };

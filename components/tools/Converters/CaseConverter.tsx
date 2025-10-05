@@ -1,7 +1,77 @@
 "use client"
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
 import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import React, { useState, useMemo } from "react";
+const otherTools = [
+    {
+        id: "rgb-to-hex",
+        name: "RGB to Hex Converter",
+        description: "Convert RGB colors to hexadecimal format",
+        category: "Converters",
+        slug: "rgb-to-hex",
+        categorySlug: "converters",
+        icon: "🎨",
+    },
+    {
+        id: "hex-to-rgb",
+        name: "Hex to RGB Converter",
+        description: "Convert hexadecimal colors to RGB format",
+        category: "Converters",
+        slug: "hex-to-rgb",
+        categorySlug: "converters",
+        icon: "🌈",
+    },
+    {
+        id: "currency-converter",
+        name: "Currency Converter",
+        description: "Convert between different currencies",
+        category: "Converters",
+        slug: "currency-converter",
+        categorySlug: "converters",
+        icon: "💱",
+    },
+    {
+        id: "unit-converter",
+        name: "Unit Converter",
+        description: "Convert between various units of measurement",
+        category: "Converters",
+        slug: "unit-converter",
+        categorySlug: "converters",
+        icon: "📏",
+    },
+    {
+        id: "decimal-to-octal",
+        name: "Decimal to Octal",
+        description: "Convert decimal numbers to octal format",
+        category: "Converters",
+        slug: "decimal-to-octal",
+        categorySlug: "converters",
+        icon: "🔢",
+    },
+
+
+    {
+        id: "case-converter",
+        name: "Case Converter",
+        description: "Convert text between different cases",
+        category: "Converters",
+        slug: "case-converter",
+        categorySlug: "converters",
+        icon: "🔠",
+    },
+    {
+        id: "ascii-to-hex",
+        name: "ASCII to Hex Converter",
+        description: "Convert ASCII characters to hexadecimal format",
+        category: "Converters",
+        slug: "ascii-to-hex",
+        categorySlug: "converters",
+        icon: "🔡",
+    },
+
+];
 
 const caseOptions = [
     {
@@ -66,7 +136,7 @@ const colorVariants = [
     "bg-teal-500 hover:bg-teal-600 text-white",
 ];
 
-const CaseConverter= (props: { article?: any, seo?: any }) => {
+const CaseConverter = (props: { article?: any, seo?: any }) => {
     const [text, setText] = useState("");
     const [theme, setTheme] = useState<"light" | "dark">(
         typeof window !== "undefined" && window.matchMedia &&
@@ -140,88 +210,92 @@ const CaseConverter= (props: { article?: any, seo?: any }) => {
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}
-                    <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        <h1 className="text-2xl font-bold mb-4 text-center">Case Converter</h1>
-                        <textarea
-                            className={`w-full h-40 p-3 mb-4 rounded border focus:outline-none focus:ring-2 ${theme === "dark"
+                    <div className="md:col-span-7 col-span-1 ">
+                        <div className="border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
+                            <h1 className="text-2xl font-bold mb-4 text-center">Case Converter</h1>
+                            <p className="text-center mb-6 text-gray-600 dark:text-gray-300">
+                                To use Toolinger <b>ASCII to Hex</b> Converter, Enter the ASCII text below
+                            </p>
+                            <textarea
+                                className={`w-full h-40 p-3 mb-4 rounded border focus:outline-none focus:ring-2 ${theme === "dark"
                                     ? "bg-gray-100 text-gray-100 border-gray-700 focus:ring-primary-400"
                                     : "bg-gray-100 text-gray-900 border-gray-300 focus:ring-primary-500"
-                                }`}
-                            placeholder="Enter or paste your text here..."
-                            value={text}
-                            onChange={(e) => setText(e.target.value)}
-                            spellCheck={false}
-                        />
+                                    }`}
+                                placeholder="Enter or paste your text here..."
+                                value={text}
+                                onChange={(e) => setText(e.target.value)}
+                                spellCheck={false}
+                            />
 
-                        <div className="flex flex-wrap justify-center mb-4">
-                            {caseOptions.map((option, idx) => (
+                            <div className="flex flex-wrap justify-center mb-4">
+                                {caseOptions.map((option, idx) => (
+                                    <button
+                                        key={option.label}
+                                        className={`${buttonClass} ${colorVariants[idx % colorVariants.length]}`}
+                                        onClick={() => handleCaseChange(option.fn)}
+                                        type="button"
+                                    >
+                                        {option.label}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="flex flex-wrap justify-center mb-4">
                                 <button
-                                    key={option.label}
-                                    className={`${buttonClass} ${colorVariants[idx % colorVariants.length]}`}
-                                    onClick={() => handleCaseChange(option.fn)}
+                                    className={`${buttonClass} bg-gray-500 hover:bg-gray-600 text-white`}
+                                    onClick={handleCopy}
                                     type="button"
                                 >
-                                    {option.label}
+                                    Copy
                                 </button>
-                            ))}
-                        </div>
-
-                        <div className="flex flex-wrap justify-center mb-4">
-                            <button
-                                className={`${buttonClass} bg-gray-500 hover:bg-gray-600 text-white`}
-                                onClick={handleCopy}
-                                type="button"
-                            >
-                                Copy
-                            </button>
-                            <button
-                                className={`${buttonClass} bg-gray-400 hover:bg-gray-500 text-white`}
-                                onClick={handleDownload}
-                                type="button"
-                            >
-                                Download
-                            </button>
-                            <button
-                                className={`${buttonClass} bg-red-500 hover:bg-red-600 text-white`}
-                                onClick={() => setText("")}
-                                type="button"
-                            >
-                                Clear
-                            </button>
-                        </div>
-
-                        <div className="flex justify-between text-sm text-gray-500 mt-2">
-                            <div>
-                                <span className="font-semibold">Characters:</span> {stats.charCount}
+                                <button
+                                    className={`${buttonClass} bg-gray-400 hover:bg-gray-500 text-white`}
+                                    onClick={handleDownload}
+                                    type="button"
+                                >
+                                    Download
+                                </button>
+                                <button
+                                    className={`${buttonClass} bg-red-500 hover:bg-red-600 text-white`}
+                                    onClick={() => setText("")}
+                                    type="button"
+                                >
+                                    Clear
+                                </button>
                             </div>
-                            <div>
-                                <span className="font-semibold">Words:</span> {stats.wordCount}
-                            </div>
-                            <div>
-                                <span className="font-semibold">Lines:</span> {stats.lineCount}
-                            </div>
-                        </div>
 
-                    </div>
+                            <div className="flex justify-between text-sm text-gray-500 mt-2">
+                                <div>
+                                    <span className="font-semibold">Characters:</span> {stats.charCount}
+                                </div>
+                                <div>
+                                    <span className="font-semibold">Words:</span> {stats.wordCount}
+                                </div>
+                                <div>
+                                    <span className="font-semibold">Lines:</span> {stats.lineCount}
+                                </div>
+                            </div>
+
+                        </div></div>
                     {/* Second column: col-span-5 on md+ */}
-                    <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
+                    <div className="md:col-span-5 col-span-1">
                         {/* You can place content for the second column here */}
-                        Advertiesment
+                        {/* Advertiesment */}
+                        <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+                        <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-                    {/* First column: col-span-6 on md+ */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                    {/* Second column: col-span-6 on md+ */}
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                </div>
+                </div> */}
 
             </div>
-           
+
         </>
 
     );

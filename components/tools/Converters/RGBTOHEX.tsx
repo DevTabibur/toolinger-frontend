@@ -1,7 +1,92 @@
 "use client";
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
 import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
+
+
+
+
+const otherTools = [
+
+    {
+        id: "hex-to-rgb",
+        name: "Hex to RGB Converter",
+        description: "Convert hexadecimal colors to RGB format",
+        category: "Converters",
+        slug: "hex-to-rgb",
+        categorySlug: "converters",
+        icon: "🌈",
+    },
+    {
+        id: "currency-converter",
+        name: "Currency Converter",
+        description: "Convert between different currencies",
+        category: "Converters",
+        slug: "currency-converter",
+        categorySlug: "converters",
+        icon: "💱",
+    },
+    {
+        id: "unit-converter",
+        name: "Unit Converter",
+        description: "Convert between various units of measurement",
+        category: "Converters",
+        slug: "unit-converter",
+        categorySlug: "converters",
+        icon: "📏",
+    },
+    {
+        id: "decimal-to-octal",
+        name: "Decimal to Octal",
+        description: "Convert decimal numbers to octal format",
+        category: "Converters",
+        slug: "decimal-to-octal",
+        categorySlug: "converters",
+        icon: "🔢",
+    },
+    
+    {
+        id: "decimal-to-hex",
+        name: "Decimal to Hex Converter",
+        description: "Convert decimal numbers to hexadecimal format",
+        category: "Converters",
+        slug: "decimal-to-hex",
+        categorySlug: "converters",
+        icon: "🔢",
+    },
+   
+    {
+        id: "hex-to-binary",
+        name: "Hex to Binary Converter",
+        description: "Convert hexadecimal numbers to binary format",
+        category: "Converters",
+        slug: "hex-to-binary",
+        categorySlug: "converters",
+        icon: "🔢",
+    },
+   
+    {
+        id: "case-converter",
+        name: "Case Converter",
+        description: "Convert text between different cases",
+        category: "Converters",
+        slug: "case-converter",
+        categorySlug: "converters",
+        icon: "🔠",
+    },
+    {
+        id: "ascii-to-hex",
+        name: "ASCII to Hex Converter",
+        description: "Convert ASCII characters to hexadecimal format",
+        category: "Converters",
+        slug: "ascii-to-hex",
+        categorySlug: "converters",
+        icon: "🔡",
+    },
+   
+];
 
 const clamp = (value: number, min: number, max: number) =>
     Math.max(min, Math.min(max, value));
@@ -64,7 +149,7 @@ const RGBTOHEX = (props: { article?: any, seo?: any }) => {
                         href="/category/converters"
                         className="text-muted-foreground hover:text-primary"
                     >
-                       Converter Tools
+                        Converter Tools
                     </Link>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     <span className="text-foreground font-medium">RGB to HEX</span>
@@ -75,176 +160,177 @@ const RGBTOHEX = (props: { article?: any, seo?: any }) => {
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}
-                    <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        <h1 className="text-2xl font-bold text-center mb-2 text-gray-900 dark:text-gray-100">
-                            RGB to HEX
-                        </h1>
-                        <p className="text-center mb-6 text-gray-600 dark:text-gray-300">
-                            To use toolinger <b>RGB to HEX tool</b>, Choose options given below then check the result section.
-                        </p>
-                        <div className="text-center text-xs text-gray-500 mb-4">
-                            Set color levels (0-255) for red, green, and blue
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Left: Sliders and Preview */}
-                            <div className="flex flex-col gap-4">
-                                {/* Red */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                                        Red color (R):
-                                    </label>
-                                    <div className="flex items-center gap-3">
-                                        <input
-                                            type="range"
-                                            min={0}
-                                            max={255}
-                                            value={red}
-                                            onChange={handleRed}
-                                            className="w-full accent-red-500"
-                                            style={{ accentColor: "#ef4444" }}
-                                        />
-                                        <input
-                                            type="number"
-                                            min={0}
-                                            max={255}
-                                            value={red}
-                                            onChange={handleRed}
-                                            className="w-16 border border-gray-300 rounded px-2 py-1 text-center"
-                                        />
-                                    </div>
-                                </div>
-                                {/* Green */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                                        Green color (G):
-                                    </label>
-                                    <div className="flex items-center gap-3">
-                                        <input
-                                            type="range"
-                                            min={0}
-                                            max={255}
-                                            value={green}
-                                            onChange={handleGreen}
-                                            className="w-full accent-green-500"
-                                            style={{ accentColor: "#22c55e" }}
-                                        />
-                                        <input
-                                            type="number"
-                                            min={0}
-                                            max={255}
-                                            value={green}
-                                            onChange={handleGreen}
-                                            className="w-16 border border-gray-300 rounded px-2 py-1 text-center"
-                                        />
-                                    </div>
-                                </div>
-                                {/* Blue */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                                        Blue color (B):
-                                    </label>
-                                    <div className="flex items-center gap-3">
-                                        <input
-                                            type="range"
-                                            min={0}
-                                            max={255}
-                                            value={blue}
-                                            onChange={handleBlue}
-                                            className="w-full accent-blue-500"
-                                            style={{ accentColor: "#3b82f6" }}
-                                        />
-                                        <input
-                                            type="number"
-                                            min={0}
-                                            max={255}
-                                            value={blue}
-                                            onChange={handleBlue}
-                                            className="w-16 border border-gray-300 rounded px-2 py-1 text-center"
-                                        />
-                                    </div>
-                                </div>
-                                {/* Preview */}
-                                <div className="flex flex-col items-center mt-4">
-                                    <div
-                                        className="w-24 h-24 rounded shadow border border-gray-300 mb-2"
-                                        style={{ background: rgb }}
-                                    ></div>
-                                    <button
-                                        onClick={handleReset}
-                                        className="mt-2 px-4 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-                                        type="button"
-                                    >
-                                        Reset
-                                    </button>
-                                </div>
+                    <div className="md:col-span-7 col-span-1 ">
+                        <div className=" border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
+                            <h1 className="text-2xl font-bold text-center mb-2 text-gray-900 dark:text-gray-100">
+                                RGB to HEX
+                            </h1>
+                            <p className="text-center mb-6 text-gray-600 dark:text-gray-300">
+                                To use toolinger <b>RGB to HEX tool</b>, Choose options given below then check the result section.
+                            </p>
+                            <div className="text-center text-xs text-gray-500 mb-4">
+                                Set color levels (0-255) for red, green, and blue
                             </div>
-                            {/* Right: Result */}
-                            <div className="flex flex-col items-center justify-center gap-6">
-                                <div className="w-full">
-                                    <div className="text-center text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">
-                                        Result
-                                    </div>
-                                    <div className="flex flex-col items-center gap-2">
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-mono text-base text-gray-700 dark:text-gray-200">HEX:</span>
-                                            <span className="font-mono text-lg font-bold px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 select-all">
-                                                {hex}
-                                            </span>
-                                            <button
-                                                className="ml-2 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-                                                onClick={() => {
-                                                    navigator.clipboard.writeText(hex);
-                                                }}
-                                                type="button"
-                                            >
-                                                Copy
-                                            </button>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="font-mono text-base text-gray-700 dark:text-gray-200">RGB:</span>
-                                            <span className="font-mono text-lg font-bold px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 select-all">
-                                                {rgb}
-                                            </span>
-                                            <button
-                                                className="ml-2 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-                                                onClick={() => {
-                                                    navigator.clipboard.writeText(rgb);
-                                                }}
-                                                type="button"
-                                            >
-                                                Copy
-                                            </button>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Left: Sliders and Preview */}
+                                <div className="flex flex-col gap-4">
+                                    {/* Red */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                                            Red color (R):
+                                        </label>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="range"
+                                                min={0}
+                                                max={255}
+                                                value={red}
+                                                onChange={handleRed}
+                                                className="w-full accent-red-500"
+                                                style={{ accentColor: "#ef4444" }}
+                                            />
+                                            <input
+                                                type="number"
+                                                min={0}
+                                                max={255}
+                                                value={red}
+                                                onChange={handleRed}
+                                                className="w-16 border border-gray-300 rounded px-2 py-1 text-center"
+                                            />
                                         </div>
                                     </div>
+                                    {/* Green */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                                            Green color (G):
+                                        </label>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="range"
+                                                min={0}
+                                                max={255}
+                                                value={green}
+                                                onChange={handleGreen}
+                                                className="w-full accent-green-500"
+                                                style={{ accentColor: "#22c55e" }}
+                                            />
+                                            <input
+                                                type="number"
+                                                min={0}
+                                                max={255}
+                                                value={green}
+                                                onChange={handleGreen}
+                                                className="w-16 border border-gray-300 rounded px-2 py-1 text-center"
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Blue */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                                            Blue color (B):
+                                        </label>
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="range"
+                                                min={0}
+                                                max={255}
+                                                value={blue}
+                                                onChange={handleBlue}
+                                                className="w-full accent-blue-500"
+                                                style={{ accentColor: "#3b82f6" }}
+                                            />
+                                            <input
+                                                type="number"
+                                                min={0}
+                                                max={255}
+                                                value={blue}
+                                                onChange={handleBlue}
+                                                className="w-16 border border-gray-300 rounded px-2 py-1 text-center"
+                                            />
+                                        </div>
+                                    </div>
+                                    {/* Preview */}
+                                    <div className="flex flex-col items-center mt-4">
+                                        <div
+                                            className="w-24 h-24 rounded shadow border border-gray-300 mb-2"
+                                            style={{ background: rgb }}
+                                        ></div>
+                                        <button
+                                            onClick={handleReset}
+                                            className="mt-2 px-4 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                                            type="button"
+                                        >
+                                            Reset
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="w-full mt-4">
-                                    <div className="text-xs text-gray-500 text-center">
-                                        HEX and RGB values update as you move the sliders or enter numbers.
+                                {/* Right: Result */}
+                                <div className="flex flex-col items-center justify-center gap-6">
+                                    <div className="w-full">
+                                        <div className="text-center text-lg font-semibold mb-2 text-gray-800 dark:text-gray-100">
+                                            Result
+                                        </div>
+                                        <div className="flex flex-col items-center gap-2">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-mono text-base text-gray-700 dark:text-gray-200">HEX:</span>
+                                                <span className="font-mono text-lg font-bold px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 select-all">
+                                                    {hex}
+                                                </span>
+                                                <button
+                                                    className="ml-2 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(hex);
+                                                    }}
+                                                    type="button"
+                                                >
+                                                    Copy
+                                                </button>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-mono text-base text-gray-700 dark:text-gray-200">RGB:</span>
+                                                <span className="font-mono text-lg font-bold px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 select-all">
+                                                    {rgb}
+                                                </span>
+                                                <button
+                                                    className="ml-2 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition"
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(rgb);
+                                                    }}
+                                                    type="button"
+                                                >
+                                                    Copy
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="w-full mt-4">
+                                        <div className="text-xs text-gray-500 text-center">
+                                            HEX and RGB values update as you move the sliders or enter numbers.
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     {/* Second column: col-span-5 on md+ */}
-                    <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
+                    <div className="md:col-span-5 col-span-1 ">
                         {/* You can place content for the second column here */}
-                        Advertiesment
+                        {/* Advertiesment */}
+                        <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+                        <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-                    {/* First column: col-span-6 on md+ */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                    {/* Second column: col-span-6 on md+ */}
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                </div>
+                </div> */}
 
             </div>
-           
+
         </>
 
     );
