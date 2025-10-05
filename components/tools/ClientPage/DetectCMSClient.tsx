@@ -6,6 +6,39 @@ import * as Yup from "yup";
 import { ChevronRight, Home, Loader2, Globe2 } from "lucide-react";
 import Link from "next/link";
 import { detectCMS } from "@/app/api/AllTools";
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
+
+const otherTools = [
+    {
+        id: "google-index-checker",
+        name: "Google Index Checker",
+        description: "Check if your pages are indexed by Google",
+        category: "Website Management",
+        slug: "google-index-checker",
+        categorySlug: "website-management",
+        icon: "📄🔎",
+    },
+    {
+        id: "google-malware-checker",
+        name: "Google Malware Checker",
+        description: "Scan your website for malware and security threats using Google's safe browsing technology.",
+        category: "Website Management",
+        slug: "google-malware-checker",
+        categorySlug: "website-management",
+        icon: "🦠",
+    },
+    {
+        id: "website-links-count-checker",
+        name: "Website Links Count Checker",
+        description: "Count the number of links on a webpage",
+        category: "Website Management",
+        slug: "links-count-checker",
+        categorySlug: "website-management",
+        icon: "🔗",
+    },
+
+];
 
 // Simple toast for error messages
 function showToast(message: string) {
@@ -131,62 +164,64 @@ const DetectCMSClient = () => {
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* Main tool column */}
-                    <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        <h2 className="text-2xl font-bold text-center mb-2">
-                            CMS Checker
-                        </h2>
-                        <p className="text-center text-muted-foreground mb-6 text-sm">
-                            Enter a website URL below to detect which CMS (Content Management System) is used to build that site.
-                        </p>
-                        <Formik
-                            initialValues={{ url: "" }}
-                            validationSchema={Yup.object({
-                                url: Yup.string()
-                                    .url("Enter a valid URL (including https://)")
-                                    .required("URL is required"),
-                            })}
-                            onSubmit={handleSubmit}
-                        >
-                            {({ isSubmitting, touched, errors }) => (
-                                <Form>
-                                    <div className="bg-muted dark:bg-cyan-100 rounded flex items-center px-0 py-4 mb-6">
-                                        <div className="flex items-center justify-center h-full px-4">
-                                            <span className="bg-primary rounded w-8 h-8 flex items-center justify-center">
-                                                <Globe2 className="text-white w-5 h-5" />
-                                            </span>
+                    <div className="md:col-span-7 col-span-1">
+                        <div className="border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
+                            <h2 className="text-2xl font-bold text-center mb-2">
+                                CMS Checker
+                            </h2>
+                            <p className="text-center text-muted-foreground mb-6 text-sm">
+                                Enter a website URL below to detect which CMS (Content Management System) is used to build that site.
+                            </p>
+                            <Formik
+                                initialValues={{ url: "" }}
+                                validationSchema={Yup.object({
+                                    url: Yup.string()
+                                        .url("Enter a valid URL (including https://)")
+                                        .required("URL is required"),
+                                })}
+                                onSubmit={handleSubmit}
+                            >
+                                {({ isSubmitting, touched, errors }) => (
+                                    <Form>
+                                        <div className="border dark:border-gray-500 border-gray-300 rounded flex items-center px-0 py-4 mb-6">
+                                            <div className="flex items-center justify-center h-full px-4">
+                                                <span className="bg-primary rounded w-8 h-8 flex items-center justify-center">
+                                                    <Globe2 className="text-white w-5 h-5" />
+                                                </span>
+                                            </div>
+                                            <div className="flex-1">
+                                                <Field
+                                                    name="url"
+                                                    type="url"
+                                                    placeholder="https://example.com/"
+                                                    className={`w-full bg-transparent outline-none border-0 focus:ring-0 text-base px-2 py-2 ${errors.url && touched.url
+                                                        ? "text-destructive"
+                                                        : "text-foreground"
+                                                        }`}
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="flex-1">
-                                            <Field
-                                                name="url"
-                                                type="url"
-                                                placeholder="https://example.com/"
-                                                className={`w-full bg-transparent outline-none border-0 focus:ring-0 text-base px-2 py-2 ${errors.url && touched.url
-                                                    ? "text-destructive"
-                                                    : "text-foreground"
-                                                    }`}
-                                            />
+                                        <ErrorMessage
+                                            name="url"
+                                            component="div"
+                                            className="text-destructive text-xs mb-2 text-center"
+                                        />
+                                        <div className="flex justify-center">
+                                            <button
+                                                type="submit"
+                                                disabled={isSubmitting || loading}
+                                                className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium px-8 py-2 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400 flex items-center justify-center"
+                                            >
+                                                {loading && (
+                                                    <Loader2 className="animate-spin w-5 h-5 mr-2" />
+                                                )}
+                                                Detect CMS
+                                            </button>
                                         </div>
-                                    </div>
-                                    <ErrorMessage
-                                        name="url"
-                                        component="div"
-                                        className="text-destructive text-xs mb-2 text-center"
-                                    />
-                                    <div className="flex justify-center">
-                                        <button
-                                            type="submit"
-                                            disabled={isSubmitting || loading}
-                                            className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium px-8 py-2 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-400 flex items-center justify-center"
-                                        >
-                                            {loading && (
-                                                <Loader2 className="animate-spin w-5 h-5 mr-2" />
-                                            )}
-                                            Detect CMS
-                                        </button>
-                                    </div>
-                                </Form>
-                            )}
-                        </Formik>
+                                    </Form>
+                                )}
+                            </Formik>
+                        </div>
                         {/* Optionally show submitted URL */}
                         {submittedUrl && (
                             <div className="mt-6 text-center text-sm text-muted-foreground">
@@ -197,13 +232,13 @@ const DetectCMSClient = () => {
                         )}
                         {/* Show result */}
                         {cmsResult && (
-                            <div className="mt-6 text-center">
+                            <div className="mt-6 text-center border border-dashed rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
                                 {cmsResult.error ? (
                                     <div className="text-destructive font-medium">
                                         {cmsResult.error}
                                     </div>
                                 ) : (
-                                    <div className="inline-block bg-emerald-50 dark:bg-emerald-900 rounded px-6 py-4 shadow text-center w-full max-w-2xl">
+                                    <div className="inline-block  rounded text-center w-full max-w-2xl">
                                         <div className="text-lg font-semibold mb-2 text-emerald-700 dark:text-emerald-300">
                                             {cmsResult.detectedCMS
                                                 ? `Detected CMS: ${cmsResult.detectedCMS}`
@@ -226,21 +261,21 @@ const DetectCMSClient = () => {
                         )}
                     </div>
                     {/* Second column: col-span-5 on md+ */}
-                    <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
+                    <div className="md:col-span-5 col-span-1">
                         {/* You can place content for the second column here */}
-                        Advertiesment
+                        {/* Advertiesment */}
+                        <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+                        <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-                    {/* First column: col-span-6 on md+ */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                    {/* Second column: col-span-6 on md+ */}
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                </div>
+                </div> */}
             </div>
         </>
     )

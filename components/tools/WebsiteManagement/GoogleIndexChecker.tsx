@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Home, ExternalLink, Loader2 } from "lucide-react";
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
 
 interface WebsiteResult {
   id: number;
@@ -9,6 +11,39 @@ interface WebsiteResult {
   fullDomain: string;
   original: string;
 }
+
+
+const otherTools = [
+
+  {
+    id: "google-malware-checker",
+    name: "Google Malware Checker",
+    description: "Scan your website for malware and security threats using Google's safe browsing technology.",
+    category: "Website Management",
+    slug: "google-malware-checker",
+    categorySlug: "website-management",
+    icon: "🦠",
+  },
+  {
+    id: "website-links-count-checker",
+    name: "Website Links Count Checker",
+    description: "Count the number of links on a webpage",
+    category: "Website Management",
+    slug: "links-count-checker",
+    categorySlug: "website-management",
+    icon: "🔗",
+  },
+  {
+    id: "cms-checker",
+    name: "CMS Checker",
+    description: "Detect what CMS a website is using",
+    category: "Website Management",
+    slug: "cms-checker",
+    categorySlug: "website-management",
+    icon: "🔍",
+  },
+];
+
 
 const MAX_URLS = 2000;
 
@@ -92,10 +127,10 @@ const GoogleIndexChecker = (props: { article?: any; seo?: any }) => {
   const activeBtn =
     "font-semibold underline underline-offset-4 decoration-2 text-blue-700 dark:text-blue-300";
   const inactiveBtn =
-    "text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline text-sm";
+    "text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300  text-sm";
 
   return (
-    <div className="min-h-screen bg-[#f8fbfc] dark:bg-gray-900">
+    <>
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center space-x-2 text-sm">
@@ -121,8 +156,8 @@ const GoogleIndexChecker = (props: { article?: any; seo?: any }) => {
       <div className="container mx-auto px-2 py-2">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
           {/* Main Content */}
-          <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow border border-gray-100 dark:border-gray-700">
-            <div className="p-6">
+          <div className="md:col-span-7 col-span-1 ">
+            <div className="border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
               <h1 className="text-2xl font-bold text-center mb-2 text-gray-900 dark:text-gray-100">
                 Google Index Checker
               </h1>
@@ -170,90 +205,90 @@ ghi.com`}
                   {error}
                 </div>
               )}
-              {results.length > 0 && (
-                <div className="mt-6">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                    Results ({results.length} website{results.length > 1 ? "s" : ""})
-                  </h2>
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse bg-white dark:bg-gray-800 shadow-sm rounded overflow-hidden border border-dashed border-gray-300 dark:border-gray-600">
-                      <thead className="bg-green-100 dark:bg-green-900/30">
-                        <tr>
-                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-dashed border-gray-300 dark:border-gray-600">
-                            SR No.
-                          </th>
-                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-dashed border-gray-300 dark:border-gray-600">
-                            Web Page
-                          </th>
-                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-dashed border-gray-300 dark:border-gray-600">
-                            Current Page
-                          </th>
-                          <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border-b border-dashed border-gray-300 dark:border-gray-600">
-                            Full URL
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {results.map((result) => (
-                          <tr key={result.id} className="border-b border-dashed border-gray-300 dark:border-gray-600">
-                            <td className="px-3 py-3 text-sm text-gray-900 dark:text-gray-100">
-                              {result.id}
-                            </td>
-                            <td className="px-3 py-3 text-sm">
-                              <a
-                                href={getCurrentPageUrl(result.original)}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1"
-                              >
-                                {getCurrentPageUrl(result.original).replace(/^https?:\/\//, "")}
-                                <ExternalLink size={12} />
-                              </a>
-                            </td>
-                            <td className="px-3 py-3 text-sm">
-                              <button
-                                onClick={() => handleCurrentPageCheck(result)}
-                                className={
-                                  active?.type === "current" && active?.id === result.id
-                                    ? `${activeBtn} text-base`
-                                    : inactiveBtn
-                                }
-                                type="button"
-                              >
-                                View Current Page Status
-                              </button>
-                            </td>
-                            <td className="px-3 py-3 text-sm">
-                              <button
-                                onClick={() => handleFullWebsiteCheck(result)}
-                                className={
-                                  active?.type === "full" && active?.id === result.id
-                                    ? `${activeBtn} text-base`
-                                    : inactiveBtn
-                                }
-                                type="button"
-                              >
-                                View Full URL Status
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
             </div>
+            {results.length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                  Results ({results.length} website{results.length > 1 ? "s" : ""})
+                </h2>
+                <div className="overflow-x-auto border border-dashed">
+                  <table className="w-full  bg-white dark:bg-gray-800 shadow-sm rounded overflow-hidden border border-dashed border-gray-300 dark:border-gray-600">
+                    <thead className="bg-green-100 dark:bg-green-900/30">
+                      <tr className="border border-dashed border-gray-300 dark:border-gray-600">
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border border-dashed border-gray-300 dark:border-gray-600">
+                          SR No.
+                        </th>
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border border-dashed border-gray-300 dark:border-gray-600">
+                          Web Page
+                        </th>
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border border-dashed border-gray-300 dark:border-gray-600">
+                          Current Page
+                        </th>
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-900 dark:text-gray-100 border border-dashed border-gray-300 dark:border-gray-600">
+                          Full URL
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="border border-dashed border-gray-300 dark:border-gray-600">
+                      {results.map((result) => (
+                        <tr key={result.id} className="border border-dashed border-gray-300 dark:border-gray-600">
+                          <td className="px-3 py-3 text-sm text-gray-900 dark:text-gray-100 border border-dashed border-gray-300 dark:border-gray-600">
+                            {result.id}
+                          </td>
+                          <td className="px-3 py-3 text-sm border border-dashed border-gray-300 dark:border-gray-600 w-96 font-bold">
+                            <Link
+                              href={getCurrentPageUrl(result.original)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1"
+                            >
+                              {getCurrentPageUrl(result.original).replace(/^https?:\/\//, "")}
+                              <ExternalLink size={50} />
+                            </Link>
+                          </td>
+                          <td className="px-3 py-3 text-sm border border-dashed border-gray-300 dark:border-gray-600">
+                            <button
+                              onClick={() => handleCurrentPageCheck(result)}
+                              className={
+                                active?.type === "current" && active?.id === result.id
+                                  ? `${activeBtn} text-base`
+                                  : inactiveBtn
+                              }
+                              type="button"
+                            >
+                              View Current Page Status
+                            </button>
+                          </td>
+                          <td className="px-3 py-3 text-sm border border-dashed border-gray-300 dark:border-gray-600">
+                            <button
+                              onClick={() => handleFullWebsiteCheck(result)}
+                              className={
+                                active?.type === "full" && active?.id === result.id
+                                  ? `${activeBtn} text-base`
+                                  : inactiveBtn
+                              }
+                              type="button"
+                            >
+                              View Full URL Status
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
           </div>
           {/* Advertisement Column */}
-          <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4 flex items-center justify-center min-h-[200px]">
-            <div className="text-center text-gray-500 dark:text-gray-400 w-full">
-              <p className="text-sm font-medium">ADVERTISEMENT</p>
-            </div>
+          <div className="md:col-span-5 col-span-1">
+            <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+            <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
           </div>
         </div>
         {/* Additional Advertisement Sections */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white dark:bg-gray-800 rounded shadow p-4 flex items-center justify-center min-h-[120px]">
             <div className="text-center text-gray-500 dark:text-gray-400 w-full">
               <p className="text-sm font-medium">ADVERTISEMENT</p>
@@ -264,9 +299,9 @@ ghi.com`}
               <p className="text-sm font-medium">ADVERTISEMENT</p>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
-    </div>
+    </>
   );
 };
 
