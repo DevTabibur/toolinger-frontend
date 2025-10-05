@@ -1,7 +1,59 @@
 "use client";
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
 import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import React, { useRef, useState } from "react";
+
+const otherTools = [
+    {
+        id: "word-counter",
+        name: "Word Counter",
+        description: "Count the number of words in a text",
+        category: "Text Tools",
+        slug: "word-counter",
+        categorySlug: "text-tools",
+        icon: "🔢",
+    },
+    {
+        id: "text-to-pdf",
+        name: "Text to PDF",
+        description: "Convert text documents to PDF format",
+        category: "Text Tools",
+        slug: "text-to-pdf",
+        categorySlug: "text-tools",
+        icon: "📄",
+    },
+    {
+        id: "text-repeater",
+        name: "Text Repeater",
+        description: "Repeat text multiple times",
+        category: "Text Tools",
+        slug: "text-repeater",
+        categorySlug: "text-tools",
+        icon: "🔁",
+    },
+    {
+        id: "word-combiner",
+        name: "Word Combiner",
+        description: "Combine words to create new terms",
+        category: "Text Tools",
+        slug: "word-combiner",
+        categorySlug: "text-tools",
+        icon: "🔗",
+        badge: "Free",
+    },
+    {
+        id: "text-to-ascii",
+        name: "Text to ASCII",
+        description: "Convert text to ASCII codes",
+        category: "Text Tools",
+        slug: "text-to-ascii",
+        categorySlug: "text-tools",
+        icon: "🔤",
+    },
+];
+
 
 // Dynamic toolbar buttons and paragraph options
 const toolbarButtons = [
@@ -165,97 +217,107 @@ export default function TextToWord(props: { article?: any, seo?: any }) {
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}
-                    <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        <h1 className="text-2xl font-bold text-center mb-4 text-gray-900 dark:text-gray-100">Text to Word Converter</h1>
-                       
-                        <div className="flex items-center gap-2 mb-2">
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept=".txt,.doc,.docx"
-                                className="hidden"
-                                onChange={handleFileUpload}
-                            />
-                            <button
-                                className="px-3 py-1 rounded bg-blue-500 text-white text-sm"
-                                onClick={() => fileInputRef.current?.click()}
-                            >
-                                Upload File
-                            </button>
-                            <input
-                                type="text"
-                                className="border rounded px-2 py-1 text-sm w-40"
-                                value={filename}
-                                onChange={e => setFilename(e.target.value)}
-                                placeholder="Filename.doc"
-                            />
-                            <button
-                                className="px-3 py-1 rounded bg-green-500 text-white text-sm"
-                                onClick={handleDownload}
-                                disabled={!content.trim()}
-                            >
-                                Download Word
-                            </button>
-                            <span className="ml-auto text-xs text-gray-500 dark:text-gray-400">
-                                Word Count: {wordCount}
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <select
-                                value={paragraphType}
-                                onChange={handleParagraphChange}
-                                className="border rounded px-2 py-1 text-sm"
-                            >
-                                {paragraphOptions.map((opt) => (
-                                    <option key={opt.value} value={opt.value}>
-                                        {opt.label}
-                                    </option>
-                                ))}
-                            </select>
-                            {toolbarButtons.map((btn, idx) => (
+                    <div className="md:col-span-7 col-span-1 ">
+
+                        <div className=" border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
+                            <h1 className="text-2xl font-bold text-center mb-2 text-gray-900 dark:text-gray-100">
+                                Text to Word Counter
+                            </h1>
+                            <p className="text-center mb-6 text-gray-600 dark:text-gray-300">
+                                Paste your text below or upload a DOC, DOCX, or TXT file to convert it to a Word document.
+                            </p>
+
+
+
+                            <div className="flex items-center gap-2 mb-2">
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept=".txt,.doc,.docx"
+                                    className="hidden"
+                                    onChange={handleFileUpload}
+                                />
                                 <button
-                                    key={idx}
-                                    title={btn.title}
-                                    className="px-2 py-1 rounded border text-sm font-semibold"
-                                    onClick={() => handleToolbar(btn.style, btn.isRedo)}
-                                    type="button"
+                                    className="px-3 py-1 rounded bg-blue-500 text-white text-sm"
+                                    onClick={() => fileInputRef.current?.click()}
                                 >
-                                    {btn.label}
+                                    Upload File
                                 </button>
-                            ))}
+                                <input
+                                    type="text"
+                                    className="border rounded px-2 py-1 text-sm w-40"
+                                    value={filename}
+                                    onChange={e => setFilename(e.target.value)}
+                                    placeholder="Filename.doc"
+                                />
+                                <button
+                                    className="px-3 py-1 rounded bg-green-500 text-white text-sm"
+                                    onClick={handleDownload}
+                                    disabled={!content.trim()}
+                                >
+                                    Download Word
+                                </button>
+                                <span className="ml-auto text-xs text-gray-500 dark:text-gray-400">
+                                    Word Count: {wordCount}
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <select
+                                    value={paragraphType}
+                                    onChange={handleParagraphChange}
+                                    className="border rounded px-2 py-1 text-sm"
+                                >
+                                    {paragraphOptions.map((opt) => (
+                                        <option key={opt.value} value={opt.value}>
+                                            {opt.label}
+                                        </option>
+                                    ))}
+                                </select>
+                                {toolbarButtons.map((btn, idx) => (
+                                    <button
+                                        key={idx}
+                                        title={btn.title}
+                                        className="px-2 py-1 rounded border text-sm font-semibold"
+                                        onClick={() => handleToolbar(btn.style, btn.isRedo)}
+                                        type="button"
+                                    >
+                                        {btn.label}
+                                    </button>
+                                ))}
+                            </div>
+                            <div
+                                ref={editorRef}
+                                className={editorClass}
+                                contentEditable
+                                spellCheck={true}
+                                suppressContentEditableWarning
+                                onInput={handleInput}
+                                style={{ minHeight: 200, outline: "none", whiteSpace: "pre-wrap" }}
+                                aria-label="Text editor"
+                            ></div>
                         </div>
-                        <div
-                            ref={editorRef}
-                            className={editorClass}
-                            contentEditable
-                            spellCheck={true}
-                            suppressContentEditableWarning
-                            onInput={handleInput}
-                            style={{ minHeight: 200, outline: "none", whiteSpace: "pre-wrap" }}
-                            aria-label="Text editor"
-                        ></div>
                     </div>
                     {/* Second column: col-span-5 on md+ */}
-                    <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
+                    <div className="md:col-span-5 col-span-1">
                         {/* You can place content for the second column here */}
-                        Advertiesment
+                        {/* Advertiesment */}
+                        <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+                        <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-                    {/* First column: col-span-6 on md+ */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                    {/* Second column: col-span-6 on md+ */}
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                </div>
+                </div> */}
 
             </div>
 
-           
-            
+
+
 
         </>
 

@@ -3,6 +3,58 @@ import React, { useState, useRef } from "react";
 import classNames from "classnames";
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
+
+const otherTools = [
+    {
+        id: "word-counter",
+        name: "Word Counter",
+        description: "Count the number of words in a text",
+        category: "Text Tools",
+        slug: "word-counter",
+        categorySlug: "text-tools",
+        icon: "🔢",
+    },
+    {
+        id: "text-to-word",
+        name: "Text to Word",
+        description: "Convert text documents to Word format",
+        category: "Text Tools",
+        slug: "text-to-word",
+        categorySlug: "text-tools",
+        icon: "📄",
+    },
+    {
+        id: "text-to-pdf",
+        name: "Text to PDF",
+        description: "Convert text documents to PDF format",
+        category: "Text Tools",
+        slug: "text-to-pdf",
+        categorySlug: "text-tools",
+        icon: "📄",
+    },
+    {
+        id: "text-repeater",
+        name: "Text Repeater",
+        description: "Repeat text multiple times",
+        category: "Text Tools",
+        slug: "text-repeater",
+        categorySlug: "text-tools",
+        icon: "🔁",
+    },
+
+    {
+        id: "text-to-ascii",
+        name: "Text to ASCII",
+        description: "Convert text to ASCII codes",
+        category: "Text Tools",
+        slug: "text-to-ascii",
+        categorySlug: "text-tools",
+        icon: "🔤",
+    },
+];
+
 
 const separatorOptions = [
     { label: "Nothing", value: "" },
@@ -128,167 +180,168 @@ export default function WordCombiner(props: { article?: any, seo?: any }) {
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}
-                    <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 text-gray-900 dark:text-gray-100">
-                            Word Combiner
-                        </h1>
-                        <p className="text-center text-gray-600 dark:text-gray-300 mb-4">
-                            To use toolinger <b>Word Combiner</b>, type your keywords in the box and press <b>Combine</b> (one word on each line)
-                        </p>
-                        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6">
-                            <div className="text-center text-xs text-gray-500 dark:text-gray-400 mb-3">
-                                Type your keywords in the box and press Combine! (one word on each line)
-                            </div>
-                            <div className="flex flex-col md:flex-row gap-4">
-                                <div className="flex-1">
+                    <div className="md:col-span-7 col-span-1">
+                        <div className=" border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
+                            <h1 className="text-2xl md:text-3xl font-bold text-center mb-2 text-gray-900 dark:text-gray-100">
+                                Word Combiner
+                            </h1>
+                            <p className="text-center text-gray-600 dark:text-gray-300 mb-4">
+                                To use toolinger <b>Word Combiner</b>, type your keywords in the box and press <b>Combine</b> (one word on each line)
+                            </p>
+                            <div className="border border-dashed border-gray-300 dark:border-gray-700 p-4">
+                                <div className="text-center text-xs text-gray-500 dark:text-gray-400 mb-3">
+                                    Type your keywords in the box and press Combine! (one word on each line)
+                                </div>
+                                <div className="flex flex-col md:flex-row gap-4">
+                                    <div className="flex-1">
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                                            Input Words
+                                        </label>
+                                        <textarea
+                                            className="w-full h-40 p-2 border rounded focus:outline-none focus:ring focus:border-blue-400 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                                            value={input}
+                                            onChange={e => setInput(e.target.value)}
+                                            placeholder="Enter one word per line"
+                                        />
+                                        <div className="flex gap-2 mt-2">
+                                            <button
+                                                className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 transition"
+                                                onClick={handleCombine}
+                                            >
+                                                Combine
+                                            </button>
+                                            <button
+                                                className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                                                onClick={handleClear}
+                                            >
+                                                Clear
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="flex-1">
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
+                                            Options
+                                        </label>
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    id="allowDoubles"
+                                                    checked={allowDoubles}
+                                                    onChange={e => setAllowDoubles(e.target.checked)}
+                                                />
+                                                <label htmlFor="allowDoubles" className="text-sm">
+                                                    Allow doubles (e.g. word1 + word1)
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    id="shuffle"
+                                                    checked={shuffle}
+                                                    onChange={e => setShuffle(e.target.checked)}
+                                                />
+                                                <label htmlFor="shuffle" className="text-sm">
+                                                    Shuffle output
+                                                </label>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <label className="text-sm" htmlFor="separator">
+                                                    Separator:
+                                                </label>
+                                                <select
+                                                    id="separator"
+                                                    className="rounded border p-1 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                                                    value={separator}
+                                                    onChange={e => setSeparator(e.target.value)}
+                                                >
+                                                    {separatorOptions.map(opt => (
+                                                        <option key={opt.label} value={opt.value}>
+                                                            {opt.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <label className="text-sm" htmlFor="wrap">
+                                                    Wrap:
+                                                </label>
+                                                <select
+                                                    id="wrap"
+                                                    className="rounded border p-1 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                                                    value={wrap}
+                                                    onChange={e => setWrap(e.target.value)}
+                                                >
+                                                    {wrapOptions.map(opt => (
+                                                        <option key={opt.label} value={opt.value}>
+                                                            {opt.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="mt-6">
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                                        Input Words
+                                        Output
                                     </label>
                                     <textarea
+                                        ref={outputRef}
                                         className="w-full h-40 p-2 border rounded focus:outline-none focus:ring focus:border-blue-400 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-                                        value={input}
-                                        onChange={e => setInput(e.target.value)}
-                                        placeholder="Enter one word per line"
+                                        value={output.join("\n")}
+                                        readOnly
                                     />
                                     <div className="flex gap-2 mt-2">
                                         <button
-                                            className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 transition"
-                                            onClick={handleCombine}
+                                            className={classNames(
+                                                "px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition",
+                                                { "opacity-50 cursor-not-allowed": output.length === 0 }
+                                            )}
+                                            onClick={handleCopy}
+                                            disabled={output.length === 0}
                                         >
-                                            Combine
+                                            Copy
                                         </button>
                                         <button
-                                            className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
-                                            onClick={handleClear}
+                                            className={classNames(
+                                                "px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700 transition",
+                                                { "opacity-50 cursor-not-allowed": output.length === 0 }
+                                            )}
+                                            onClick={handleDownload}
+                                            disabled={output.length === 0}
                                         >
-                                            Clear
+                                            Download
                                         </button>
                                     </div>
+                                    {output.length > 0 && (
+                                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                            {output.length} combinations generated.
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="flex-1">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                                        Options
-                                    </label>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex items-center gap-2">
-                                            <input
-                                                type="checkbox"
-                                                id="allowDoubles"
-                                                checked={allowDoubles}
-                                                onChange={e => setAllowDoubles(e.target.checked)}
-                                            />
-                                            <label htmlFor="allowDoubles" className="text-sm">
-                                                Allow doubles (e.g. word1 + word1)
-                                            </label>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <input
-                                                type="checkbox"
-                                                id="shuffle"
-                                                checked={shuffle}
-                                                onChange={e => setShuffle(e.target.checked)}
-                                            />
-                                            <label htmlFor="shuffle" className="text-sm">
-                                                Shuffle output
-                                            </label>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <label className="text-sm" htmlFor="separator">
-                                                Separator:
-                                            </label>
-                                            <select
-                                                id="separator"
-                                                className="rounded border p-1 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-                                                value={separator}
-                                                onChange={e => setSeparator(e.target.value)}
-                                            >
-                                                {separatorOptions.map(opt => (
-                                                    <option key={opt.label} value={opt.value}>
-                                                        {opt.label}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <label className="text-sm" htmlFor="wrap">
-                                                Wrap:
-                                            </label>
-                                            <select
-                                                id="wrap"
-                                                className="rounded border p-1 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-                                                value={wrap}
-                                                onChange={e => setWrap(e.target.value)}
-                                            >
-                                                {wrapOptions.map(opt => (
-                                                    <option key={opt.label} value={opt.value}>
-                                                        {opt.label}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mt-6">
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
-                                    Output
-                                </label>
-                                <textarea
-                                    ref={outputRef}
-                                    className="w-full h-40 p-2 border rounded focus:outline-none focus:ring focus:border-blue-400 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
-                                    value={output.join("\n")}
-                                    readOnly
-                                />
-                                <div className="flex gap-2 mt-2">
-                                    <button
-                                        className={classNames(
-                                            "px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition",
-                                            { "opacity-50 cursor-not-allowed": output.length === 0 }
-                                        )}
-                                        onClick={handleCopy}
-                                        disabled={output.length === 0}
-                                    >
-                                        Copy
-                                    </button>
-                                    <button
-                                        className={classNames(
-                                            "px-3 py-1 rounded bg-indigo-600 text-white hover:bg-indigo-700 transition",
-                                            { "opacity-50 cursor-not-allowed": output.length === 0 }
-                                        )}
-                                        onClick={handleDownload}
-                                        disabled={output.length === 0}
-                                    >
-                                        Download
-                                    </button>
-                                </div>
-                                {output.length > 0 && (
-                                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                        {output.length} combinations generated.
-                                    </div>
-                                )}
                             </div>
                         </div>
-
                     </div>
                     {/* Second column: col-span-5 on md+ */}
-                    <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
+                    <div className="md:col-span-5 col-span-1">
                         {/* You can place content for the second column here */}
-                        Advertiesment
+                        {/* Advertiesment */}
+                        <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+                        <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-                    {/* First column: col-span-6 on md+ */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                    {/* Second column: col-span-6 on md+ */}
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                </div>
+                </div> */}
 
             </div>
-           
+
         </>
 
     );
