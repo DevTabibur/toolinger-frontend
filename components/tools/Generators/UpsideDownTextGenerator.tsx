@@ -1,7 +1,31 @@
 "use client";
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
 import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
+const otherTools = [
+    {
+        id: "reverse-text-generator",
+        name: "Reverse Text Generator",
+        description: "Reverse the text input.",
+        category: "Generators",
+        slug: "reverse-text-generator",
+        categorySlug: "generators",
+        icon: "🔄",
+        level: "free",
+    },
+
+    {
+        id: "password-generator",
+        name: "Password Generator",
+        description: "Generate secure passwords.",
+        category: "Generators",
+        slug: "password-generator",
+        categorySlug: "generators",
+        icon: "🔐",
+    },
+];
 
 const UPSIDE_DOWN_MAP: Record<string, string> = {
     a: "ɐ",
@@ -152,93 +176,100 @@ export default function UpsideDownTextGenerator(props: { article?: any, seo?: an
             <div className="container mx-auto p-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     {/* First column: col-span-7 on md+ */}
-                    <div className="md:col-span-7 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
-                        <h1 className="text-2xl font-bold text-center mb-4 text-gray-900 dark:text-gray-100">
-                            Upside Down Text Converter
-                        </h1>
-                        <div className="mb-4">
-                            <label
-                                htmlFor="udtc-input"
-                                className="block text-gray-700 dark:text-gray-200 font-semibold mb-2"
-                            >
-                                Enter your text:
-                            </label>
-                            <textarea
-                                id="udtc-input"
-                                className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                rows={4}
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                placeholder="Type or paste your text here..."
-                            />
-                        </div>
-                        <div className="flex items-center gap-4 mb-4">
-                            <label className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
-                                <input
-                                    type="checkbox"
-                                    checked={backwards}
-                                    onChange={() => setBackwards((b) => !b)}
-                                    className="accent-blue-500"
-                                />
-                                Reverse text
-                            </label>
-                            <label className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
-                                <input
-                                    type="checkbox"
-                                    checked={upsideDown}
-                                    onChange={() => setUpsideDown((u) => !u)}
-                                    className="accent-blue-500"
-                                />
-                                Upside down
-                            </label>
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-2">
-                                Result:
-                            </label>
-                            <div className="relative">
-                                <textarea
-                                    className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 resize-none"
-                                    rows={4}
-                                    value={getOutput()}
-                                    readOnly
-                                    spellCheck={false}
-                                    style={{ fontFamily: "monospace" }}
-                                />
-                                <button
-                                    onClick={handleCopy}
-                                    className="absolute top-2 right-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm transition"
-                                    type="button"
+                    <div className="md:col-span-7 col-span-1">
+                        <div className=" border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
+
+                            <h1 className="text-2xl font-bold text-center mb-2 text-gray-900 dark:text-gray-100">
+                                Upside Down Text Converter
+                            </h1>
+                            <p className="text-center mb-6 text-gray-600 dark:text-gray-300">
+                                Enter your text below and instantly flip it upside down! 
+                                <br />
+                                <b>Upside Down Text Converter</b> transforms your input into upside down text for fun, social media, or creative uses.
+                            </p>
+                            <div className="mb-4">
+                                <label
+                                    htmlFor="udtc-input"
+                                    className="block text-gray-700 dark:text-gray-200 font-semibold mb-2"
                                 >
-                                    {copied ? "Copied!" : "Copy"}
-                                </button>
+                                    Enter your text:
+                                </label>
+                                <textarea
+                                    id="udtc-input"
+                                    className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    rows={4}
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    placeholder="Type or paste your text here..."
+                                />
+                            </div>
+                            <div className="flex items-center gap-4 mb-4">
+                                <label className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+                                    <input
+                                        type="checkbox"
+                                        checked={backwards}
+                                        onChange={() => setBackwards((b) => !b)}
+                                        className="accent-blue-500"
+                                    />
+                                    Reverse text
+                                </label>
+                                <label className="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+                                    <input
+                                        type="checkbox"
+                                        checked={upsideDown}
+                                        onChange={() => setUpsideDown((u) => !u)}
+                                        className="accent-blue-500"
+                                    />
+                                    Upside down
+                                </label>
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-gray-700 dark:text-gray-200 font-semibold mb-2">
+                                    Result:
+                                </label>
+                                <div className="relative">
+                                    <textarea
+                                        className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 resize-none"
+                                        rows={4}
+                                        value={getOutput()}
+                                        readOnly
+                                        spellCheck={false}
+                                        style={{ fontFamily: "monospace" }}
+                                    />
+                                    <button
+                                        onClick={handleCopy}
+                                        className="absolute top-2 right-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm transition"
+                                        type="button"
+                                    >
+                                        {copied ? "Copied!" : "Copy"}
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                                This tool flips your text upside down and/or reverses it for fun social media posts, nicknames, and more!
                             </div>
                         </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                            This tool flips your text upside down and/or reverses it for fun social media posts, nicknames, and more!
-                        </div>
-
                     </div>
                     {/* Second column: col-span-5 on md+ */}
-                    <div className="md:col-span-5 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
+                    <div className="md:col-span-5 col-span-14">
                         {/* You can place content for the second column here */}
-                        Advertiesment
+                        {/* Advertiesment */}
+                        <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+                        <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
                     </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
-                    {/* First column: col-span-6 on md+ */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                    {/* Second column: col-span-6 on md+ */}
                     <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
                         Advertiesment
                     </div>
-                </div>
+                </div> */}
 
             </div>
 
-           
+
         </>
 
     );
