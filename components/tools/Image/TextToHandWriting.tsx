@@ -2,6 +2,22 @@
 import React, { useRef, useState } from "react";
 import { ChevronRight, Home, Download } from "lucide-react";
 import Link from "next/link";
+import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
+import { popularTools } from "@/lib/categories";
+
+const otherTools = [
+    {
+        id: "text-to-image",
+        name: "Text to Image",
+        description: "Convert text into an image format",
+        category: "Image Tools",
+        slug: "text-to-image",
+        categorySlug: "image-tools",
+        icon: "🖼️",
+    },
+
+];
+
 
 // Handwriting font families (replace with actual font names or URLs as needed)
 const HANDWRITING_FONTS = [
@@ -110,120 +126,133 @@ export default function TextToHandWriting(props: { article?: any, seo?: any }) {
                 </nav>
             </div>
 
+
             <div className="container mx-auto py-8 px-4">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+                    {/* First column: col-span-8 on md+ */}
+                    <div className="md:col-span-8 col-span-12">
+                    <div className="border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
+                        <h1 className="text-2xl font-bold text-center mb-2 text-gray-900 dark:text-gray-100">Text to Handwriting</h1>
+                        <p className="text-center mb-6 text-gray-600 dark:text-gray-300">
+                            Paste your text and generate a realistic handwriting image. Customize font, ink color, and page style.
+                        </p>
 
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {/* Controls */}
+                            <div>
+                                <div className="mb-4">
+                                    <label className="block font-medium mb-1">Handwriting Style</label>
+                                    <select
+                                        className="w-full border rounded px-2 py-1"
+                                        value={font}
+                                        onChange={e => setFont(e.target.value)}
+                                    >
+                                        {HANDWRITING_FONTS.map(f => (
+                                            <option key={f.value} value={f.value}>{f.label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block font-medium mb-1">Font Size</label>
+                                    <input
+                                        type="number"
+                                        min={14}
+                                        max={48}
+                                        className="w-full border rounded px-2 py-1"
+                                        value={fontSize}
+                                        onChange={e => setFontSize(Number(e.target.value))}
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block font-medium mb-1">Ink Color</label>
+                                    <input
+                                        type="color"
+                                        className="w-10 h-10 p-0 border rounded"
+                                        value={inkColor}
+                                        onChange={e => setInkColor(e.target.value)}
+                                    />
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block font-medium mb-1">Page Style</label>
+                                    <select
+                                        className="w-full border rounded px-2 py-1"
+                                        value={pageStyle}
+                                        onChange={e => setPageStyle(e.target.value)}
+                                    >
+                                        {PAGE_STYLES.map(s => (
+                                            <option key={s.value} value={s.value}>{s.label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="mb-4 flex gap-4">
+                                    <label className="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={bold}
+                                            onChange={e => setBold(e.target.checked)}
+                                        />
+                                        Bold
+                                    </label>
+                                    <label className="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            checked={italic}
+                                            onChange={e => setItalic(e.target.checked)}
+                                        />
+                                        Italic
+                                    </label>
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block font-medium mb-1">Text</label>
+                                    <textarea
+                                        className="w-full border rounded px-2 py-1 min-h-[120px]"
+                                        value={text}
+                                        onChange={e => setText(e.target.value)}
+                                    />
+                                </div>
+                                <button
+                                    className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 transition"
+                                    onClick={handleDownload}
+                                    type="button"
+                                >
+                                    <Download size={18} />
+                                    Download as PNG
+                                </button>
+                            </div>
 
-                <h1 className="text-2xl font-bold mb-4">Text to Handwriting</h1>
-                <p className="mb-6 text-gray-600 dark:text-gray-300">
-                    Paste your text and generate a realistic handwriting image. Customize font, ink color, and page style.
-                </p>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    {/* Controls */}
-                    <div>
-                        <div className="mb-4">
-                            <label className="block font-medium mb-1">Handwriting Style</label>
-                            <select
-                                className="w-full border rounded px-2 py-1"
-                                value={font}
-                                onChange={e => setFont(e.target.value)}
-                            >
-                                {HANDWRITING_FONTS.map(f => (
-                                    <option key={f.value} value={f.value}>{f.label}</option>
-                                ))}
-                            </select>
+                            {/* Preview */}
+                            <div>
+                                <div
+                                    ref={previewRef}
+                                    className={`p-8 min-h-[400px] rounded shadow ${getPageStyleClass(pageStyle)}`}
+                                    style={{
+                                        fontFamily,
+                                        fontSize: `${fontSize}px`,
+                                        color: inkColor,
+                                        fontWeight: bold ? "bold" : "normal",
+                                        fontStyle: italic ? "italic" : "normal",
+                                        whiteSpace: "pre-wrap",
+                                        lineHeight: 1.8,
+                                        transition: "all 0.2s"
+                                    }}
+                                >
+                                    {text}
+                                </div>
+                            </div>
                         </div>
-                        <div className="mb-4">
-                            <label className="block font-medium mb-1">Font Size</label>
-                            <input
-                                type="number"
-                                min={14}
-                                max={48}
-                                className="w-full border rounded px-2 py-1"
-                                value={fontSize}
-                                onChange={e => setFontSize(Number(e.target.value))}
-                            />
                         </div>
-                        <div className="mb-4">
-                            <label className="block font-medium mb-1">Ink Color</label>
-                            <input
-                                type="color"
-                                className="w-10 h-10 p-0 border rounded"
-                                value={inkColor}
-                                onChange={e => setInkColor(e.target.value)}
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block font-medium mb-1">Page Style</label>
-                            <select
-                                className="w-full border rounded px-2 py-1"
-                                value={pageStyle}
-                                onChange={e => setPageStyle(e.target.value)}
-                            >
-                                {PAGE_STYLES.map(s => (
-                                    <option key={s.value} value={s.value}>{s.label}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="mb-4 flex gap-4">
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    checked={bold}
-                                    onChange={e => setBold(e.target.checked)}
-                                />
-                                Bold
-                            </label>
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    checked={italic}
-                                    onChange={e => setItalic(e.target.checked)}
-                                />
-                                Italic
-                            </label>
-                        </div>
-                        <div className="mb-4">
-                            <label className="block font-medium mb-1">Text</label>
-                            <textarea
-                                className="w-full border rounded px-2 py-1 min-h-[120px]"
-                                value={text}
-                                onChange={e => setText(e.target.value)}
-                            />
-                        </div>
-                        <button
-                            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 transition"
-                            onClick={handleDownload}
-                            type="button"
-                        >
-                            <Download size={18} />
-                            Download as PNG
-                        </button>
                     </div>
 
-                    {/* Preview */}
-                    <div>
-                        <div
-                            ref={previewRef}
-                            className={`p-8 min-h-[400px] rounded shadow ${getPageStyleClass(pageStyle)}`}
-                            style={{
-                                fontFamily,
-                                fontSize: `${fontSize}px`,
-                                color: inkColor,
-                                fontWeight: bold ? "bold" : "normal",
-                                fontStyle: italic ? "italic" : "normal",
-                                whiteSpace: "pre-wrap",
-                                lineHeight: 1.8,
-                                transition: "all 0.2s"
-                            }}
-                        >
-                            {text}
+                    <div className="md:col-span-4 col-span-12">
+                        <div className="w-full md:w-80">
+                            <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
+                            <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
                         </div>
                     </div>
                 </div>
             </div>
 
-           
+
         </>
     );
 }
