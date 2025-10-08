@@ -59,6 +59,7 @@ const CreatePageModal: React.FC<CreatePageModalProps> = ({ open, onClose, onCrea
     const [slug, setSlug] = useState("");
     const [touchedSlug, setTouchedSlug] = useState(false);
     const [loading, setLoading] = useState(false);
+    console.log("slug", slug)
 
     // When title changes and slug not manually edited, update slug
     useEffect(() => {
@@ -78,6 +79,7 @@ const CreatePageModal: React.FC<CreatePageModalProps> = ({ open, onClose, onCrea
     }, [open]);
 
     const handleSubmit = async (e: React.FormEvent) => {
+        console.log("Form Submitted")
         e.preventDefault();
         if (!title.trim() || !slug.trim() || !type.trim()) {
             toast.error("All fields are required");
@@ -85,10 +87,11 @@ const CreatePageModal: React.FC<CreatePageModalProps> = ({ open, onClose, onCrea
         }
         setLoading(true);
         try {
+
             const payload = {
                 title: title.trim(),
                 type: type.trim(),
-                slug: slug.trim(),
+                slug: `/${slug.trim()}`,
             };
             const res = await createDynamicPagesArticleAndSeo(payload);
             if (res.statusCode === 200) {

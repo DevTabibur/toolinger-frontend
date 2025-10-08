@@ -95,7 +95,7 @@ export function Header() {
             >
               Blog
             </Link>
-            {user?.email ? <Link
+            {/* {user?.email ? <Link
               href="/dashboard"
               className="text-sm font-medium hover:text-primary transition-colors"
             >
@@ -105,7 +105,7 @@ export function Header() {
               className="text-sm font-medium hover:text-primary transition-colors"
             >
               Login
-            </Link>}
+            </Link>} */}
 
             {/*<Link
             href="/auth/register"
@@ -197,7 +197,7 @@ export function Header() {
               >
                 Blog
               </Link>
-              {user?.email ? <Link
+              {/* {user?.email ? <Link
               href="/dashboard"
               className="text-sm font-medium hover:text-primary transition-colors"
             >
@@ -207,7 +207,7 @@ export function Header() {
               className="text-sm font-medium hover:text-primary transition-colors"
             >
               Login
-            </Link>}
+            </Link>} */}
               {/* <Link
                 href="/auth/register"
                 className="text-sm font-medium hover:text-primary transition-colors"

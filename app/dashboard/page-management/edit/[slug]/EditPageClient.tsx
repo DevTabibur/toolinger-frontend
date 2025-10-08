@@ -146,7 +146,7 @@ const contentValidationSchema = Yup.object({
                 "summary",
                 "summary_large_image",
                 "app",
-                "player" 
+                "player"
             ],
             "Invalid Twitter Card type"
         )
@@ -200,7 +200,7 @@ export default function EditPageClient({ slug, }: EditPageClientProps) {
     // const twitterFileInputRef = useRef<HTMLInputElement | null>(null)
     // const [twitterImageError, setTwitterImageError] = useState<string | null>(null)
 
-  
+
 
     // Handle file input change, store File object and preview URL
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -340,6 +340,7 @@ export default function EditPageClient({ slug, }: EditPageClientProps) {
                 }
 
                 formData.append("pageContent", wrapContentWithColor(values.content))
+                // formData.append("pageContent", values.content)
                 // ========================basic seo
                 if (values.metaTitle !== undefined && values.metaTitle !== null) {
                     formData.append("metaTitle", values.metaTitle);
@@ -506,7 +507,7 @@ export default function EditPageClient({ slug, }: EditPageClientProps) {
     // Use a real <form> to ensure Formik's onSubmit is always called with latest values
     return (
         <div className="space-y-6">
-          
+
 
             {/* Header */}
             <div className="flex items-center justify-between">
