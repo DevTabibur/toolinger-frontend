@@ -299,8 +299,47 @@ export default function EditPageClient({ slug, }: EditPageClientProps) {
                 formData.append("slug", `/${slug}`)
                 formData.append("type", type)
                 formData.append("title", title)
+                // formData.append("pageContent", values.content)
                 // ========================article
-                formData.append("pageContent", values.content)
+                // Wrap the content in a parent div that forces the color for all content (text, headings, lists, etc.)
+                // Light mode: green (#22c55e), Dark mode: red (#ef4444)
+                // This approach ensures that even if the user pastes colored text, the parent color will override it.
+                // The color is set via a CSS variable for easy dark mode switching.
+
+                // Improved: Force color on all text, including <ul>, <ol>, <li>, and their markers/numbers.
+                function wrapContentWithColor(content: string) {
+                    // The parent div sets the color for all descendants using a CSS variable.
+                    // We use ::marker and ::before/::after to ensure list bullets/numbers are colored.
+                    // This ensures all text, bullets, and numbers inherit the correct color in both modes.
+                    return `<div 
+                        style="color: var(--editor-dynamic-color, #000000); --editor-dynamic-color: #000000;" 
+                        class="wordcounter-content-color"
+                    >
+                        <style>
+                            .wordcounter-content-color,
+                            .wordcounter-content-color *,
+                            .wordcounter-content-color *::marker,
+                            .wordcounter-content-color *::before,
+                            .wordcounter-content-color *::after {
+                                color: var(--editor-dynamic-color, #000000) !important;
+                            }
+                            .dark .wordcounter-content-color {
+                                --editor-dynamic-color: #e3e3e3 !important;
+                                color: var(--editor-dynamic-color, #e3e3e3) !important;
+                            }
+                            .dark .wordcounter-content-color,
+                            .dark .wordcounter-content-color *,
+                            .dark .wordcounter-content-color *::marker,
+                            .dark .wordcounter-content-color *::before,
+                            .dark .wordcounter-content-color *::after {
+                                color: var(--editor-dynamic-color, #e3e3e3) !important;
+                            }
+                        </style>
+                        ${content}
+                    </div>`;
+                }
+
+                formData.append("pageContent", wrapContentWithColor(values.content))
                 // ========================basic seo
                 if (values.metaTitle !== undefined && values.metaTitle !== null) {
                     formData.append("metaTitle", values.metaTitle);

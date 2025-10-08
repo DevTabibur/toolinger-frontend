@@ -1,5 +1,5 @@
 "use client";
-
+import sanitize from 'dompurify';
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { AdBanner } from "@/components/ad-banner";
@@ -258,11 +258,12 @@ export default function AboutClient({ page }: any) {
       </div>
 
       <div className="container mx-auto px-4 py-24">
-        <div
-          className="max-w-3xl mx-auto"
-          dangerouslySetInnerHTML={{ __html: page?.data?.pageContent || "" }}
-        ></div>
+        <article
+          className="prose max-w-3xl mx-auto"
+          dangerouslySetInnerHTML={{ __html: (page?.data?.pageContent || "") }}
+        ></article>
       </div>
+
 
       <Footer />
     </div>

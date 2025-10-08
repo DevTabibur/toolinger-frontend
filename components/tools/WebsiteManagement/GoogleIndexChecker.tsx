@@ -232,7 +232,7 @@ ghi.com`}
                     <tbody className="border border-dashed border-gray-300 dark:border-gray-600">
                       {results.map((result) => (
                         <tr key={result.id} className="border border-dashed border-gray-300 dark:border-gray-600">
-                          <td className="px-3 py-3 text-sm text-gray-900 dark:text-gray-100 border border-dashed border-gray-300 dark:border-gray-600">
+                          <td className="px-3 text-center py-3 text-sm text-gray-900 dark:text-gray-100 border border-dashed border-gray-300 dark:border-gray-600">
                             {result.id}
                           </td>
                           <td className="px-3 py-3 text-sm border border-dashed border-gray-300 dark:border-gray-600 w-96 font-bold">
@@ -243,7 +243,7 @@ ghi.com`}
                               className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1"
                             >
                               {getCurrentPageUrl(result.original).replace(/^https?:\/\//, "")}
-                              <ExternalLink size={50} />
+                              <ExternalLink size={20} />
                             </Link>
                           </td>
                           <td className="px-3 py-3 text-sm border border-dashed border-gray-300 dark:border-gray-600">

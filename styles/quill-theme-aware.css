@@ -1,0 +1,51 @@
+/* Light Mode */
+.ql-container {
+    background-color: #ffffff;
+    color: #111827; /* gray-900 */
+  }
+  
+  .ql-editor {
+    color: #111827 !important; /* default light text */
+  }
+  
+  /* Dark Mode */
+  .dark .ql-container {
+    background-color: #0f0f0f;
+    color: #f3f4f6;
+  }
+  
+  .dark .ql-editor {
+    color: #e5e7eb !important; /* default dark text */
+  }
+  
+  /* ✅ Respect manual color selection (don’t override if inline color exists) */
+  .ql-editor *[style*="color:"] {
+    color: inherit !important;
+  }
+  
+  /* ✅ Quill toolbar colors match mode */
+  .ql-toolbar {
+    background-color: var(--toolbar-bg, #f9fafb);
+    border-color: #e5e7eb;
+  }
+  
+  .dark .ql-toolbar {
+    background-color: #18181b;
+    border-color: #27272a;
+  }
+  
+  .ql-toolbar button svg,
+  .ql-toolbar .ql-picker-label {
+    color: var(--toolbar-text, #111827);
+  }
+  
+  .dark .ql-toolbar button svg,
+  .dark .ql-toolbar .ql-picker-label {
+    color: #f3f4f6;
+  }
+  
+  /* Bullet, paragraph tweaks */
+  .ql-editor p { margin-bottom: 0.75rem; }
+  .ql-editor ul { list-style-type: disc; margin-left: 1.5rem; }
+  .ql-editor ol { list-style-type: decimal; margin-left: 1.5rem; }
+  
