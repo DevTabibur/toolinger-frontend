@@ -4,6 +4,7 @@ import { ChevronRight, Home, Download, Copy, FileDown, FileUp } from "lucide-rea
 import Link from "next/link";
 import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
 import { popularTools } from "@/lib/categories";
+import ArticleRenderer from "@/utils/ArticleRenderer";
 
 const otherTools = [
 
@@ -471,6 +472,7 @@ export default function TextToImage(props: { article?: any, seo?: any }) {
                                 </div>
                             </div>
                         </div>
+                        <ArticleRenderer file="text_to_image.html" />
                     </div>
 
                     <div className="md:col-span-4 col-span-12">

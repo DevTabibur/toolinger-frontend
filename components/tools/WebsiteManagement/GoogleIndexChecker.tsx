@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronRight, Home, ExternalLink, Loader2 } from "lucide-react";
 import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
 import { popularTools } from "@/lib/categories";
+import ArticleRenderer from "@/utils/ArticleRenderer";
 
 interface WebsiteResult {
   id: number;
@@ -12,13 +13,12 @@ interface WebsiteResult {
   original: string;
 }
 
-
 const otherTools = [
-
   {
     id: "google-malware-checker",
     name: "Google Malware Checker",
-    description: "Scan your website for malware and security threats using Google's safe browsing technology.",
+    description:
+      "Scan your website for malware and security threats using Google's safe browsing technology.",
     category: "Website Management",
     slug: "google-malware-checker",
     categorySlug: "website-management",
@@ -44,7 +44,6 @@ const otherTools = [
   },
 ];
 
-
 const MAX_URLS = 2000;
 
 const getFullDomain = (url: string) => {
@@ -67,7 +66,10 @@ const GoogleIndexChecker = (props: { article?: any; seo?: any }) => {
   const [results, setResults] = useState<WebsiteResult[]>([]);
   const [error, setError] = useState<string | null>(null);
   // Track last clicked: {type: "current"|"full", id: number}
-  const [active, setActive] = useState<{ type: "current" | "full"; id: number } | null>(null);
+  const [active, setActive] = useState<{
+    type: "current" | "full";
+    id: number;
+  } | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,14 +114,18 @@ const GoogleIndexChecker = (props: { article?: any; seo?: any }) => {
     setActive({ type: "current", id: result.id });
     // Always use https:// for current page
     const url = getCurrentPageUrl(result.original);
-    const googleSearchUrl = `https://www.google.com/search?q=site:${encodeURIComponent(url)}`;
+    const googleSearchUrl = `https://www.google.com/search?q=site:${encodeURIComponent(
+      url
+    )}`;
     window.open(googleSearchUrl, "_blank", "noopener,noreferrer");
   };
 
   const handleFullWebsiteCheck = (result: WebsiteResult) => {
     setActive({ type: "full", id: result.id });
     // Only use the domain part for full website
-    const googleSearchUrl = `https://www.google.com/search?q=site:${encodeURIComponent(result.fullDomain)}`;
+    const googleSearchUrl = `https://www.google.com/search?q=site:${encodeURIComponent(
+      result.fullDomain
+    )}`;
     window.open(googleSearchUrl, "_blank", "noopener,noreferrer");
   };
 
@@ -149,7 +155,9 @@ const GoogleIndexChecker = (props: { article?: any; seo?: any }) => {
             Website Management
           </Link>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          <span className="text-foreground font-medium">Google Index Checker</span>
+          <span className="text-foreground font-medium">
+            Google Index Checker
+          </span>
         </nav>
       </div>
 
@@ -162,7 +170,9 @@ const GoogleIndexChecker = (props: { article?: any; seo?: any }) => {
                 Google Index Checker
               </h1>
               <p className="text-center text-[15px] text-gray-700 dark:text-gray-200 mb-4">
-                To use <strong>Google Index Checker</strong>, paste up to <b>2,000 webpages</b> (one URL per line) in the box below and click <b>Check Pages</b>.
+                To use <strong>Google Index Checker</strong>, paste up to{" "}
+                <b>2,000 webpages</b> (one URL per line) in the box below and
+                click <b>Check Pages</b>.
               </p>
               <form onSubmit={handleSubmit}>
                 <label
@@ -209,7 +219,8 @@ ghi.com`}
             {results.length > 0 && (
               <div className="mt-6">
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                  Results ({results.length} website{results.length > 1 ? "s" : ""})
+                  Results ({results.length} website
+                  {results.length > 1 ? "s" : ""})
                 </h2>
                 <div className="overflow-x-auto border border-dashed">
                   <table className="w-full  bg-white dark:bg-gray-800 shadow-sm rounded overflow-hidden border border-dashed border-gray-300 dark:border-gray-600">
@@ -231,7 +242,10 @@ ghi.com`}
                     </thead>
                     <tbody className="border border-dashed border-gray-300 dark:border-gray-600">
                       {results.map((result) => (
-                        <tr key={result.id} className="border border-dashed border-gray-300 dark:border-gray-600">
+                        <tr
+                          key={result.id}
+                          className="border border-dashed border-gray-300 dark:border-gray-600"
+                        >
                           <td className="px-3 text-center py-3 text-sm text-gray-900 dark:text-gray-100 border border-dashed border-gray-300 dark:border-gray-600">
                             {result.id}
                           </td>
@@ -242,7 +256,10 @@ ghi.com`}
                               rel="noopener noreferrer"
                               className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 flex items-center gap-1"
                             >
-                              {getCurrentPageUrl(result.original).replace(/^https?:\/\//, "")}
+                              {getCurrentPageUrl(result.original).replace(
+                                /^https?:\/\//,
+                                ""
+                              )}
                               <ExternalLink size={20} />
                             </Link>
                           </td>
@@ -250,7 +267,8 @@ ghi.com`}
                             <button
                               onClick={() => handleCurrentPageCheck(result)}
                               className={
-                                active?.type === "current" && active?.id === result.id
+                                active?.type === "current" &&
+                                active?.id === result.id
                                   ? `${activeBtn} text-base`
                                   : inactiveBtn
                               }
@@ -263,7 +281,8 @@ ghi.com`}
                             <button
                               onClick={() => handleFullWebsiteCheck(result)}
                               className={
-                                active?.type === "full" && active?.id === result.id
+                                active?.type === "full" &&
+                                active?.id === result.id
                                   ? `${activeBtn} text-base`
                                   : inactiveBtn
                               }
@@ -279,12 +298,18 @@ ghi.com`}
                 </div>
               </div>
             )}
-
+            <ArticleRenderer file="google_index_checker.html" />
           </div>
           {/* Advertisement Column */}
           <div className="md:col-span-5 col-span-1">
-            <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
-            <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
+            <ReleavantToolsSidebar
+              title="Popular Tools"
+              tools={popularTools as any}
+            />
+            <ReleavantToolsSidebar
+              title="Other Tools"
+              tools={otherTools as any}
+            />
           </div>
         </div>
         {/* Additional Advertisement Sections */}

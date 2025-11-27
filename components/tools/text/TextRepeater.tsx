@@ -4,6 +4,7 @@ import { Home, ChevronRight, Copy, Download, Trash2 } from "lucide-react";
 import Link from "next/link";
 import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
 import { popularTools } from "@/lib/categories";
+import ArticleRenderer from "@/utils/ArticleRenderer";
 
 const otherTools = [
     {
@@ -289,6 +290,7 @@ export default function TextRepeater(props: { article?: any, seo?: any }) {
                             </div>
                         </div>
                         </div>
+                        <ArticleRenderer file="text_repeater.html" />
                     </div>
                     {/* Second column: col-span-5 on md+ */}
                     <div className="md:col-span-5 col-span-1">

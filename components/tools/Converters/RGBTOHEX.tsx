@@ -1,6 +1,7 @@
 "use client";
 import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
 import { popularTools } from "@/lib/categories";
+import ArticleRenderer from "@/utils/ArticleRenderer";
 import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -311,6 +312,7 @@ const RGBTOHEX = (props: { article?: any, seo?: any }) => {
                                 </div>
                             </div>
                         </div>
+                    <ArticleRenderer file="rgb_to_hex.html" />
                     </div>
                     {/* Second column: col-span-5 on md+ */}
                     <div className="md:col-span-5 col-span-1 ">

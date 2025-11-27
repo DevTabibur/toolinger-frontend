@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
 import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
 import { popularTools } from "@/lib/categories";
+import ArticleRenderer from "@/utils/ArticleRenderer";
 
 const otherTools = [
   {
@@ -498,6 +499,7 @@ const LTVCalculator = (props: { article?: any, seo?: any }) => {
                 </div>
               </div>
             )}
+            <ArticleRenderer file="ltv_calculator.html" />
           </div>
           {/* Second column: col-span-5 on md+ */}
           <div className="md:col-span-5 col-span-1">

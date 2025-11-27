@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
 import { popularTools } from "@/lib/categories";
+import ArticleRenderer from "@/utils/ArticleRenderer";
 
 
 const otherTools = [
@@ -359,8 +360,8 @@ const BinaryCalculator = (props: { article?: any, seo?: any }) => {
                     {/* First column: col-span-7 on md+ */}
                     <div className="md:col-span-7 col-span-1">
                         <div className=" border rounded-lg p-4 mb-8 bg-white dark:bg-gray-900 shadow-sm dark:border-gray-700">
-                            <h1 className="text-2xl font-bold mb-4 text-center">Binary Calculator</h1>
-                            <p className="text-center mb-6">
+                            <h1 className="text-2xl font-bold mb-4 text-center  text-gray-900 dark:text-white">Binary Calculator</h1>
+                            <p className="text-center mb-6 text-gray-900 dark:text-white">
                                 Enter a number and select the base to convert from and to. This tool will help you convert between binary, decimal, octal, and hexadecimal formats.
                             </p>
 
@@ -477,6 +478,7 @@ const BinaryCalculator = (props: { article?: any, seo?: any }) => {
                                 </span>
                             </div>
                         )}
+                        <ArticleRenderer file="decimal_to_binary.html" />
                     </div>
                     {/* Second column: col-span-5 on md+ */}
                     <div className="md:col-span-5 col-span-1">

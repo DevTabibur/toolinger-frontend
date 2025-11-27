@@ -202,7 +202,7 @@ const ToolClient = ({
                 return <UpsideDownTextGenerator />;
             case "password-generator":
                 return <PasswordGenerator />;
-            // ===============    ===========================                    image tools===================
+            // ===========================image tools===================
             case "text-to-handwriting":
                 return <TextToHandWriting />;
             case "text-to-image":
@@ -279,11 +279,11 @@ const ToolClient = ({
         <div>
             {renderToolComponent()}
 
-            <div className="container mx-auto p-6">
+            {/* <div className="container mx-auto p-6">
                 <div className="prose max-w-[700px] text-start">
                     <div dangerouslySetInnerHTML={{ __html: page?.data?.pageContent || "" }} />
                 </div>
-            </div>
+            </div> */}
         </div>
     </>)
 }

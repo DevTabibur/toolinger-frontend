@@ -1,6 +1,7 @@
 "use client";
 import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
 import { popularTools } from "@/lib/categories";
+import ArticleRenderer from "@/utils/ArticleRenderer";
 import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -249,6 +250,7 @@ export default function UpsideDownTextGenerator(props: { article?: any, seo?: an
                                 This tool flips your text upside down and/or reverses it for fun social media posts, nicknames, and more!
                             </div>
                         </div>
+                        <ArticleRenderer file="upside_down_text_generator.html" />
                     </div>
                     {/* Second column: col-span-5 on md+ */}
                     <div className="md:col-span-5 col-span-14">

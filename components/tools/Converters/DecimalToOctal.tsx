@@ -1,10 +1,11 @@
-"use client"
+"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
 import { ChevronRight, Home } from "lucide-react";
 import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
 import { popularTools } from "@/lib/categories";
+import ArticleRenderer from "@/utils/ArticleRenderer";
 const otherTools = [
   {
     id: "rgb-to-hex",
@@ -52,7 +53,6 @@ const otherTools = [
     icon: "🔢",
   },
 
-
   {
     id: "case-converter",
     name: "Case Converter",
@@ -71,7 +71,6 @@ const otherTools = [
     categorySlug: "converters",
     icon: "🔡",
   },
-
 ];
 
 // Validation helpers
@@ -136,7 +135,9 @@ function convertDecimal(decimalStr: string) {
   if (value < 0) total = -total;
 
   // Show the original decimal and the full calculation, e.g. 20 = (2 × 8^1) + (0 × 8^0) = 16
-  let calculationString = `${value} = ${calculationParts.join(" + ")} = ${total}`;
+  let calculationString = `${value} = ${calculationParts.join(
+    " + "
+  )} = ${total}`;
 
   return {
     octal: octalStr,
@@ -146,7 +147,7 @@ function convertDecimal(decimalStr: string) {
   };
 }
 
-const DecimalToOctal = (props: { article?: any, seo?: any }) => {
+const DecimalToOctal = (props: { article?: any; seo?: any }) => {
   const [decimalInput, setDecimalInput] = useState("");
   const [octalResult, setOctalResult] = useState("");
   const [hexResult, setHexResult] = useState("");
@@ -210,7 +211,9 @@ const DecimalToOctal = (props: { article?: any, seo?: any }) => {
                 Decimal to Octal Converter
               </h1>
               <p className="text-center mb-6 text-gray-600 dark:text-gray-300">
-                Enter a decimal number below and click <b>Convert</b> to see its octal (base-8) representation. This tool also shows the conversion steps and the hexadecimal equivalent.
+                Enter a decimal number below and click <b>Convert</b> to see its
+                octal (base-8) representation. This tool also shows the
+                conversion steps and the hexadecimal equivalent.
               </p>
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Input area */}
@@ -258,10 +261,14 @@ const DecimalToOctal = (props: { article?: any, seo?: any }) => {
                 {/* Output area */}
                 <div className="flex-1">
                   <div className="bg-gray-50 dark:bg-gray-900 rounded p-4 min-h-[120px]">
-                    <h2 className="text-lg font-semibold mb-2 dark:text-white">Result</h2>
+                    <h2 className="text-lg font-semibold mb-2 dark:text-white">
+                      Result
+                    </h2>
                     <div className="mb-2">
                       <span className="font-medium">Octal:</span>{" "}
-                      <span className="text-primary">{octalResult || "--"}</span>
+                      <span className="text-primary">
+                        {octalResult || "--"}
+                      </span>
                     </div>
                     <div className="mb-2">
                       <span className="font-medium">Hexadecimal:</span>{" "}
@@ -277,13 +284,20 @@ const DecimalToOctal = (props: { article?: any, seo?: any }) => {
                 </div>
               </div>
             </div>
+            <ArticleRenderer file="decimal_to_octal.html" />
           </div>
           {/* Second column: col-span-5 on md+ */}
           <div className="md:col-span-5 col-span-1 ">
             {/* You can place content for the second column here */}
             {/* Advertiesment */}
-            <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
-            <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
+            <ReleavantToolsSidebar
+              title="Popular Tools"
+              tools={popularTools as any}
+            />
+            <ReleavantToolsSidebar
+              title="Other Tools"
+              tools={otherTools as any}
+            />
           </div>
         </div>
         {/* Advertisements or additional content */}
@@ -296,8 +310,6 @@ const DecimalToOctal = (props: { article?: any, seo?: any }) => {
           </div>
         </div> */}
       </div>
-
-
     </>
   );
 };

@@ -4,7 +4,7 @@ import { ChevronRight, Home, Trash2 } from "lucide-react";
 import Link from "next/link";
 import ReleavantToolsSidebar from "@/components/ReleavantToolsSidebar";
 import { popularTools } from "@/lib/categories";
-
+import ArticleRenderer from "@/utils/ArticleRenderer";
 
 const otherTools = [
   {
@@ -54,7 +54,6 @@ const otherTools = [
     icon: "🔤",
   },
 ];
-
 
 function countWords(text: string) {
   // Split by whitespace, filter out empty strings
@@ -134,71 +133,79 @@ export default function WordCounter(props: any) {
                 To use <b>word counter</b>, copy and paste text in the input box
                 below or upload DOC, PDF or DOCX to count words and characters.
               </p>
-            
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-              <div className={statBoxStyle}>
-                <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {words}
-                </span>
-                <span className="uppercase text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1">
-                  Words
-                </span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                <div className={statBoxStyle}>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {words}
+                  </span>
+                  <span className="uppercase text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1">
+                    Words
+                  </span>
+                </div>
+                <div className={statBoxStyle}>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {characters}
+                  </span>
+                  <span className="uppercase text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1">
+                    Characters
+                  </span>
+                </div>
+                <div className={statBoxStyle}>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {sentences}
+                  </span>
+                  <span className="uppercase text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1">
+                    Sentence
+                  </span>
+                </div>
+                <div className={statBoxStyle}>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {readTime}
+                  </span>
+                  <span className="uppercase text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1">
+                    Read Time <span className="lowercase">sec</span>
+                  </span>
+                </div>
               </div>
-              <div className={statBoxStyle}>
-                <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {characters}
-                </span>
-                <span className="uppercase text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1">
-                  Characters
-                </span>
+              <div className="relative">
+                <textarea
+                  className="w-full min-h-[120px] max-h-[300px] border border-gray-300 dark:border-gray-700 rounded-lg p-3 pr-10 text-gray-800 dark:text-gray-100 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-600 transition bg-white"
+                  value={text}
+                  onChange={handleChange}
+                  placeholder="Paste or type your text here..."
+                />
+                {text.length > 0 && (
+                  <button
+                    className="absolute bottom-3 right-3 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition"
+                    onClick={handleClear}
+                    aria-label="Clear text"
+                    type="button"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                )}
               </div>
-              <div className={statBoxStyle}>
-                <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {sentences}
-                </span>
-                <span className="uppercase text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1">
-                  Sentence
-                </span>
-              </div>
-              <div className={statBoxStyle}>
-                <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {readTime}
-                </span>
-                <span className="uppercase text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1">
-                  Read Time <span className="lowercase">sec</span>
-                </span>
-              </div>
-            </div>
-            <div className="relative">
-              <textarea
-                className="w-full min-h-[120px] max-h-[300px] border border-gray-300 dark:border-gray-700 rounded-lg p-3 pr-10 text-gray-800 dark:text-gray-100 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400 dark:focus:ring-blue-600 transition bg-white"
-                value={text}
-                onChange={handleChange}
-                placeholder="Paste or type your text here..."
-              />
-              {text.length > 0 && (
-                <button
-                  className="absolute bottom-3 right-3 text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition"
-                  onClick={handleClear}
-                  aria-label="Clear text"
-                  type="button"
-                >
-                  <Trash2 size={20} />
-                </button>
-              )}
-            </div>
-            </div>
+            </div>{" "}
+            <ArticleRenderer file="word_counter.html" />
           </div>
-          
+
           {/* Second column: col-span-5 on md+ */}
           <div className="md:col-span-5 col-span-1 ">
             {/* You can place content for the second column here */}
             {/* Advertiesment */}
-            <ReleavantToolsSidebar title="Popular Tools" tools={popularTools as any} />
-            <ReleavantToolsSidebar title="Other Tools" tools={otherTools as any} />
+            <ReleavantToolsSidebar
+              title="Popular Tools"
+              tools={popularTools as any}
+            />
+            <ReleavantToolsSidebar
+              title="Other Tools"
+              tools={otherTools as any}
+            />
           </div>
         </div>
+
+
         {/* <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
           <div className="md:col-span-6 col-span-1 bg-white dark:bg-gray-800 rounded shadow p-4">
             Advertiesment
@@ -208,7 +215,6 @@ export default function WordCounter(props: any) {
           </div>
         </div> */}
       </div>
-
     </>
   );
 }
